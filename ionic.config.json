@@ -1,0 +1,7 @@
+{
+  "name": "sufarmed",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
