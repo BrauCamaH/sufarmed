@@ -1,6 +1,7 @@
 {
   "name": "sufarmed",
   "version": "0.0.1",
+  "description": "An Ionic project",
   "private": true,
   "dependencies": {
     "@capacitor/core": "2.4.0",
@@ -50,7 +51,19 @@
     "@capacitor/cli": "2.4.0",
     "@typescript-eslint/eslint-plugin": "^3.8.0",
     "@typescript-eslint/parser": "^3.8.0",
-    "eslint": "^7.6.0"
+    "eslint": "^7.6.0",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.11"
   },
-  "description": "An Ionic project"
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{tsx,ts,js,jsx}": [
+      "prettier --write",
+      "git add"
+    ]
+  }
 }
