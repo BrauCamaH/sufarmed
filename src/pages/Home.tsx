@@ -7,6 +7,9 @@ import {
 } from '@ionic/react';
 import React from 'react';
 import Appbar from '../components/Appbar';
+import Footer from '../components/Footer';
+import Section from '../components/Section';
+import Slider from '../components/Slider';
 import './Home.css';
 
 const Home: React.FC = () => {
@@ -19,6 +22,9 @@ const Home: React.FC = () => {
             <IonTitle size="large">Blank</IonTitle>
           </IonToolbar>
         </IonHeader>
+        <Slider />
+        <Section />
+        <Footer />
       </IonContent>
     </IonPage>
   );
