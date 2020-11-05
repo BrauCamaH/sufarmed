@@ -1,17 +1,17 @@
 import React from 'react';
-import { IonSlides, IonSlide, IonContent } from '@ionic/react';
+import { IonSlides, IonSlide } from '@ionic/react';
 
 import './Slider.css';
 
 // Optional parameters to pass to the swiper instance.
 // See http://idangero.us/swiper/api/ for valid options.
 const slideOpts = {
-  initialSlide: 1,
+  initialSlide: 0,
   speed: 400,
 };
 
 const Slider: React.FC = () => (
-  <IonContent id="slider">
+  <div id="slider">
     <IonSlides pager={true} options={slideOpts}>
       <IonSlide className="slide-image">
         <img
@@ -35,7 +35,7 @@ const Slider: React.FC = () => (
         />
       </IonSlide>
     </IonSlides>
-  </IonContent>
+  </div>
 );
 
 export default Slider;

@@ -14,8 +14,6 @@ import {
 } from '@ionic/react';
 import { cart } from 'ionicons/icons';
 
-import Slider from './Slider';
-
 const Appbar: React.FC = () => {
   return (
     <>
@@ -53,7 +51,6 @@ const Appbar: React.FC = () => {
           </IonList>
         </IonGrid>
       </IonHeader>
-      <Slider />
     </>
   );
 };
