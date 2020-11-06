@@ -6,23 +6,26 @@ import {
   IonCardTitle,
   IonImg,
 } from '@ionic/react';
+import { Product } from '../models/Product';
 
 export interface ProductProps {
-  imgUrl: string;
-  name: string;
-  info: string;
+  product: Product;
 }
 
-const Product: React.FC<ProductProps> = ({ imgUrl, name, info }) => {
+const ProductCard: React.FC<ProductProps> = ({ product }) => {
   return (
     <IonCard>
-      <IonImg style={{ width: 300 }} className="slide-image" src={imgUrl} />
+      <IonImg
+        style={{ width: 300 }}
+        className="slide-image"
+        src={product.imgUrl}
+      />
       <IonCardHeader>
-        <IonCardTitle>{name}</IonCardTitle>
+        <IonCardTitle>{product.name}</IonCardTitle>
       </IonCardHeader>
-      <IonCardContent>{info}</IonCardContent>
+      <IonCardContent>{product.summary}</IonCardContent>
     </IonCard>
   );
 };
 
-export default Product;
+export default ProductCard;

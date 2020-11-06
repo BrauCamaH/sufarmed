@@ -38,7 +38,11 @@ const Appbar: React.FC = () => {
           <IonMenu></IonMenu>
           <IonList lines="none">
             <IonRow class="ion-justify-content-center">
-              <IonItem detail={false} routerLink={'/'} routerDirection="none">
+              <IonItem
+                detail={false}
+                routerLink={'/categories'}
+                routerDirection="none"
+              >
                 <IonLabel>Categorias</IonLabel>
               </IonItem>
               <IonItem detail={false} routerLink={'/'} routerDirection="none">

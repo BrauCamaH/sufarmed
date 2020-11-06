@@ -2,14 +2,9 @@ import React from 'react';
 import { IonContent, IonGrid, IonPage, IonRow, IonCol } from '@ionic/react';
 import Appbar from '../components/Appbar';
 import Footer from '../components/Footer';
-import Product from '../components/Product';
+import ProductCard from '../components/Product';
+import { Product } from '../models/Product';
 import './Home.css';
-
-interface Product {
-  imgUrl: string;
-  name: string;
-  info: string;
-}
 
 interface ProductsProps {
   products: Product[];
@@ -24,11 +19,7 @@ const Home: React.FC<ProductsProps> = ({ products }) => {
           <IonRow>
             {products.map((product, index) => {
               <IonCol key={index}>
-                <Product
-                  imgUrl={product.imgUrl}
-                  name={product.name}
-                  info={product.info}
-                />
+                <ProductCard product={product} />
               </IonCol>;
             })}
           </IonRow>

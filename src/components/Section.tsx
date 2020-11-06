@@ -7,7 +7,8 @@ import {
   IonButton,
   IonTitle,
 } from '@ionic/react';
-import Product from '../components/Product';
+import ProductCard from '../components/Product';
+import { Product } from '../models/Product';
 
 const slideOpts = {
   initialSlide: 0,
@@ -15,49 +16,57 @@ const slideOpts = {
   slidesPerView: 4.5,
 };
 
-const Section: React.FC = () => {
+const productList: Product[] = [
+  {
+    id: Date.now().toString(),
+    imgUrl: 'https://picsum.photos/200/300',
+    name: 'Product',
+  },
+  {
+    id: Date.now().toString(),
+    imgUrl: 'https://picsum.photos/200/300',
+    name: 'Product',
+  },
+  {
+    id: Date.now().toString(),
+    imgUrl: 'https://picsum.photos/200/300',
+    name: 'Product',
+  },
+  {
+    id: Date.now().toString(),
+    imgUrl: 'https://picsum.photos/200/300',
+    name: 'Product',
+  },
+  {
+    id: Date.now().toString(),
+    imgUrl: 'https://picsum.photos/200/300',
+    name: 'Product',
+  },
+];
+
+interface SectionProps {
+  products?: Product[];
+}
+
+const Section: React.FC<SectionProps> = ({ products }) => {
+  const mockListItems = productList.map((product) => (
+    <IonSlide key={product.id}>
+      <ProductCard product={product} />
+    </IonSlide>
+  ));
+  const ListItems = products?.map((product) => (
+    <IonSlide key={product.id}>
+      <ProductCard product={product} />
+    </IonSlide>
+  ));
   return (
     <IonGrid>
       <IonRow>
         <IonTitle>Section Name</IonTitle>
-        <IonButton fill="clear">Ver mas</IonButton>
+        <IonButton fill="clear">Ver más</IonButton>
       </IonRow>
       <IonSlides options={slideOpts}>
-        <IonSlide>
-          <Product
-            imgUrl="https://picsum.photos/900/300"
-            name="Product"
-            info="Product Info"
-          />
-        </IonSlide>
-        <IonSlide>
-          <Product
-            imgUrl="https://picsum.photos/900/300"
-            name="Product"
-            info="Product Info"
-          />
-        </IonSlide>
-        <IonSlide>
-          <Product
-            imgUrl="https://picsum.photos/900/300"
-            name="Product"
-            info="Product Info"
-          />
-        </IonSlide>{' '}
-        <IonSlide>
-          <Product
-            imgUrl="https://picsum.photos/900/300"
-            name="Product"
-            info="Product Info"
-          />
-        </IonSlide>{' '}
-        <IonSlide>
-          <Product
-            imgUrl="https://picsum.photos/900/300"
-            name="Product"
-            info="Product Info"
-          />
-        </IonSlide>
+        {products ? ListItems : mockListItems}
       </IonSlides>
     </IonGrid>
   );
