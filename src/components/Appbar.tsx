@@ -20,16 +20,23 @@ const Appbar: React.FC = () => {
       <IonHeader>
         <IonGrid>
           <IonRow class="ion-justify-content-around ion-align-items-center">
-            <IonImg
-              style={{ width: 200, heigth: 200 }}
-              src="assets/logo-sufarmed.png"
-            />
+            <IonItem
+              routerLink="/home"
+              lines="none"
+              color="ligth"
+              routerDirection="root"
+            >
+              <IonImg
+                style={{ width: 200, heigth: 200 }}
+                src="assets/logo-sufarmed.png"
+              />
+            </IonItem>
             <IonSearchbar
               placeholder="Buscar Productos..."
               style={{ width: 500 }}
             />
             <IonRow class="ion-justify-content-between ion-align-items-center">
-              <IonButton>Iniciar Sesión</IonButton>
+              <IonButton routerLink="/login">Iniciar Sesión</IonButton>
               <IonButton fill="clear" size="large" routerLink="/cart">
                 <IonIcon icon={cart}></IonIcon>
               </IonButton>
