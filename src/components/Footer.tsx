@@ -6,7 +6,7 @@ import './Footer.css';
 const Footer: React.FC = () => {
   return (
     <IonFooter>
-      <IonToolbar>
+      <IonToolbar color="secondary">
         <IonGrid id="footer">
           <IonRow className="">
             <IonCol>

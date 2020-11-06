@@ -4,7 +4,7 @@ import React from 'react';
 const AppBar: React.FC = () => {
   return (
     <IonHeader>
-      <IonToolbar>
+      <IonToolbar color="primary">
         <IonItem
           routerLink="/home"
           lines="none"

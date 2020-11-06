@@ -89,7 +89,7 @@ const Login: React.FC = () => {
                 </IonRow>
               </IonList>
               <IonCol>
-                <IonButton type="submit" expand="block">
+                <IonButton type="submit" expand="block" color="secondary">
                   Crear cuenta
                 </IonButton>
               </IonCol>

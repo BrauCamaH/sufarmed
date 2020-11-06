@@ -53,7 +53,7 @@ const Login: React.FC = () => {
                 </IonItem>
               </IonList>
               <IonCol>
-                <IonButton type="submit" expand="block">
+                <IonButton type="submit" expand="block" color="secondary">
                   Iniciar Sesión
                 </IonButton>
               </IonCol>
