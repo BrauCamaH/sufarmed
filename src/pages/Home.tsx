@@ -1,11 +1,5 @@
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-} from '@ionic/react';
 import React from 'react';
+import { IonContent, IonPage } from '@ionic/react';
 import Appbar from '../components/Appbar';
 import Footer from '../components/Footer';
 import Section from '../components/Section';
@@ -17,11 +11,6 @@ const Home: React.FC = () => {
     <IonPage>
       <Appbar />
       <IonContent>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Blank</IonTitle>
-          </IonToolbar>
-        </IonHeader>
         <Slider />
         <Section />
         <Footer />
