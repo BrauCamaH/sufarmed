@@ -38,6 +38,16 @@ const categories: Category[] = [
     name: 'category',
     imgUrl: 'https://picsum.photos/150/150',
   },
+  {
+    id: Date.now().toString(),
+    name: 'category',
+    imgUrl: 'https://picsum.photos/150/150',
+  },
+  {
+    id: Date.now().toString(),
+    name: 'category',
+    imgUrl: 'https://picsum.photos/150/150',
+  },
 ];
 
 const CategoriesPage: React.FC = () => {
