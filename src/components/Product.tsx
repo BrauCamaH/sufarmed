@@ -2,11 +2,13 @@ import React from 'react';
 import {
   IonCard,
   IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
+  IonCardSubtitle,
   IonImg,
+  IonItem,
 } from '@ionic/react';
 import { Product } from '../models/Product';
+
+import './Product.css';
 
 export interface ProductProps {
   product: Product;
@@ -14,17 +16,17 @@ export interface ProductProps {
 
 const ProductCard: React.FC<ProductProps> = ({ product }) => {
   return (
-    <IonCard>
-      <IonImg
-        style={{ width: 300 }}
-        className="slide-image"
-        src={product.imgUrl}
-      />
-      <IonCardHeader>
-        <IonCardTitle>{product.name}</IonCardTitle>
-      </IonCardHeader>
-      <IonCardContent>{product.summary}</IonCardContent>
-    </IonCard>
+    <div id="productCard">
+      <IonItem button lines="none">
+        <IonCard className="product">
+          <IonImg className="product__img" src={product.imgUrl} />
+          <IonCardContent>
+            <IonCardSubtitle>{product.name}</IonCardSubtitle>
+            {product.summary}
+          </IonCardContent>
+        </IonCard>
+      </IonItem>
+    </div>
   );
 };
 

@@ -1,0 +1,9 @@
+#productCard {
+  max-height: 300px;
+}
+.product__img {
+  pointer-events: none;
+  position: relative;
+  max-width: 500px;
+  max-height: 300px;
+}
