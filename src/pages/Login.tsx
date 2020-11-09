@@ -25,7 +25,7 @@ const Login: React.FC = () => {
   return (
     <IonPage>
       <IonContent>
-        <Appbar />
+        <Appbar title="Inicio de sesión" />
         <IonCard className="login-form">
           <IonCardHeader>
             <IonTitle>Ingresa los siguientes datos para</IonTitle>
@@ -65,7 +65,7 @@ const Login: React.FC = () => {
                   routerLink="/signup"
                   routerAnimation={undefined}
                 >
-                  Registrase
+                  Registrarse
                 </IonButton>
               </IonCol>
             </form>

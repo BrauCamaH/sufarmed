@@ -27,7 +27,7 @@ const Login: React.FC = () => {
   return (
     <IonPage>
       <IonContent>
-        <Appbar />
+        <Appbar title="Registrarse" />
         <IonCard className="login-form">
           <IonCardHeader>
             <IonTitle>Crear un cuenta en sufarmed</IonTitle>
