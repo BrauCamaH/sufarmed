@@ -10,8 +10,84 @@ import {
   IonLabel,
   IonImg,
   IonToolbar,
+  IonMenuToggle,
+  IonMenu,
+  IonContent,
+  IonList,
+  IonMenuButton,
 } from '@ionic/react';
-import { cart } from 'ionicons/icons';
+import { cart, menu, help, pricetag, calendar } from 'ionicons/icons';
+import { withRouter, useLocation } from 'react-router';
+import { NavLink } from 'react-router-dom';
+
+import './Appbar.css';
+
+interface Pages {
+  title: string;
+  path: string;
+  routerDirection?: string;
+  icon: string;
+}
+
+interface MenuProps {
+  menuEnabled?: boolean;
+}
+
+const routes = {
+  appPages: [
+    { title: 'Categorias', path: '/categories', icon: pricetag },
+    { title: 'Ayuda', path: '/tabs/speakers', icon: help },
+    { title: 'Mis compras', path: '/tabs/map', icon: calendar },
+  ],
+};
+
+export const Menu: React.FC<MenuProps> = ({ menuEnabled }) => {
+  const location = useLocation();
+  const renderlistItems = (list: Pages[]) => {
+    return list
+      .filter((route) => !!route.path)
+      .map((p) => (
+        <IonMenuToggle key={p.title} auto-hide="false">
+          <IonItem
+            detail={false}
+            routerLink={p.path}
+            routerDirection="none"
+            className={
+              location.pathname.startsWith(p.path) ? 'selected' : undefined
+            }
+          >
+            <IonIcon id="drawe" slot="start" icon={p.icon} />
+            <IonLabel>{p.title}</IonLabel>
+          </IonItem>
+        </IonMenuToggle>
+      ));
+  };
+  return (
+    <IonMenu type="overlay" disabled={!menuEnabled} contentId="main">
+      <IonContent forceOverscroll={false}>
+        <IonHeader>
+          <IonToolbar color="primary">
+            <IonItem
+              color="primary"
+              lines="none"
+              routerLink="/home"
+              routerDirection="root"
+            >
+              <IonMenuButton>
+                <IonIcon icon={menu} />
+              </IonMenuButton>
+              <IonImg
+                style={{ width: 150, heigth: 150 }}
+                src="assets/logo-sufarmed.png"
+              />
+            </IonItem>
+          </IonToolbar>
+        </IonHeader>
+        <IonList lines="none">{renderlistItems(routes.appPages)}</IonList>
+      </IonContent>
+    </IonMenu>
+  );
+};
 
 const Appbar: React.FC = () => {
   return (
@@ -19,64 +95,30 @@ const Appbar: React.FC = () => {
       <IonHeader>
         <IonToolbar color="primary">
           <IonGrid color="primary">
-            <IonRow class="ion-justify-content-around ion-align-items-center">
-              <IonItem
-                routerLink="/home"
-                lines="none"
-                color="ligth"
-                routerDirection="root"
-              >
-                <IonImg
-                  style={{ width: 200, heigth: 200 }}
-                  src="assets/logo-sufarmed.png"
-                />
-              </IonItem>
+            <IonRow class="ion-justify-content-between ion-justify-items-center">
+              <IonRow>
+                <IonMenuButton>
+                  <IonIcon id="drawer" icon={menu} />
+                </IonMenuButton>
+                <NavLink to="home">
+                  <IonImg
+                    style={{ width: 150, heigth: 150 }}
+                    src="assets/logo-sufarmed.png"
+                  />
+                </NavLink>
+              </IonRow>
               <IonSearchbar
                 placeholder="Buscar Productos..."
                 style={{ width: 500 }}
               />
               <IonRow class="ion-justify-content-between ion-align-items-center">
-                <IonButton routerLink="/login" color="secondary">
+                <IonButton routerLink="/login" color="secondary" size="small">
                   Iniciar Sesión
                 </IonButton>
-                <IonButton
-                  fill="clear"
-                  size="large"
-                  color="secondary"
-                  routerLink="/cart"
-                >
+                <IonButton fill="clear" color="secondary" routerLink="/cart">
                   <IonIcon icon={cart}></IonIcon>
                 </IonButton>
               </IonRow>
-            </IonRow>
-            <IonRow class="ion-justify-content-center">
-              <IonItem
-                lines="none"
-                color="primary"
-                detail={false}
-                routerLink={'/categories'}
-                routerDirection="none"
-              >
-                <IonLabel>Categorias</IonLabel>
-              </IonItem>
-              <IonItem
-                lines="none"
-                color="primary"
-                detail={false}
-                routerLink={'/'}
-                routerDirection="none"
-              >
-                <IonLabel>Historial</IonLabel>
-              </IonItem>
-              <IonItem
-                lines="none"
-                color="primary"
-                detail={false}
-                routerLink={'/'}
-                routerDirection="none"
-              >
-                <IonLabel>Ayuda</IonLabel>
-              </IonItem>
             </IonRow>
           </IonGrid>
         </IonToolbar>
@@ -85,4 +127,4 @@ const Appbar: React.FC = () => {
   );
 };
 
-export default Appbar;
+export default withRouter(Appbar);
