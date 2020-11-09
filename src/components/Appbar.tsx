@@ -8,8 +8,6 @@ import {
   IonRow,
   IonItem,
   IonLabel,
-  IonMenu,
-  IonList,
   IonImg,
   IonToolbar,
 } from '@ionic/react';
