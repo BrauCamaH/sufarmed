@@ -25,14 +25,16 @@ import Home from './pages/Home';
 import Categories from './pages/Categories';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import Products from './pages/Products';
 
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
       <IonRouterOutlet>
         <Route path="/home" component={Home} exact={true} />
+        <Route path="/products" component={Products} exact={true} />
         <Route path="/categories" component={Categories} exact={true} />
-        <Route path="/Login" component={Login} exact={true} />
+        <Route path="/login" component={Login} exact={true} />
         <Route path="/signup" component={Signup} exact={true} />
         <Route exact path="/" render={() => <Redirect to="/home" />} />
       </IonRouterOutlet>

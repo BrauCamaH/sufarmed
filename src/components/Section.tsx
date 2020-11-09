@@ -19,28 +19,33 @@ const slideOpts = {
 const productList: Product[] = [
   {
     id: Date.now().toString(),
-    imgUrl: 'https://picsum.photos/200/300',
+    imgUrl: 'https://picsum.photos/500/300',
     name: 'Product',
+    summary: '$50 50tabs',
   },
   {
     id: Date.now().toString(),
-    imgUrl: 'https://picsum.photos/200/300',
+    imgUrl: 'https://picsum.photos/500/300',
     name: 'Product',
+    summary: '$50 50tabs',
   },
   {
     id: Date.now().toString(),
-    imgUrl: 'https://picsum.photos/200/300',
+    imgUrl: 'https://picsum.photos/500/300',
     name: 'Product',
+    summary: '$50 50tabs',
   },
   {
     id: Date.now().toString(),
-    imgUrl: 'https://picsum.photos/200/300',
+    imgUrl: 'https://picsum.photos/500/300',
     name: 'Product',
+    summary: '$50 50tabs',
   },
   {
     id: Date.now().toString(),
-    imgUrl: 'https://picsum.photos/200/300',
+    imgUrl: 'https://picsum.photos/500/300',
     name: 'Product',
+    summary: '$50 50tabs',
   },
 ];
 
