@@ -3,6 +3,7 @@ import { IonContent, IonGrid, IonPage, IonRow, IonCol } from '@ionic/react';
 import Appbar from '../components/Appbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/Product';
+import Filter from '../components/Filter';
 import { Product } from '../models/Product';
 import './Home.css';
 
@@ -73,6 +74,7 @@ const Home: React.FC = () => {
   return (
     <IonPage>
       <Appbar />
+      <Filter />
       <IonContent>
         <IonGrid fixed>
           <IonRow className="ion-justify-content-center">
