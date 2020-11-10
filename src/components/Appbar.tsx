@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   IonHeader,
-  IonSearchbar,
   IonButton,
   IonIcon,
   IonGrid,
@@ -15,10 +14,13 @@ import {
   IonContent,
   IonList,
   IonMenuButton,
+  IonModal,
 } from '@ionic/react';
-import { cart, menu, help, pricetag, calendar } from 'ionicons/icons';
+import { cart, menu, help, pricetag, calendar, search } from 'ionicons/icons';
 import { withRouter, useLocation } from 'react-router';
 import { NavLink } from 'react-router-dom';
+
+import SearchModal from './SearchModal';
 
 import './Appbar.css';
 
@@ -90,12 +92,14 @@ export const Menu: React.FC<MenuProps> = ({ menuEnabled }) => {
 };
 
 const Appbar: React.FC = () => {
+  const [showSearchbar, setShowSearchbar] = useState<boolean>(false);
+
   return (
     <>
       <IonHeader>
         <IonToolbar color="primary">
           <IonGrid color="primary">
-            <IonRow class="ion-justify-content-between ion-justify-items-center">
+            <IonRow class="ion-justify-content-between ion-justify-content-center">
               <IonRow>
                 <IonMenuButton>
                   <IonIcon id="drawer" icon={menu} />
@@ -107,12 +111,20 @@ const Appbar: React.FC = () => {
                   />
                 </NavLink>
               </IonRow>
-              <IonSearchbar
-                placeholder="Buscar Productos..."
-                style={{ width: 500 }}
-              />
               <IonRow class="ion-justify-content-between ion-align-items-center">
-                <IonButton routerLink="/login" color="secondary" size="small">
+                <IonButton
+                  onClick={() => {
+                    setShowSearchbar(true);
+                  }}
+                >
+                  <IonIcon color="light" icon={search} />
+                </IonButton>
+                <IonButton
+                  className="ion-padding-start"
+                  routerLink="/login"
+                  color="secondary"
+                  size="small"
+                >
                   Iniciar Sesión
                 </IonButton>
                 <IonButton fill="clear" color="secondary" routerLink="/cart">
@@ -123,6 +135,14 @@ const Appbar: React.FC = () => {
           </IonGrid>
         </IonToolbar>
       </IonHeader>
+      <IonModal
+        isOpen={showSearchbar}
+        onDidDismiss={() => setShowSearchbar(false)}
+        swipeToClose={true}
+        cssClass="session-list-filter"
+      >
+        <SearchModal onDismissModal={() => setShowSearchbar(false)} />
+      </IonModal>
     </>
   );
 };
