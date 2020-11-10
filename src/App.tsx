@@ -19,8 +19,9 @@ import './theme/variables.css';
 
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
-import { IonApp, IonRouterOutlet } from '@ionic/react';
+import { IonApp, IonRouterOutlet, IonSplitPane } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
+import { Menu } from './components/Appbar';
 import Home from './pages/Home';
 import Categories from './pages/Categories';
 import Login from './pages/Login';
@@ -31,15 +32,18 @@ import Product from './pages/Product';
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
-      <IonRouterOutlet>
-        <Route path="/home" component={Home} exact={true} />
-        <Route path="/products" component={Products} exact={true} />
-        <Route path="/product" component={Product} exact={true} />
-        <Route path="/categories" component={Categories} exact={true} />
-        <Route path="/login" component={Login} exact={true} />
-        <Route path="/signup" component={Signup} exact={true} />
-        <Route exact path="/" render={() => <Redirect to="/home" />} />
-      </IonRouterOutlet>
+      <IonSplitPane disabled contentId="main">
+        <Menu menuEnabled={true} />
+        <IonRouterOutlet id="main">
+          <Route path="/home" component={Home} exact={true} />
+          <Route path="/products" component={Products} exact={true} />
+          <Route path="/product" component={Product} exact={true} />
+          <Route path="/categories" component={Categories} exact={true} />
+          <Route path="/login" component={Login} exact={true} />
+          <Route path="/signup" component={Signup} exact={true} />
+          <Route exact path="/" render={() => <Redirect to="/home" />} />
+        </IonRouterOutlet>
+      </IonSplitPane>
     </IonReactRouter>
   </IonApp>
 );

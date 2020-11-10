@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   IonHeader,
-  IonSearchbar,
   IonButton,
   IonIcon,
   IonGrid,
@@ -10,79 +9,142 @@ import {
   IonLabel,
   IonImg,
   IonToolbar,
+  IonMenuToggle,
+  IonMenu,
+  IonContent,
+  IonList,
+  IonMenuButton,
+  IonModal,
 } from '@ionic/react';
-import { cart } from 'ionicons/icons';
+import { cart, menu, help, pricetag, calendar, search } from 'ionicons/icons';
+import { withRouter, useLocation } from 'react-router';
+import { NavLink } from 'react-router-dom';
+
+import SearchModal from './SearchModal';
+
+import './Appbar.css';
+
+interface Pages {
+  title: string;
+  path: string;
+  routerDirection?: string;
+  icon: string;
+}
+
+interface MenuProps {
+  menuEnabled?: boolean;
+}
+
+const routes = {
+  appPages: [
+    { title: 'Categorias', path: '/categories', icon: pricetag },
+    { title: 'Ayuda', path: '/tabs/speakers', icon: help },
+    { title: 'Mis compras', path: '/tabs/map', icon: calendar },
+  ],
+};
+
+export const Menu: React.FC<MenuProps> = ({ menuEnabled }) => {
+  const location = useLocation();
+  const renderlistItems = (list: Pages[]) => {
+    return list
+      .filter((route) => !!route.path)
+      .map((p) => (
+        <IonMenuToggle key={p.title} auto-hide="false">
+          <IonItem
+            detail={false}
+            routerLink={p.path}
+            routerDirection="none"
+            className={
+              location.pathname.startsWith(p.path) ? 'selected' : undefined
+            }
+          >
+            <IonIcon id="drawe" slot="start" icon={p.icon} />
+            <IonLabel>{p.title}</IonLabel>
+          </IonItem>
+        </IonMenuToggle>
+      ));
+  };
+  return (
+    <IonMenu type="overlay" disabled={!menuEnabled} contentId="main">
+      <IonContent forceOverscroll={false}>
+        <IonHeader>
+          <IonToolbar color="primary">
+            <IonItem
+              color="primary"
+              lines="none"
+              routerLink="/home"
+              routerDirection="root"
+            >
+              <IonMenuButton>
+                <IonIcon icon={menu} />
+              </IonMenuButton>
+              <IonImg
+                style={{ width: 150, heigth: 150 }}
+                src="assets/logo-sufarmed.png"
+              />
+            </IonItem>
+          </IonToolbar>
+        </IonHeader>
+        <IonList lines="none">{renderlistItems(routes.appPages)}</IonList>
+      </IonContent>
+    </IonMenu>
+  );
+};
 
 const Appbar: React.FC = () => {
+  const [showSearchbar, setShowSearchbar] = useState<boolean>(false);
+
   return (
     <>
       <IonHeader>
         <IonToolbar color="primary">
           <IonGrid color="primary">
-            <IonRow class="ion-justify-content-around ion-align-items-center">
-              <IonItem
-                routerLink="/home"
-                lines="none"
-                color="ligth"
-                routerDirection="root"
-              >
-                <IonImg
-                  style={{ width: 200, heigth: 200 }}
-                  src="assets/logo-sufarmed.png"
-                />
-              </IonItem>
-              <IonSearchbar
-                placeholder="Buscar Productos..."
-                style={{ width: 500 }}
-              />
+            <IonRow class="ion-justify-content-between ion-justify-content-center">
+              <IonRow>
+                <IonMenuButton>
+                  <IonIcon id="drawer" icon={menu} />
+                </IonMenuButton>
+                <NavLink to="home">
+                  <IonImg
+                    style={{ width: 150, heigth: 150 }}
+                    src="assets/logo-sufarmed.png"
+                  />
+                </NavLink>
+              </IonRow>
               <IonRow class="ion-justify-content-between ion-align-items-center">
-                <IonButton routerLink="/login" color="secondary">
-                  Iniciar Sesión
+                <IonButton
+                  onClick={() => {
+                    setShowSearchbar(true);
+                  }}
+                >
+                  <IonIcon color="light" icon={search} />
                 </IonButton>
                 <IonButton
-                  fill="clear"
-                  size="large"
+                  className="ion-padding-start"
+                  routerLink="/login"
                   color="secondary"
-                  routerLink="/cart"
+                  size="small"
                 >
+                  Iniciar Sesión
+                </IonButton>
+                <IonButton fill="clear" color="secondary" routerLink="/cart">
                   <IonIcon icon={cart}></IonIcon>
                 </IonButton>
               </IonRow>
             </IonRow>
-            <IonRow class="ion-justify-content-center">
-              <IonItem
-                lines="none"
-                color="primary"
-                detail={false}
-                routerLink={'/categories'}
-                routerDirection="none"
-              >
-                <IonLabel>Categorias</IonLabel>
-              </IonItem>
-              <IonItem
-                lines="none"
-                color="primary"
-                detail={false}
-                routerLink={'/'}
-                routerDirection="none"
-              >
-                <IonLabel>Historial</IonLabel>
-              </IonItem>
-              <IonItem
-                lines="none"
-                color="primary"
-                detail={false}
-                routerLink={'/'}
-                routerDirection="none"
-              >
-                <IonLabel>Ayuda</IonLabel>
-              </IonItem>
-            </IonRow>
           </IonGrid>
         </IonToolbar>
       </IonHeader>
+      <IonModal
+        isOpen={showSearchbar}
+        onDidDismiss={() => setShowSearchbar(false)}
+        swipeToClose={true}
+        cssClass="session-list-filter"
+      >
+        <SearchModal onDismissModal={() => setShowSearchbar(false)} />
+      </IonModal>
     </>
   );
 };
 
-export default Appbar;
+export default withRouter(Appbar);
