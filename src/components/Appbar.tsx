@@ -99,7 +99,7 @@ const Appbar: React.FC = () => {
       <IonHeader>
         <IonToolbar color="primary">
           <IonGrid color="primary">
-            <IonRow class="ion-justify-content-between ion-justify-content-center">
+            <IonRow class="ion-justify-content-between">
               <IonRow>
                 <IonMenuButton>
                   <IonIcon id="drawer" icon={menu} />
