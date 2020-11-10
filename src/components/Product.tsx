@@ -19,7 +19,11 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
     <div id="productCard">
       <IonItem button lines="none">
         <IonCard className="product">
-          <IonImg className="product__img" src={product.imgUrl} />
+          <IonImg
+            className="product__img"
+            src={product.imgUrl}
+            alt="product image"
+          />
           <IonCardContent>
             <IonCardSubtitle>{product.name}</IonCardSubtitle>
             {product.summary}
