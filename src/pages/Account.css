@@ -1,0 +1,12 @@
+.account__list {
+  max-width: 800px;
+}
+
+.account__item {
+  max-height: 100px;
+}
+
+.account__title{
+  padding-left: 20px;
+  margin-bottom: 20px;
+}

@@ -6,7 +6,7 @@ import {
   IonSearchbar,
   IonToolbar,
 } from '@ionic/react';
-import { close } from 'ionicons/icons';
+import { arrowBack } from 'ionicons/icons';
 
 export interface SearhModalProps {
   onDismissModal: () => void;
@@ -17,15 +17,21 @@ const SearhModal: React.FC<SearhModalProps> = ({ onDismissModal }) => {
     <>
       <IonHeader>
         <IonToolbar color="primary">
-          <IonSearchbar />
           <IonButton
-            slot="end"
+            slot="start"
             fill="clear"
             color="light"
             onClick={onDismissModal}
           >
-            <IonIcon icon={close} />
+            <IonIcon icon={arrowBack} />
           </IonButton>
+          <IonSearchbar
+            placeholder="Buscar productos..."
+            type="search"
+            onEmptied={() => {
+              alert('hello');
+            }}
+          />
         </IonToolbar>
       </IonHeader>
     </>
