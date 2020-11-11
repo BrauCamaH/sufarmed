@@ -17,7 +17,7 @@ export interface ProductProps {
 const ProductCard: React.FC<ProductProps> = ({ product }) => {
   return (
     <div id="productCard">
-      <IonItem button lines="none">
+      <IonItem button lines="none" routerLink={`/product`}>
         <IonCard className="product">
           <IonImg
             className="product__img"
