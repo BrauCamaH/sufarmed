@@ -35,6 +35,7 @@ const CartItem: React.FC<CartProps> = ({ product }) => {
       <IonRow className="ion-justify-content-center ion-align-items-center">
         <IonCol>
           <img
+            alt="card item"
             style={{ maxWidth: '300px', maxHeight: '300px' }}
             src={product.imgUrl}
           />
