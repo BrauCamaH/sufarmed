@@ -38,8 +38,8 @@ interface MenuProps {
 const routes = {
   appPages: [
     { title: 'Categorias', path: '/categories', icon: pricetag },
-    { title: 'Ayuda', path: '/tabs/speakers', icon: help },
-    { title: 'Mis compras', path: '/tabs/map', icon: calendar },
+    { title: 'Ayuda', path: '/help', icon: help },
+    { title: 'Mis compras', path: '/history', icon: calendar },
   ],
 };
 

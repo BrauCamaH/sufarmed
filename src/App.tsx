@@ -30,6 +30,7 @@ import Products from './pages/Products';
 import Product from './pages/Product';
 import Cart from './pages/Cart';
 import Account from './pages/Account';
+import Help from './pages/Help';
 
 const App: React.FC = () => (
   <IonApp>
@@ -43,6 +44,7 @@ const App: React.FC = () => (
           <Route path="/categories" component={Categories} exact={true} />
           <Route path="/cart" component={Cart} exact={true} />
           <Route path="/account" component={Account} exact={true} />
+          <Route path="/help" component={Help} exact={true} />
           <Route path="/login" component={Login} exact={true} />
           <Route path="/signup" component={Signup} exact={true} />
           <Route exact path="/" render={() => <Redirect to="/home" />} />
