@@ -1,11 +1,13 @@
 import React from 'react';
-import { IonContent, IonList, IonPage } from '@ionic/react';
+import { IonContent, IonList, IonPage, IonRow } from '@ionic/react';
 import CategoryItem from '../components/Category';
 
 import Appbar from '../components/Appbar';
 import Footer from '../components/Footer';
 
 import { Category } from '../models/Category';
+
+import './Categories.css';
 
 const categories: Category[] = [
   {
@@ -55,11 +57,13 @@ const CategoriesPage: React.FC = () => {
     <IonPage>
       <Appbar />
       <IonContent>
-        <IonList style={{ padding: '6em' }}>
-          {categories?.map((category) => (
-            <CategoryItem category={category} />
-          ))}
-        </IonList>{' '}
+        <IonList className="categories__list">
+          <IonRow className="ion-justify-content-center">
+            {categories?.map((category) => (
+              <CategoryItem category={category} />
+            ))}
+          </IonRow>
+        </IonList>
         <Footer />
       </IonContent>
     </IonPage>
