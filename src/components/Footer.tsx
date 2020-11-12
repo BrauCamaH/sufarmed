@@ -5,10 +5,10 @@ import './Footer.css';
 
 const Footer: React.FC = () => {
   return (
-    <IonFooter>
+    <IonFooter className="footer-content">
       <IonToolbar color="secondary">
         <IonGrid id="footer">
-          <IonRow className="">
+          <IonRow>
             <IonCol>
               <IonRow>Acerca de</IonRow>
               <IonRow>Sufarmed</IonRow>
