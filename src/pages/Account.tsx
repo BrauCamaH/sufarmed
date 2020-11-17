@@ -47,6 +47,7 @@ const AccountItem: React.FC<AccountItemProps> = ({
   type = 'text',
 }) => {
   const [editField, setEditField] = useState<boolean>(false);
+
   return (
     <>
       <IonCard className="account__item">

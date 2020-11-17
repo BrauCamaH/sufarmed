@@ -16,11 +16,20 @@ import {
   IonMenuButton,
   IonModal,
 } from '@ionic/react';
-import { cart, menu, help, pricetag, calendar, search } from 'ionicons/icons';
+import {
+  cart,
+  menu,
+  help,
+  pricetag,
+  calendar,
+  search,
+  person,
+} from 'ionicons/icons';
 import { withRouter, useLocation } from 'react-router';
 import { NavLink } from 'react-router-dom';
 
 import SearchModal from './SearchModal';
+import { useUserState } from '../providers/UserProvider';
 
 import './Appbar.css';
 
@@ -93,6 +102,7 @@ export const Menu: React.FC<MenuProps> = ({ menuEnabled }) => {
 
 const Appbar: React.FC = () => {
   const [showSearchbar, setShowSearchbar] = useState<boolean>(false);
+  const state = useUserState();
 
   return (
     <>
@@ -119,14 +129,21 @@ const Appbar: React.FC = () => {
                 >
                   <IonIcon color="light" icon={search} />
                 </IonButton>
-                <IonButton
-                  className="ion-padding-start"
-                  routerLink="/login"
-                  color="secondary"
-                  size="small"
-                >
-                  Iniciar Sesión
-                </IonButton>
+                {state.user ? (
+                  <IonButton routerLink="/account">
+                    <IonIcon icon={person} />
+                  </IonButton>
+                ) : (
+                  <IonButton
+                    className="ion-padding-start"
+                    routerLink="/login"
+                    color="secondary"
+                    size="small"
+                  >
+                    Iniciar Sesión
+                  </IonButton>
+                )}
+
                 <IonButton fill="clear" color="secondary" routerLink="/cart">
                   <IonIcon icon={cart}></IonIcon>
                 </IonButton>

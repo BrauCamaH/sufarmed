@@ -32,25 +32,29 @@ import Cart from './pages/Cart';
 import Account from './pages/Account';
 import Help from './pages/Help';
 
+import { UserProvider } from './providers/UserProvider';
+
 const App: React.FC = () => (
   <IonApp>
-    <IonReactRouter>
-      <IonSplitPane disabled contentId="main">
-        <Menu menuEnabled={true} />
-        <IonRouterOutlet id="main">
-          <Route path="/home" component={Home} exact={true} />
-          <Route path="/products" component={Products} exact={true} />
-          <Route path="/product" component={Product} exact={true} />
-          <Route path="/categories" component={Categories} exact={true} />
-          <Route path="/cart" component={Cart} exact={true} />
-          <Route path="/account" component={Account} exact={true} />
-          <Route path="/help" component={Help} exact={true} />
-          <Route path="/login" component={Login} exact={true} />
-          <Route path="/signup" component={Signup} exact={true} />
-          <Route exact path="/" render={() => <Redirect to="/home" />} />
-        </IonRouterOutlet>
-      </IonSplitPane>
-    </IonReactRouter>
+    <UserProvider>
+      <IonReactRouter>
+        <IonSplitPane disabled contentId="main">
+          <Menu menuEnabled={true} />
+          <IonRouterOutlet id="main">
+            <Route path="/home" component={Home} exact={true} />
+            <Route path="/products" component={Products} exact={true} />
+            <Route path="/product" component={Product} exact={true} />
+            <Route path="/categories" component={Categories} exact={true} />
+            <Route path="/cart" component={Cart} exact={true} />
+            <Route path="/account" component={Account} exact={true} />
+            <Route path="/help" component={Help} exact={true} />
+            <Route path="/login" component={Login} exact={true} />
+            <Route path="/signup" component={Signup} exact={true} />
+            <Route exact path="/" render={() => <Redirect to="/home" />} />
+          </IonRouterOutlet>
+        </IonSplitPane>
+      </IonReactRouter>
+    </UserProvider>
   </IonApp>
 );
 

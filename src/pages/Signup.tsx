@@ -15,15 +15,32 @@ import {
   IonTitle,
 } from '@ionic/react';
 import React from 'react';
+import { useForm } from 'react-hook-form';
+
 import Appbar from '../components/MinimalAppBar';
+import { createUser } from '../api/users';
+import { useUserDispatch } from '../providers/UserProvider';
 
 import './Login.css';
 
-const login = (e: React.FormEvent) => {
-  e.preventDefault();
-};
-
 const Login: React.FC = () => {
+  const { register, handleSubmit } = useForm();
+  const dispatch = useUserDispatch();
+
+  const handleSignUp = async (data: {
+    name: string;
+    last_name: string;
+    email: string;
+    password: string;
+  }) => {
+    const response = await createUser(
+      data.email,
+      data.last_name,
+      data.email,
+      data.password
+    );
+    dispatch({ type: 'set-user', payload: response });
+  };
   return (
     <IonPage>
       <IonContent>
@@ -33,7 +50,7 @@ const Login: React.FC = () => {
             <IonTitle>Crear un cuenta en sufarmed</IonTitle>
           </IonCardHeader>
           <IonCardContent>
-            <form noValidate onSubmit={login}>
+            <form noValidate onSubmit={handleSubmit(handleSignUp)}>
               <IonList>
                 <IonRow>
                   <IonCol>
@@ -44,6 +61,7 @@ const Login: React.FC = () => {
                           Nombre
                         </IonLabel>
                         <IonInput
+                          ref={register}
                           name="firtsname"
                           type="text"
                           spellCheck={false}
@@ -57,7 +75,7 @@ const Login: React.FC = () => {
                         <IonLabel position="stacked" color="primary">
                           Apellido
                         </IonLabel>
-                        <IonInput name="lastname" type="text" />
+                        <IonInput ref={register} name="lastname" type="text" />
                       </IonItem>
                     </IonRow>
                   </IonCol>
@@ -69,6 +87,7 @@ const Login: React.FC = () => {
                           Email
                         </IonLabel>
                         <IonInput
+                          ref={register}
                           name="email"
                           type="email"
                           spellCheck={false}
@@ -82,7 +101,11 @@ const Login: React.FC = () => {
                         <IonLabel position="stacked" color="primary">
                           Password
                         </IonLabel>
-                        <IonInput name="password" type="password" />
+                        <IonInput
+                          ref={register}
+                          name="password"
+                          type="password"
+                        />
                       </IonItem>
                     </IonRow>
                   </IonCol>

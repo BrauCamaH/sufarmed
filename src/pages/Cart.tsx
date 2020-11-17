@@ -20,25 +20,25 @@ import CartItem from '../components/CartItem';
 
 const products: Product[] = [
   {
-    id: Date.now().toString(),
+    id: 1,
     imgUrl: 'https://picsum.photos/200/200',
     name: 'Product',
     summary: '$50 50tabs',
   },
   {
-    id: Date.now().toString(),
+    id: 3,
     imgUrl: 'https://picsum.photos/200/200',
     name: 'Product',
     summary: '$50 50tabs',
   },
   {
-    id: Date.now().toString(),
+    id: 4,
     imgUrl: 'https://picsum.photos/200/200',
     name: 'Product',
     summary: '$50 50tabs',
   },
   {
-    id: Date.now().toString(),
+    id: 5,
     imgUrl: 'https://picsum.photos/200/200',
     name: 'Product',
     summary: '$50 50tabs',

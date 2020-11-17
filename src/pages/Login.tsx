@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   IonButton,
   IonCard,
@@ -12,16 +13,23 @@ import {
   IonPage,
   IonTitle,
 } from '@ionic/react';
-import React from 'react';
+import { useForm } from 'react-hook-form';
+
 import Appbar from '../components/MinimalAppBar';
+import { login } from '../api/users';
+import { useUserDispatch } from '../providers/UserProvider';
 
 import './Login.css';
 
-const login = (e: React.FormEvent) => {
-  e.preventDefault();
-};
-
 const Login: React.FC = () => {
+  const { register, handleSubmit } = useForm();
+  const dispatch = useUserDispatch();
+
+  const handleLogin = async (data: { email: string; password: string }) => {
+    const response = await login(data.email, data.password);
+    dispatch({ type: 'set-user', payload: response });
+  };
+
   return (
     <IonPage>
       <IonContent>
@@ -31,13 +39,14 @@ const Login: React.FC = () => {
             <IonTitle>Ingresa los siguientes datos para</IonTitle>
           </IonCardHeader>
           <IonCardContent>
-            <form noValidate onSubmit={login}>
+            <form noValidate onSubmit={handleSubmit(handleLogin)}>
               <IonList>
                 <IonItem>
                   <IonLabel position="stacked" color="primary">
                     Email
                   </IonLabel>
                   <IonInput
+                    ref={register}
                     name="email"
                     type="email"
                     spellCheck={false}
@@ -49,7 +58,7 @@ const Login: React.FC = () => {
                   <IonLabel position="stacked" color="primary">
                     Password
                   </IonLabel>
-                  <IonInput name="password" type="password" />
+                  <IonInput ref={register} name="password" type="password" />
                 </IonItem>
               </IonList>
               <IonCol>
