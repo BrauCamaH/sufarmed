@@ -16,16 +16,18 @@ import {
 } from '@ionic/react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { Redirect, withRouter } from 'react-router-dom';
 
 import Appbar from '../components/MinimalAppBar';
 import { createUser } from '../api/users';
-import { useUserDispatch } from '../providers/UserProvider';
+import { useUserDispatch, useUserState } from '../providers/UserProvider';
 
 import './Login.css';
 
-const Login: React.FC = () => {
+const SignUp: React.FC = () => {
   const { register, handleSubmit } = useForm();
   const dispatch = useUserDispatch();
+  const state = useUserState();
 
   const handleSignUp = async (data: {
     name: string;
@@ -41,6 +43,11 @@ const Login: React.FC = () => {
     );
     dispatch({ type: 'set-user', payload: response });
   };
+
+  if (state.user) {
+    return <Redirect to="home" />;
+  }
+
   return (
     <IonPage>
       <IonContent>
@@ -134,4 +141,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default withRouter(SignUp);

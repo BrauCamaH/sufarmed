@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   IonButton,
   IonCard,
@@ -11,24 +11,32 @@ import {
   IonLabel,
   IonList,
   IonPage,
+  IonSpinner,
   IonTitle,
 } from '@ionic/react';
 import { useForm } from 'react-hook-form';
+import { Redirect, withRouter } from 'react-router-dom';
 
 import Appbar from '../components/MinimalAppBar';
 import { login } from '../api/users';
-import { useUserDispatch } from '../providers/UserProvider';
+import { useUserDispatch, useUserState } from '../providers/UserProvider';
 
 import './Login.css';
 
 const Login: React.FC = () => {
   const { register, handleSubmit } = useForm();
   const dispatch = useUserDispatch();
+  const state = useUserState();
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (data: { email: string; password: string }) => {
     const response = await login(data.email, data.password);
     dispatch({ type: 'set-user', payload: response });
   };
+
+  if (state.user) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <IonPage>
@@ -62,9 +70,22 @@ const Login: React.FC = () => {
                 </IonItem>
               </IonList>
               <IonCol>
-                <IonButton type="submit" expand="block" color="secondary">
-                  Iniciar Sesión
-                </IonButton>
+                {loading ? (
+                  <IonButton type="submit" expand="block" color="secondary">
+                    <IonSpinner />
+                  </IonButton>
+                ) : (
+                  <IonButton
+                    type="submit"
+                    expand="block"
+                    color="secondary"
+                    onClick={() => {
+                      setLoading(true);
+                    }}
+                  >
+                    Iniciar Sesión
+                  </IonButton>
+                )}
               </IonCol>
               <IonCol>
                 <IonButton
@@ -85,4 +106,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default withRouter(Login);

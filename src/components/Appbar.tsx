@@ -26,9 +26,9 @@ import {
   person,
 } from 'ionicons/icons';
 import { withRouter, useLocation } from 'react-router';
-import { NavLink } from 'react-router-dom';
 
 import SearchModal from './SearchModal';
+import ImageItem from './ImageItem';
 import { useUserState } from '../providers/UserProvider';
 
 import './Appbar.css';
@@ -48,12 +48,13 @@ const routes = {
   appPages: [
     { title: 'Categorias', path: '/categories', icon: pricetag },
     { title: 'Ayuda', path: '/help', icon: help },
-    { title: 'Mis compras', path: '/history', icon: calendar },
+    { title: 'Mis compras', path: '/orders', icon: calendar },
   ],
 };
 
 export const Menu: React.FC<MenuProps> = ({ menuEnabled }) => {
   const location = useLocation();
+
   const renderlistItems = (list: Pages[]) => {
     return list
       .filter((route) => !!route.path)
@@ -67,7 +68,7 @@ export const Menu: React.FC<MenuProps> = ({ menuEnabled }) => {
               location.pathname.startsWith(p.path) ? 'selected' : undefined
             }
           >
-            <IonIcon id="drawe" slot="start" icon={p.icon} />
+            <IonIcon id="drawer" slot="start" icon={p.icon} />
             <IonLabel>{p.title}</IonLabel>
           </IonItem>
         </IonMenuToggle>
@@ -114,37 +115,29 @@ const Appbar: React.FC = () => {
                 <IonMenuButton>
                   <IonIcon id="drawer" icon={menu} />
                 </IonMenuButton>
-                <NavLink to="home">
-                  <IonImg
-                    style={{ width: 150, heigth: 150 }}
-                    src="assets/logo-sufarmed.png"
-                  />
-                </NavLink>
+                <ImageItem />
               </IonRow>
               <IonRow class="ion-justify-content-between ion-align-items-center">
                 <IonButton
+                  fill="clear"
+                  color="light"
                   onClick={() => {
                     setShowSearchbar(true);
                   }}
                 >
-                  <IonIcon color="light" icon={search} />
+                  <IonIcon icon={search} />
                 </IonButton>
                 {state.user ? (
-                  <IonButton routerLink="/account">
+                  <IonButton fill="clear" color="light" routerLink="/account">
                     <IonIcon icon={person} />
                   </IonButton>
                 ) : (
-                  <IonButton
-                    className="ion-padding-start"
-                    routerLink="/login"
-                    color="secondary"
-                    size="small"
-                  >
+                  <IonButton routerLink="/login" color="secondary" size="small">
                     Iniciar Sesión
                   </IonButton>
                 )}
 
-                <IonButton fill="clear" color="secondary" routerLink="/cart">
+                <IonButton fill="clear" color="light" routerLink="/cart">
                   <IonIcon icon={cart}></IonIcon>
                 </IonButton>
               </IonRow>

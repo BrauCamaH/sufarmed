@@ -13,8 +13,8 @@ const Home: React.FC = () => {
       <IonContent>
         <Slider />
         <Section />
+        <Footer />
       </IonContent>
-      <Footer />
     </IonPage>
   );
 };

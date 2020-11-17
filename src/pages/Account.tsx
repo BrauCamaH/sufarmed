@@ -19,6 +19,8 @@ import {
   IonToolbar,
 } from '@ionic/react';
 import { pencil, close } from 'ionicons/icons';
+import { withRouter, useLocation } from 'react-router';
+
 import Appbar from '../components/Appbar';
 import Footer from '../components/Footer';
 
@@ -114,13 +116,46 @@ const AccountItem: React.FC<AccountItemProps> = ({
 };
 
 const Home: React.FC = () => {
+  const location = useLocation();
+
   return (
     <IonPage id="account">
       <Appbar />
       <IonContent>
+        <IonToolbar>
+          <IonRow className="ion-margin-start ion-margin-bottom">
+            <IonItem
+              button
+              lines={location.pathname.startsWith('/account') ? 'full' : 'none'}
+            >
+              <h1
+                className={
+                  location.pathname.startsWith('/account')
+                    ? 'account_item--selected'
+                    : undefined
+                }
+              >
+                Mi Cuenta
+              </h1>
+            </IonItem>
+            <IonItem
+              button
+              lines={location.pathname.startsWith('/orders') ? 'full' : 'none'}
+            >
+              <h1
+                className={
+                  location.pathname.startsWith('/orders')
+                    ? 'account_item--selected'
+                    : undefined
+                }
+              >
+                Mis Compras
+              </h1>
+            </IonItem>
+          </IonRow>
+        </IonToolbar>
         <IonGrid>
           <IonGrid className="ion-justify-content-center account__list">
-            <h1 className="account__title">MiCuenta</h1>
             <IonTitle>Datos de la Cuenta</IonTitle>
             <IonCol>
               <AccountItem fieldName="E-mail" />
@@ -141,4 +176,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default withRouter(Home);

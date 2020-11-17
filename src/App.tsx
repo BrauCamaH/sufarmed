@@ -35,8 +35,8 @@ import Help from './pages/Help';
 import { UserProvider } from './providers/UserProvider';
 
 const App: React.FC = () => (
-  <IonApp>
-    <UserProvider>
+  <UserProvider>
+    <IonApp>
       <IonReactRouter>
         <IonSplitPane disabled contentId="main">
           <Menu menuEnabled={true} />
@@ -54,8 +54,8 @@ const App: React.FC = () => (
           </IonRouterOutlet>
         </IonSplitPane>
       </IonReactRouter>
-    </UserProvider>
-  </IonApp>
+    </IonApp>
+  </UserProvider>
 );
 
 export default App;
