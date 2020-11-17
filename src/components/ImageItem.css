@@ -1,0 +1,10 @@
+#image-item {
+  width: 150px;
+}
+
+@media (max-width: 768px) {
+  #image-item {
+    width: 100px;
+    width: 130px;
+  }
+}
