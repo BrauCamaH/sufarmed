@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   IonButton,
   IonHeader,
@@ -13,6 +13,22 @@ export interface SearhModalProps {
 }
 
 const SearhModal: React.FC<SearhModalProps> = ({ onDismissModal }) => {
+  const searchRef = useRef<any>(null);
+
+  async function focusElement(ref: any) {
+    if (ref) {
+      const el = await ref.getInputElement();
+      el.focus();
+    } else {
+      console.log('focusElement got no ref');
+    }
+  }
+  focusElement(searchRef.current);
+
+  useEffect(() => {
+    focusElement(searchRef.current);
+  });
+
   return (
     <>
       <IonHeader>
@@ -26,6 +42,7 @@ const SearhModal: React.FC<SearhModalProps> = ({ onDismissModal }) => {
             <IonIcon icon={arrowBack} />
           </IonButton>
           <IonSearchbar
+            ref={searchRef}
             placeholder="Buscar productos..."
             type="search"
             onEmptied={() => {

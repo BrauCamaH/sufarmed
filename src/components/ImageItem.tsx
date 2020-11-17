@@ -5,7 +5,7 @@ import './ImageItem.css';
 
 const ImageItem: React.FC = () => {
   return (
-    <NavLink to="/">
+    <NavLink to="/home">
       <img id="image-item" src="assets/logo-sufarmed.png" alt="sufarmed" />
     </NavLink>
   );

@@ -23,6 +23,7 @@ import { withRouter, useLocation } from 'react-router';
 
 import Appbar from '../components/Appbar';
 import Footer from '../components/Footer';
+import { useUserState } from '../providers/UserProvider';
 
 import './Account.css';
 
@@ -42,11 +43,13 @@ interface AccountItemProps {
     | 'month'
     | 'datetime-local'
     | undefined;
+  value?: string;
 }
 
 const AccountItem: React.FC<AccountItemProps> = ({
   fieldName,
   type = 'text',
+  value = '',
 }) => {
   const [editField, setEditField] = useState<boolean>(false);
 
@@ -63,7 +66,7 @@ const AccountItem: React.FC<AccountItemProps> = ({
               </IonCol>
               <IonCol>
                 <IonItem disabled>
-                  <IonInput type={type} />
+                  <IonInput type={type} value={value} />
                 </IonItem>
               </IonCol>
               <IonCol slot="end">
@@ -99,7 +102,7 @@ const AccountItem: React.FC<AccountItemProps> = ({
           <IonCard>
             <IonItem>
               <IonLabel position="stacked">{`Ingresa tu ${fieldName}`}</IonLabel>
-              <IonInput type={type} />
+              <IonInput type={type} value={value} />
             </IonItem>
           </IonCard>
           <IonCard>
@@ -115,8 +118,9 @@ const AccountItem: React.FC<AccountItemProps> = ({
   );
 };
 
-const Home: React.FC = () => {
+const Account: React.FC = () => {
   const location = useLocation();
+  const state = useUserState();
 
   return (
     <IonPage id="account">
@@ -158,15 +162,19 @@ const Home: React.FC = () => {
           <IonGrid className="ion-justify-content-center account__list">
             <IonTitle>Datos de la Cuenta</IonTitle>
             <IonCol>
-              <AccountItem fieldName="E-mail" />
-              <AccountItem fieldName="Contraseña" type="password" />
+              <AccountItem fieldName="E-mail" value={state.user?.email} />
+              <AccountItem fieldName="Contraseña" type="password" value="" />
             </IonCol>
           </IonGrid>
           <IonGrid className="ion-justify-content-center account__list">
             <IonTitle>Datos Personales</IonTitle>
             <IonCol>
-              <AccountItem fieldName="Nombre" />
-              <AccountItem fieldName="Telefono" type="tel" />
+              <AccountItem fieldName="Nombre" value={state.user?.name} />
+              <AccountItem
+                fieldName="Telefono"
+                type="tel"
+                value={state.user?.cellphone}
+              />
             </IonCol>
           </IonGrid>
         </IonGrid>
@@ -176,4 +184,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default withRouter(Home);
+export default withRouter(Account);

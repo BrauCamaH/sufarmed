@@ -132,7 +132,12 @@ const Appbar: React.FC = () => {
                     <IonIcon icon={person} />
                   </IonButton>
                 ) : (
-                  <IonButton routerLink="/login" color="secondary" size="small">
+                  <IonButton
+                    routerLink="/login"
+                    routerDirection="root"
+                    color="secondary"
+                    size="small"
+                  >
                     Iniciar Sesión
                   </IonButton>
                 )}
