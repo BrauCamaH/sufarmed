@@ -5,7 +5,6 @@ import {
   IonCardContent,
   IonCardSubtitle,
   IonCol,
-  IonContent,
   IonGrid,
   IonHeader,
   IonIcon,
@@ -13,7 +12,6 @@ import {
   IonItem,
   IonLabel,
   IonModal,
-  IonPage,
   IonRow,
   IonTitle,
   IonToolbar,
@@ -21,8 +19,7 @@ import {
 import { pencil, close } from 'ionicons/icons';
 import { withRouter, useLocation } from 'react-router';
 
-import Appbar from '../components/Appbar';
-import Footer from '../components/Footer';
+import Layout from '../components/Layout';
 import { useUserState } from '../providers/UserProvider';
 
 import './Account.css';
@@ -123,9 +120,8 @@ const Account: React.FC = () => {
   const state = useUserState();
 
   return (
-    <IonPage id="account">
-      <Appbar />
-      <IonContent>
+    <Layout>
+      <div id="account">
         <IonToolbar>
           <IonRow className="ion-margin-start ion-margin-bottom">
             <IonItem
@@ -178,9 +174,8 @@ const Account: React.FC = () => {
             </IonCol>
           </IonGrid>
         </IonGrid>
-        <Footer />
-      </IonContent>
-    </IonPage>
+      </div>
+    </Layout>
   );
 };
 

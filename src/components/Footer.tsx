@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  IonCol,
-  IonFooter,
-  IonToolbar,
-  IonGrid,
-  IonRow,
-  IonText,
-} from '@ionic/react';
+import { IonCol, IonFooter, IonToolbar, IonGrid, IonRow } from '@ionic/react';
 import { NavLink } from 'react-router-dom';
 
 import './Footer.css';

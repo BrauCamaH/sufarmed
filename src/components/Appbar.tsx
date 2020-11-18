@@ -63,7 +63,7 @@ export const Menu: React.FC<MenuProps> = ({ menuEnabled }) => {
           <IonItem
             detail={false}
             routerLink={p.path}
-            routerDirection="none"
+            routerDirection="root"
             className={
               location.pathname.startsWith(p.path) ? 'selected' : undefined
             }
@@ -107,7 +107,7 @@ const Appbar: React.FC = () => {
 
   return (
     <>
-      <IonHeader>
+      <IonHeader id="appbar">
         <IonToolbar color="primary">
           <IonGrid color="primary">
             <IonRow class="ion-justify-content-between">

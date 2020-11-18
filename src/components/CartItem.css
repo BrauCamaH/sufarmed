@@ -1,4 +1,4 @@
 #cart-item {
-  max-height: 300px;
-  max-width: 600px;
+  width: 800px;
+  min-width: 200px;
 }

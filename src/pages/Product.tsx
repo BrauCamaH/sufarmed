@@ -6,7 +6,6 @@ import {
   IonCardHeader,
   IonCardSubtitle,
   IonCol,
-  IonContent,
   IonGrid,
   IonIcon,
   IonImg,
@@ -14,13 +13,11 @@ import {
   IonItem,
   IonLabel,
   IonList,
-  IonPage,
   IonRow,
   IonTitle,
 } from '@ionic/react';
 import { cart } from 'ionicons/icons';
-import Appbar from '../components/Appbar';
-import Footer from '../components/Footer';
+import Layout from '../components/Layout';
 
 const MainContent: React.FC = () => {
   return (
@@ -147,16 +144,12 @@ const Especifications: React.FC = () => {
 
 const ProductPage: React.FC = () => {
   return (
-    <IonPage>
-      <Appbar />
-      <IonContent>
-        <IonImg src="https://picsum.photos/900/500" />
-        <MainContent />
-        <Description />
-        <Especifications />
-        <Footer />
-      </IonContent>
-    </IonPage>
+    <Layout>
+      <IonImg src="https://picsum.photos/900/500" />
+      <MainContent />
+      <Description />
+      <Especifications />
+    </Layout>
   );
 };
 

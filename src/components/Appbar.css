@@ -1,3 +1,10 @@
+#appbar {
+  margin-bottom: 5px;
+  position: sticky;
+  top: 0;
+  z-index: 300;
+}
+
 /* Remove background transitions for switching themes */
 ion-menu ion-item {
   --transition: none;
