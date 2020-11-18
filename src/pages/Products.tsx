@@ -77,7 +77,7 @@ const Home: React.FC = () => {
       <Filter />
       <IonContent>
         <IonGrid fixed>
-          <IonRow className="ion-justify-content-center">
+          <IonRow>
             {products.map((product) => (
               <IonCol key={product.id} size="6" size-md="3">
                 <ProductCard product={product} />

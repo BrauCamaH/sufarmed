@@ -37,8 +37,8 @@ const CategoriesPage: React.FC = () => {
             )}
           </IonRow>
         </IonList>
-        <Footer />
       </IonContent>
+      <Footer />
     </IonPage>
   );
 };

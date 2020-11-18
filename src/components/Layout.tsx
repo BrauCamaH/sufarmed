@@ -7,12 +7,12 @@ import './Layout.css';
 
 const Layout: React.FC = ({ children }) => {
   return (
-    <IonPage className="layout__content">
-      <IonContent>
+    <IonPage>
+      <IonContent className="layout__content">
         <Appbar />
         {children}
-        <Footer />
       </IonContent>
+      <Footer />
     </IonPage>
   );
 };
