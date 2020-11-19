@@ -1,12 +1,17 @@
 import React from 'react';
 import { IonButton, IonCard, IonIcon, IonInput, IonRow } from '@ionic/react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { search } from 'ionicons/icons';
 
 import './Searchbar.css';
 
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
+
 const SearhModal: React.FC = () => {
+  const text = useQuery().get('q') || '';
   const history = useHistory();
   const { register, handleSubmit } = useForm();
 
@@ -22,6 +27,7 @@ const SearhModal: React.FC = () => {
             id="searchbar"
             ref={register}
             name="text"
+            value={text}
             inputMode="search"
             enterkeyhint="enter"
             placeholder="Buscar productos..."

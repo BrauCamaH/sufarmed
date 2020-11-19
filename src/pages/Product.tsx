@@ -8,41 +8,46 @@ import {
   IonCol,
   IonGrid,
   IonIcon,
-  IonImg,
   IonInput,
   IonItem,
   IonLabel,
   IonList,
   IonRow,
+  IonSpinner,
   IonTitle,
 } from '@ionic/react';
 import { cart } from 'ionicons/icons';
 import Layout from '../components/Layout';
+import { useParams } from 'react-router-dom';
+import { useGetProductById } from '../api/products';
+import { Product } from '../models/Product';
 
-const MainContent: React.FC = () => {
+import './Products.css';
+
+interface ProductPageProps {
+  product: Product;
+}
+
+const MainContent: React.FC<ProductPageProps> = ({ product }) => {
   return (
     <IonCard>
       <IonCardContent>
         <IonItem>
-          <IonTitle color="tertiary">Titulo</IonTitle>
-          <IonTitle color="black">$000</IonTitle>
+          <IonTitle color="tertiary">{product.name}</IonTitle>
+          <IonTitle color="black">${product.price}</IonTitle>
         </IonItem>
         <IonGrid>
           <IonRow>
             <IonCol sizeLg="6" sizeSm="auto" sizeMd="6">
-              <IonCardSubtitle>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                Laborum corrupti facilis aut recusandae at quidem esse
-                perspiciatis, voluptatum eligendi perferendis eius quaerat
-                placeat incidunt rerum dolor quae repellendus! Doloremque,
-                voluptate.
-              </IonCardSubtitle>
+              <IonCardSubtitle>{product.summary}</IonCardSubtitle>
             </IonCol>
             <IonCol size="auto">
               <IonList lines="none">
-                <IonItem>Presentación</IonItem>
-                <IonItem>Contenido por unidad</IonItem>
-                <IonItem>Unidades</IonItem>
+                <IonItem>Presentación: {product.presentation}</IonItem>
+                <IonItem>
+                  Contenido por unidad: {product.content_by_unit}
+                </IonItem>
+                <IonItem>Unidades: {product.total_units}</IonItem>
               </IonList>
             </IonCol>
             <IonCol size="auto">
@@ -62,23 +67,20 @@ const MainContent: React.FC = () => {
   );
 };
 
-const Description: React.FC = () => {
+const Description: React.FC<ProductPageProps> = ({ product }) => {
   return (
     <div>
       <IonTitle color="tertiary">Descripción</IonTitle>
       <IonItem lines="none">
         <IonCardSubtitle>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis
-          provident dolore corrupti at, cumque temporibus facere similique in
-          suscipit molestias! Cupiditate similique in exercitationem, ducimus
-          incidunt eligendi recusandae ab velit.
+          {product.description || 'No hay descripción'}
         </IonCardSubtitle>
       </IonItem>
     </div>
   );
 };
 
-const Especifications: React.FC = () => {
+const Especifications: React.FC<ProductPageProps> = ({ product }) => {
   return (
     <IonCard>
       <IonCardHeader>
@@ -91,23 +93,13 @@ const Especifications: React.FC = () => {
               <IonList lines="none">
                 <IonItem>Formula</IonItem>
                 <IonItem>
-                  <IonCardSubtitle>
-                    Lorem iIonCardSubtitlesum dolor sit amet consectetur
-                    adipisicing elit. Placeat nemo modi eius ratione nobis
-                    maiores suscipit pariatur tempore quo deleniti ab, vel
-                    nostrum tempora dolorum at ipsum necessitatibus nisi ut.
-                  </IonCardSubtitle>
+                  <IonCardSubtitle>{product.formula}</IonCardSubtitle>
                 </IonItem>
               </IonList>
               <IonList lines="none">
                 <IonItem>Indicaciones</IonItem>
                 <IonItem>
-                  <IonCardSubtitle>
-                    Lorem iIonCardSubtitlesum dolor sit amet consectetur
-                    adipisicing elit. Placeat nemo modi eius ratione nobis
-                    maiores suscipit pariatur tempore quo deleniti ab, vel
-                    nostrum tempora dolorum at ipsum necessitatibus nisi ut.
-                  </IonCardSubtitle>
+                  <IonCardSubtitle>{product.indications}</IonCardSubtitle>
                 </IonItem>
               </IonList>
             </IonCol>
@@ -115,23 +107,13 @@ const Especifications: React.FC = () => {
               <IonList lines="none">
                 <IonItem>Dosís</IonItem>
                 <IonItem>
-                  <IonCardSubtitle>
-                    Lorem iIonCardSubtitlesum dolor sit amet consectetur
-                    adipisicing elit. Placeat nemo modi eius ratione nobis
-                    maiores suscipit pariatur tempore quo deleniti ab, vel
-                    nostrum tempora dolorum at ipsum necessitatibus nisi ut.
-                  </IonCardSubtitle>
+                  <IonCardSubtitle>{product.dose}</IonCardSubtitle>
                 </IonItem>
               </IonList>
               <IonList lines="none">
                 <IonItem>Vía de administración</IonItem>
                 <IonItem>
-                  <IonCardSubtitle>
-                    Lorem iIonCardSubtitlesum dolor sit amet consectetur
-                    adipisicing elit. Placeat nemo modi eius ratione nobis
-                    maiores suscipit pariatur tempore quo deleniti ab, vel
-                    nostrum tempora dolorum at ipsum necessitatibus nisi ut.
-                  </IonCardSubtitle>
+                  <IonCardSubtitle>{product.administration}</IonCardSubtitle>
                 </IonItem>
               </IonList>
             </IonCol>
@@ -143,14 +125,35 @@ const Especifications: React.FC = () => {
 };
 
 const ProductPage: React.FC = () => {
-  return (
-    <Layout>
-      <IonImg src="https://picsum.photos/900/500" />
-      <MainContent />
-      <Description />
-      <Especifications />
-    </Layout>
-  );
+  const { id } = useParams<any>();
+  const { isLoading, data: product } = useGetProductById(id);
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <IonSpinner />
+      </Layout>
+    );
+  } else {
+    return (
+      <Layout>
+        {
+          <>
+            <IonRow className="ion-justify-content-center">
+              <img
+                className="product-page__img"
+                src={product?.img?.url}
+                alt="product"
+              />
+            </IonRow>
+            <MainContent product={product} />
+            <Description product={product} />
+            <Especifications product={product} />
+          </>
+        }
+      </Layout>
+    );
+  }
 };
 
 export default ProductPage;

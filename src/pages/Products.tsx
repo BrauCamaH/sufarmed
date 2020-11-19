@@ -1,94 +1,47 @@
-import React from 'react';
-import { IonContent, IonGrid, IonPage, IonRow, IonCol } from '@ionic/react';
-import Appbar from '../components/Appbar';
-import Footer from '../components/Footer';
+import React, { useEffect } from 'react';
+import { IonGrid, IonRow, IonCol, IonSpinner } from '@ionic/react';
 import ProductCard from '../components/Product';
 import Filter from '../components/Filter';
 import { Product } from '../models/Product';
-import './Home.css';
 
-const products: Product[] = [
-  {
-    id: 1,
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: 2,
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: 3,
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: 4,
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: 5,
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: 6,
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: 7,
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: 8,
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: 9,
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: 10,
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-];
+import { useGetProductsByName } from '../api/products';
+import { useLocation } from 'react-router';
+import Layout from '../components/Layout';
 
-const Home: React.FC = () => {
-  return (
-    <IonPage>
-      <Appbar />
-      <Filter />
-      <IonContent>
-        <IonGrid fixed>
-          <IonRow>
-            {products.map((product) => (
-              <IonCol key={product.id} size="6" size-md="3">
-                <ProductCard product={product} />
-              </IonCol>
-            ))}
-          </IonRow>
-        </IonGrid>
-        <Footer />
-      </IonContent>
-    </IonPage>
-  );
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
 };
 
-export default Home;
+const Products: React.FC = () => {
+  const text = useQuery().get('q') || '';
+  const { isLoading, data: products, refetch } = useGetProductsByName(text, 1);
+  useEffect(() => {
+    refetch();
+  }, [text]);
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <IonSpinner />
+      </Layout>
+    );
+  } else {
+    return (
+      <Layout>
+        <Filter />
+        <IonGrid fixed>
+          <IonRow>
+            {products.map &&
+              products.map((product: Product) => (
+                <IonCol key={product.id} size="10" size-md="4">
+                  <ProductCard product={product} />
+                </IonCol>
+              ))}
+          </IonRow>
+        </IonGrid>
+      </Layout>
+    );
+  }
+};
+
+export default Products;

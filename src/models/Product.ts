@@ -1,6 +1,25 @@
 export interface Product {
   id: number;
   imgUrl: string;
+  price: number;
+  img?: {
+    name?: string;
+    url: string;
+    formats: {
+      large: {
+        url: string;
+      };
+      medium: {
+        url: string;
+      };
+      small: {
+        url: string;
+      };
+      thumbnail: {
+        url: string;
+      };
+    };
+  };
   name: string;
   summary?: string;
   description?: string;

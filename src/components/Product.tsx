@@ -21,13 +21,16 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
           className="product__item"
           button
           lines="none"
-          routerLink={`/product`}
+          routerLink={`/product/${product.id}`}
         >
-          <img className="product__img" src={product.imgUrl} alt="product" />
+          <img
+            className="product__img"
+            src={product.img?.formats.small.url}
+            alt="product"
+          />
         </IonItem>
         <IonCardContent>
-          <IonCardSubtitle>{product.name}</IonCardSubtitle>
-          {product.summary}
+          <IonCardSubtitle>{product.name}</IonCardSubtitle>${product.price}
         </IonCardContent>
       </IonCard>
     </div>

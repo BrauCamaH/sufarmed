@@ -1,13 +1,18 @@
+import { IonItem } from '@ionic/react';
 import * as React from 'react';
-import { NavLink } from 'react-router-dom';
 
 import './ImageItem.css';
 
 const ImageItem: React.FC = () => {
   return (
-    <NavLink to="/home">
+    <IonItem
+      lines="none"
+      color="primary"
+      routerLink="/home"
+      routerDirection="none"
+    >
       <img id="image-item" src="assets/logo-sufarmed.png" alt="sufarmed" />
-    </NavLink>
+    </IonItem>
   );
 };
 

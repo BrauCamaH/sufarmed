@@ -6,9 +6,11 @@ import {
   IonRow,
   IonButton,
   IonTitle,
+  IonSpinner,
 } from '@ionic/react';
 import ProductCard from '../components/Product';
 import { Product } from '../models/Product';
+import { useGetProductsByName } from '../api/products';
 
 const slideOpts = {
   initialSlide: 0,
@@ -16,65 +18,42 @@ const slideOpts = {
   slidesPerView: 4.5,
 };
 
-const productList: Product[] = [
-  {
-    id: 1,
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: 2,
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: 3,
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: 4,
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: 5,
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-];
-
 interface SectionProps {
-  products?: Product[];
+  name: string;
+  searchId: string;
 }
 
-const Section: React.FC<SectionProps> = ({ products }) => {
-  const mockListItems = productList.map((product) => (
-    <IonSlide key={product.id}>
-      <ProductCard product={product} />
-    </IonSlide>
-  ));
-  const ListItems = products?.map((product) => (
-    <IonSlide key={product.id}>
-      <ProductCard product={product} />
-    </IonSlide>
-  ));
-  return (
-    <IonGrid>
-      <IonRow>
-        <IonTitle>Section Name</IonTitle>
-        <IonButton fill="clear">Ver más</IonButton>
-      </IonRow>
-      <IonSlides options={slideOpts}>
-        {products ? ListItems : mockListItems}
-      </IonSlides>
-    </IonGrid>
-  );
+const Section: React.FC<SectionProps> = ({ name, searchId }) => {
+  const { isLoading, data: products } = useGetProductsByName(searchId, 1);
+
+  if (isLoading) {
+    return <IonSpinner />;
+  } else {
+    return (
+      <IonGrid>
+        <IonRow>
+          <IonTitle>{name}</IonTitle>
+          <IonButton
+            fill="clear"
+            routerLink={`/products?q=${searchId}`}
+            routerDirection="root"
+          >
+            Ver más
+          </IonButton>
+        </IonRow>
+        <IonSlides options={slideOpts}>
+          {
+            <IonSlide>
+              {products.map &&
+                products.map((product: Product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+            </IonSlide>
+          }
+        </IonSlides>
+      </IonGrid>
+    );
+  }
 };
 
 export default Section;
