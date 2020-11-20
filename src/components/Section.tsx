@@ -42,14 +42,12 @@ const Section: React.FC<SectionProps> = ({ name, searchId }) => {
           </IonButton>
         </IonRow>
         <IonSlides options={slideOpts}>
-          {
-            <IonSlide>
-              {products.map &&
-                products.map((product: Product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-            </IonSlide>
-          }
+          {products.map &&
+            products.map((product: Product) => (
+              <IonSlide key={product.id}>
+                <ProductCard product={product} />
+              </IonSlide>
+            ))}
         </IonSlides>
       </IonGrid>
     );
