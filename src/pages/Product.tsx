@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   IonButton,
   IonCard,
@@ -23,18 +23,27 @@ import { useGetProductById } from '../api/products';
 import { Product } from '../models/Product';
 
 import './Products.css';
+import { useForm } from 'react-hook-form';
 
 interface ProductPageProps {
   product: Product;
 }
 
 const MainContent: React.FC<ProductPageProps> = ({ product }) => {
+  const { register, errors, handleSubmit } = useForm();
+
   return (
     <IonCard>
       <IonCardContent>
         <IonItem>
-          <IonTitle color="tertiary">{product.name}</IonTitle>
-          <IonTitle color="black">${product.price}</IonTitle>
+          <IonRow>
+            <IonCol>
+              <IonTitle color="tertiary">{product.name}</IonTitle>
+            </IonCol>
+            <IonCol>
+              <IonTitle color="dark">${product.price}</IonTitle>
+            </IonCol>
+          </IonRow>
         </IonItem>
         <IonGrid>
           <IonRow>
@@ -51,14 +60,40 @@ const MainContent: React.FC<ProductPageProps> = ({ product }) => {
               </IonList>
             </IonCol>
             <IonCol size="auto">
-              <IonItem>
-                <IonLabel position="stacked">Cantidad</IonLabel>
-                <IonInput type="number" maxlength={4} />
-              </IonItem>
-              <IonButton color="secondary">Comprar</IonButton>
-              <IonButton color="secondary">
-                <IonIcon icon={cart} />
-              </IonButton>
+              <form
+                onSubmit={handleSubmit((data) => {
+                  console.log(data);
+                })}
+              >
+                <IonItem>
+                  <IonLabel>Cantidad :</IonLabel>
+                  <IonInput
+                    ref={register({
+                      required: true,
+                      max: product.stock,
+                      min: 1,
+                    })}
+                    className="ion-margin-end"
+                    name="quantity"
+                    type="number"
+                    maxlength={4}
+                  />
+                  <IonCardSubtitle>
+                    ({product.stock}) disponibles
+                  </IonCardSubtitle>
+                </IonItem>
+                {
+                  <IonTitle color="danger">
+                    {errors.quantity && <p>Error en cantidad</p>}
+                  </IonTitle>
+                }
+                <IonButton color="secondary" type="submit">
+                  Comprar
+                </IonButton>
+                <IonButton color="secondary">
+                  <IonIcon icon={cart} />
+                </IonButton>
+              </form>
             </IonCol>
           </IonRow>
         </IonGrid>
@@ -126,7 +161,11 @@ const Especifications: React.FC<ProductPageProps> = ({ product }) => {
 
 const ProductPage: React.FC = () => {
   const { id } = useParams<any>();
-  const { isLoading, data: product } = useGetProductById(id);
+  const { isLoading, data: product, refetch } = useGetProductById(id);
+
+  useEffect(() => {
+    (!product || !product.image) && refetch();
+  }, []);
 
   if (isLoading) {
     return (
@@ -140,11 +179,13 @@ const ProductPage: React.FC = () => {
         {
           <>
             <IonRow className="ion-justify-content-center">
-              <img
-                className="product-page__img"
-                src={product?.img.url}
-                alt="product"
-              />
+              {product.img && (
+                <img
+                  className="product-page__img"
+                  src={product.img.formats.medium.url}
+                  alt="product"
+                />
+              )}
             </IonRow>
             <MainContent product={product} />
             <Description product={product} />

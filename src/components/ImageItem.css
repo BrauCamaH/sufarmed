@@ -1,12 +1,9 @@
 #image-item {
-  padding-top: 6px;
   width: 100px;
 }
 
 @media (max-width: 350px) {
   #image-item {
-    padding-top: 6px;
-
     display: none;
   }
 }

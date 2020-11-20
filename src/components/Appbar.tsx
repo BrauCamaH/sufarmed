@@ -107,7 +107,6 @@ const Appbar: React.FC = () => {
                 </IonMenuButton>
                 <ImageItem />
               </IonRow>
-              <Searchbar />
               <IonRow class="ion-justify-content-between ion-align-items-center">
                 {state.user ? (
                   <IonButton fill="clear" color="light" routerLink="/account">
@@ -115,6 +114,7 @@ const Appbar: React.FC = () => {
                   </IonButton>
                 ) : (
                   <IonButton
+                    className="ion-margin-start"
                     routerLink="/login"
                     routerDirection="root"
                     color="secondary"
@@ -128,6 +128,7 @@ const Appbar: React.FC = () => {
                 </IonButton>
               </IonRow>
             </IonRow>
+            <Searchbar />
           </IonGrid>
         </IonToolbar>
       </IonHeader>
