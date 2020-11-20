@@ -10,6 +10,7 @@ const Home: React.FC = () => {
     <Layout>
       <Slider />
       <Section name="Tabletas" searchId="tabs" />
+      <Section name="Tabletas" searchId="tabs" />
     </Layout>
   );
 };

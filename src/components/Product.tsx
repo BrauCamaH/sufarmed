@@ -21,6 +21,7 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
           className="product__item"
           button
           lines="none"
+          routerDirection="none"
           routerLink={`/product/${product.id}`}
         >
           <img

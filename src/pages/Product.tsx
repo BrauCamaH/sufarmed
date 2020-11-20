@@ -142,7 +142,7 @@ const ProductPage: React.FC = () => {
             <IonRow className="ion-justify-content-center">
               <img
                 className="product-page__img"
-                src={product?.img?.url}
+                src={product?.img.url}
                 alt="product"
               />
             </IonRow>
