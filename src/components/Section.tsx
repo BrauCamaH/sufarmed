@@ -14,8 +14,8 @@ import { useGetProductsByName } from '../api/products';
 
 const slideOpts = {
   initialSlide: 0,
-  spaceBetween: 0.1,
-  slidesPerView: 4.5,
+  spaceBetween: 0,
+  slidesPerView: 1.8,
 };
 
 interface SectionProps {
