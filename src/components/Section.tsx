@@ -18,27 +18,28 @@ interface SectionProps {
 }
 
 const Section: React.FC<SectionProps> = ({ name, searchId }) => {
-  const { isLoading, data: products } = useGetProductsByName(searchId, 1);
+  const { isLoading, isError, data: products } = useGetProductsByName(
+    searchId,
+    1
+  );
 
   const isSmall = useMediaQuery({ query: '(max-width: 576px)' });
   const isMedium = useMediaQuery({ query: '(max-width: 768px)' });
-
-  if (isLoading) {
-    return <IonSpinner />;
-  } else {
-    return (
-      <div className="ion-margin-bottom">
-        <IonRow>
-          <IonTitle>{name}</IonTitle>
-          {}
-          <IonButton
-            fill="clear"
-            routerLink={`/products?q=${searchId}`}
-            routerDirection="root"
-          >
-            Ver más
-          </IonButton>
-        </IonRow>
+  return (
+    <div className="ion-margin-bottom">
+      <IonRow>
+        <IonTitle>{name}</IonTitle>
+        <IonButton
+          fill="clear"
+          routerLink={`/products?q=${searchId}`}
+          routerDirection="root"
+        >
+          Ver más
+        </IonButton>
+      </IonRow>
+      {isLoading ? (
+        <IonSpinner />
+      ) : !isError ? (
         <IonSlides
           options={{ slidesPerView: isSmall ? 1.6 : isMedium ? 3.6 : 4.6 }}
         >
@@ -49,9 +50,11 @@ const Section: React.FC<SectionProps> = ({ name, searchId }) => {
               </IonSlide>
             ))}
         </IonSlides>
-      </div>
-    );
-  }
+      ) : (
+        <p>Error revise conexión</p>
+      )}
+    </div>
+  );
 };
 
 export default Section;

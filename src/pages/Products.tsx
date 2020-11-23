@@ -14,21 +14,21 @@ const useQuery = () => {
 
 const Products: React.FC = () => {
   const text = useQuery().get('q') || '';
-  const { isLoading, data: products, refetch } = useGetProductsByName(text, 1);
+  const { isLoading, data: products, isError, refetch } = useGetProductsByName(
+    text,
+    1
+  );
+
   useEffect(() => {
     refetch();
   }, [text]);
 
-  if (isLoading) {
-    return (
-      <Layout>
+  return (
+    <Layout>
+      <Filter />
+      {isLoading ? (
         <IonSpinner />
-      </Layout>
-    );
-  } else {
-    return (
-      <Layout>
-        <Filter />
+      ) : !isError ? (
         <IonGrid fixed>
           <IonRow>
             {products.map &&
@@ -39,9 +39,11 @@ const Products: React.FC = () => {
               ))}
           </IonRow>
         </IonGrid>
-      </Layout>
-    );
-  }
+      ) : (
+        <p>Error revise conexión a internet</p>
+      )}
+    </Layout>
+  );
 };
 
 export default Products;

@@ -11,8 +11,8 @@ const Layout: React.FC = ({ children }) => {
       <IonContent className="layout__content">
         <Appbar />
         {children}
+        <Footer />
       </IonContent>
-      <Footer />
     </IonPage>
   );
 };

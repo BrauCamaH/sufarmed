@@ -37,7 +37,7 @@ const CartItem: React.FC<CartProps> = ({ product }) => {
           <img
             alt="card item"
             style={{ maxWidth: '300px', maxHeight: '300px' }}
-            src={product.imgUrl}
+            src={product.img?.formats.small.url}
           />
         </IonCol>
         <IonCol>

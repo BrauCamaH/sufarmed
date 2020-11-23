@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   IonButton,
   IonCard,
@@ -15,6 +15,7 @@ import {
   IonRow,
   IonSpinner,
   IonTitle,
+  IonToast,
 } from '@ionic/react';
 import { cart } from 'ionicons/icons';
 import Layout from '../components/Layout';
@@ -24,16 +25,53 @@ import { Product } from '../models/Product';
 
 import './Products.css';
 import { useForm } from 'react-hook-form';
+import { useCreateOrder, useCreateOrderDetail } from '../api/orders';
+import { useUserState } from '../providers/UserProvider';
+import { User } from '../models/User';
+import { Order } from '../models/Order';
 
 interface ProductPageProps {
   product: Product;
+  token?: string;
+  user?: User;
 }
 
-const MainContent: React.FC<ProductPageProps> = ({ product }) => {
+const MainContent: React.FC<ProductPageProps> = ({ product, token, user }) => {
+  const [showToast, setShowToast] = useState(false);
   const { register, errors, handleSubmit } = useForm();
+  const [createOrder] = useCreateOrder();
+  const [createOrderDetail] = useCreateOrderDetail();
+
+  const handleCreateOrder = async ({ quantity }: { quantity: number }) => {
+    if (token && user) {
+      const order: Order = await createOrder({ token, user: user.id });
+      await createOrderDetail({
+        orderId: order.id,
+        price: product.price,
+        productId: product.id,
+        token,
+        quantity,
+      });
+    } else {
+      setShowToast(true);
+    }
+  };
 
   return (
     <IonCard>
+      <IonToast
+        position="top"
+        color="danger"
+        isOpen={showToast}
+        duration={3000}
+        message="No se ha iniciado sesión"
+        buttons={[
+          {
+            text: 'Aceptar',
+            role: 'cancel',
+          },
+        ]}
+      />
       <IonCardContent>
         <IonItem>
           <IonRow>
@@ -60,11 +98,7 @@ const MainContent: React.FC<ProductPageProps> = ({ product }) => {
               </IonList>
             </IonCol>
             <IonCol size="auto">
-              <form
-                onSubmit={handleSubmit((data) => {
-                  console.log(data);
-                })}
-              >
+              <form onSubmit={handleSubmit(handleCreateOrder)}>
                 <IonItem>
                   <IonLabel>Cantidad :</IonLabel>
                   <IonInput
@@ -87,10 +121,8 @@ const MainContent: React.FC<ProductPageProps> = ({ product }) => {
                     {errors.quantity && <p>Error en cantidad</p>}
                   </IonTitle>
                 }
+                <IonButton color="secondary">Comprar</IonButton>
                 <IonButton color="secondary" type="submit">
-                  Comprar
-                </IonButton>
-                <IonButton color="secondary">
                   <IonIcon icon={cart} />
                 </IonButton>
               </form>
@@ -161,40 +193,33 @@ const Especifications: React.FC<ProductPageProps> = ({ product }) => {
 
 const ProductPage: React.FC = () => {
   const { id } = useParams<any>();
-  const { isLoading, data: product, refetch } = useGetProductById(id);
+  const { isLoading, isError, data: product } = useGetProductById(id);
+  const state = useUserState();
 
-  useEffect(() => {
-    (!product || !product.image) && refetch();
-  }, []);
-
-  if (isLoading) {
-    return (
-      <Layout>
+  return (
+    <Layout>
+      {isLoading ? (
         <IonSpinner />
-      </Layout>
-    );
-  } else {
-    return (
-      <Layout>
-        {
-          <>
-            <IonRow className="ion-justify-content-center">
-              {product.img && (
-                <img
-                  className="product-page__img"
-                  src={product.img.formats.medium.url}
-                  alt="product"
-                />
-              )}
-            </IonRow>
-            <MainContent product={product} />
-            <Description product={product} />
-            <Especifications product={product} />
-          </>
-        }
-      </Layout>
-    );
-  }
+      ) : !isError ? (
+        <>
+          <IonRow className="ion-justify-content-center">
+            {product.img && (
+              <img
+                className="product-page__img"
+                src={product.img.formats.medium.url}
+                alt="product"
+              />
+            )}
+          </IonRow>
+          <MainContent token={state.jwt} user={state.user} product={product} />
+          <Description product={product} />
+          <Especifications product={product} />
+        </>
+      ) : (
+        <p>Error revise conexión a internet</p>
+      )}
+    </Layout>
+  );
 };
 
 export default ProductPage;

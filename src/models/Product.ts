@@ -1,25 +1,9 @@
+import { Multimedia } from './Multimedia';
 export interface Product {
   id: number;
   price: number;
   stock?: number;
-  img?: {
-    name?: string;
-    url: string;
-    formats: {
-      large: {
-        url: string;
-      };
-      medium: {
-        url: string;
-      };
-      small: {
-        url: string;
-      };
-      thumbnail: {
-        url: string;
-      };
-    };
-  };
+  img?: Multimedia;
   name: string;
   summary?: string;
   description?: string;

@@ -7,7 +7,7 @@ export const useQueryOrders = async ({
 }: {
   token: string;
   userId: number;
-}): Promise<unknown> => {
+}): Promise<any> => {
   return useQuery('orders', async () => {
     const { data } = await axios.get(`/users/${userId}`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -22,7 +22,7 @@ export const useQueryOrderDetails = async ({
 }: {
   token: string;
   orderId: number;
-}): Promise<unknown> => {
+}): Promise<any> => {
   return useQuery('orders', async () => {
     const { data } = await axios.get(`/orders/${orderId}`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -43,25 +43,24 @@ export const createOrderDetail = async ({
   orderId: number;
   price: number;
   quantity: number;
-}): Promise<unknown> => {
-  const { data } = await axios.post('/order-detail', {
-    headers: { Authorization: `Bearer ${token}` },
-    data: {
-      product: productId,
-      order: orderId,
-      price,
-      quantity,
-    },
-  });
+}): Promise<any> => {
+  const { data } = await axios.post(
+    '/order-details',
+    { product: productId, order: orderId, price, quantity },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
   return data;
 };
+
 export const deleteOrderDetail = async ({
   token,
   id,
 }: {
   token: string;
   id: number;
-}): Promise<unknown> => {
+}): Promise<any> => {
   const { data } = await axios.delete(`/order-details/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -76,7 +75,7 @@ export const updateOrderDetail = async ({
   token: string;
   id: number;
   data: { quantity: number; price: number; discount: number };
-}): Promise<unknown> => {
+}): Promise<any> => {
   const { data: response } = await axios.put(`/order-details/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
     data,
@@ -93,7 +92,7 @@ export const updateOrder = async ({
   id: number;
   data: { status: string; ship_date?: string };
 }): Promise<unknown> => {
-  const { data: response } = await axios.put(`/order/${id}`, {
+  const { data: response } = await axios.put(`/orders/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
     data,
   });
@@ -102,15 +101,18 @@ export const updateOrder = async ({
 
 export const createOrder = async ({
   token,
+  user,
 }: {
   token: string;
-}): Promise<unknown> => {
-  const { data } = await axios.post('/orders', {
-    headers: { Authorization: `Bearer ${token}` },
-    data: {
-      status: 'created',
-    },
-  });
+  user: number;
+}): Promise<any> => {
+  const { data } = await axios.post(
+    '/orders',
+    { status: 'created', user },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
   return data;
 };
 
@@ -120,7 +122,7 @@ export const deleteOrder = async ({
 }: {
   token: string;
   id: number;
-}): Promise<unknown> => {
+}): Promise<any> => {
   const { data } = await axios.delete(`/orders/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
