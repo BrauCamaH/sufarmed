@@ -7,7 +7,11 @@ type Action =
   | { type: 'set-item'; payload: OrderDetail }
   | { type: 'delete-item'; payload: number }
   | { type: 'set-cart'; payload: OrderDetail[] }
-  | { type: 'set-status'; payload: 'isLoading' | 'isError' | 'isFetched' };
+  | { type: 'set-status'; payload: 'isLoading' | 'isError' | 'isFetched' }
+  | {
+      type: 'update-quantity';
+      payload: { quantity: number; orderDetail: OrderDetail };
+    };
 
 type Dispatch = (action: Action) => void;
 type State = {
@@ -32,7 +36,23 @@ const cartReducer = (state: State, action: Action): any => {
     case 'set-item':
       return { ...state, cart: [...state.cart, { ...action.payload }] };
     case 'delete-item':
-      return null;
+      return {
+        ...state,
+        cart: [...state.cart.filter((item) => item.id !== action.payload)],
+      };
+    case 'update-quantity': {
+      const newArray = [...state.cart];
+      const index = newArray.findIndex(
+        (item) => item.id == action.payload.orderDetail.id
+      );
+      newArray[index] = {
+        ...action.payload.orderDetail,
+        quantity: action.payload.quantity,
+      };
+
+      return { ...state, cart: newArray };
+    }
+
     default: {
       return state;
     }

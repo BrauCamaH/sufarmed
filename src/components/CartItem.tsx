@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   IonCard,
@@ -17,17 +17,28 @@ import {
 import './CartItem.css';
 import { trash } from 'ionicons/icons';
 import { OrderDetail } from '../models/OrderDetail';
+import { useCartDispatch } from '../providers/CartProvider';
 
 export interface CartProps {
   orderDetail: OrderDetail;
 }
-
 const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
+  const dispatch = useCartDispatch();
+  const [quantity, setQuantity] = useState<number>(orderDetail.quantity);
+
   return (
     <IonCard id="cart-item">
       <IonHeader>
         <IonToolbar>
-          <IonButton fill="clear" color="danger" slot="end" size="small">
+          <IonButton
+            fill="clear"
+            color="danger"
+            slot="end"
+            size="small"
+            onClick={() => {
+              dispatch({ type: 'delete-item', payload: orderDetail.id });
+            }}
+          >
             <IonIcon icon={trash} />
           </IonButton>
         </IonToolbar>
@@ -50,8 +61,17 @@ const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
           <IonItem lines="full">
             <IonLabel position="stacked">Cantidad</IonLabel>
             <IonInput
+              onIonChange={(e: any) => {
+                setQuantity(e.target.value);
+              }}
+              onIonBlur={() => {
+                dispatch({
+                  type: 'update-quantity',
+                  payload: { quantity, orderDetail },
+                });
+              }}
               type="number"
-              value={orderDetail.quantity}
+              value={quantity}
               maxlength={4}
             />
           </IonItem>
