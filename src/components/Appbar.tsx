@@ -14,6 +14,7 @@ import {
   IonContent,
   IonList,
   IonMenuButton,
+  IonBadge,
 } from '@ionic/react';
 import { cart, menu, help, pricetag, calendar, person } from 'ionicons/icons';
 import { withRouter, useLocation } from 'react-router';
@@ -23,6 +24,7 @@ import ImageItem from './ImageItem';
 import { useUserState } from '../providers/UserProvider';
 
 import './Appbar.css';
+import { useCartState } from '../providers/CartProvider';
 
 interface Pages {
   title: string;
@@ -92,8 +94,8 @@ export const Menu: React.FC<MenuProps> = ({ menuEnabled }) => {
   );
 };
 
-const Appbar: React.FC = () => {
-  const state = useUserState();
+const AuthAppbar: React.FC = () => {
+  const state = useCartState();
 
   return (
     <>
@@ -108,23 +110,12 @@ const Appbar: React.FC = () => {
                 <ImageItem />
               </IonRow>
               <IonRow class="ion-justify-content-between ion-align-items-center">
-                {state.user ? (
-                  <IonButton fill="clear" color="light" routerLink="/account">
-                    <IonIcon icon={person} />
-                  </IonButton>
-                ) : (
-                  <IonButton
-                    className="ion-margin-start"
-                    routerLink="/login"
-                    routerDirection="root"
-                    color="secondary"
-                    size="small"
-                  >
-                    Iniciar Sesión
-                  </IonButton>
-                )}
+                <IonButton fill="clear" color="light" routerLink="/account">
+                  <IonIcon icon={person} />
+                </IonButton>
                 <IonButton fill="clear" color="light" routerLink="/cart">
-                  <IonIcon icon={cart}></IonIcon>
+                  <IonIcon icon={cart} />
+                  <IonBadge>{state.cart.length}</IonBadge>
                 </IonButton>
               </IonRow>
             </IonRow>
@@ -134,6 +125,48 @@ const Appbar: React.FC = () => {
       </IonHeader>
     </>
   );
+};
+
+const UnAuthAppbar: React.FC = () => {
+  return (
+    <>
+      <IonHeader id="appbar">
+        <IonToolbar color="primary">
+          <IonGrid color="primary">
+            <IonRow class="ion-justify-content-between ion-align-items-center">
+              <IonRow>
+                <IonMenuButton>
+                  <IonIcon id="drawer" icon={menu} />
+                </IonMenuButton>
+                <ImageItem />
+              </IonRow>
+              <IonRow class="ion-justify-content-between ion-align-items-center">
+                <IonButton
+                  className="ion-margin-start"
+                  routerLink="/login"
+                  routerDirection="root"
+                  color="secondary"
+                  size="small"
+                >
+                  Iniciar Sesión
+                </IonButton>
+
+                <IonButton fill="clear" color="light" routerLink="/cart">
+                  <IonIcon icon={cart} />
+                </IonButton>
+              </IonRow>
+            </IonRow>
+            <Searchbar />
+          </IonGrid>
+        </IonToolbar>
+      </IonHeader>
+    </>
+  );
+};
+
+const Appbar: React.FC = () => {
+  const state = useUserState();
+  return state.user ? <AuthAppbar /> : <UnAuthAppbar />;
 };
 
 export default withRouter(Appbar);

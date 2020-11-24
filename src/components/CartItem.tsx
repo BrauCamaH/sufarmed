@@ -14,15 +14,15 @@ import {
   IonIcon,
   IonHeader,
 } from '@ionic/react';
-import { Product } from '../models/Product';
 import './CartItem.css';
 import { trash } from 'ionicons/icons';
+import { OrderDetail } from '../models/OrderDetail';
 
 export interface CartProps {
-  product: Product;
+  orderDetail: OrderDetail;
 }
 
-const CartItem: React.FC<CartProps> = ({ product }) => {
+const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
   return (
     <IonCard id="cart-item">
       <IonHeader>
@@ -37,19 +37,23 @@ const CartItem: React.FC<CartProps> = ({ product }) => {
           <img
             alt="card item"
             style={{ maxWidth: '300px', maxHeight: '300px' }}
-            src={product.img?.formats.small.url}
+            src={orderDetail.product.img?.formats.small.url}
           />
         </IonCol>
         <IonCol>
           <IonCardContent>
-            <IonCardSubtitle>{product.name}</IonCardSubtitle>
-            {product.summary}
+            <IonCardSubtitle>{orderDetail.product.name}</IonCardSubtitle>
+            {orderDetail.price}
           </IonCardContent>
         </IonCol>
         <IonCol>
           <IonItem lines="full">
             <IonLabel position="stacked">Cantidad</IonLabel>
-            <IonInput type="number" maxlength={4} />
+            <IonInput
+              type="number"
+              value={orderDetail.quantity}
+              maxlength={4}
+            />
           </IonItem>
         </IonCol>
       </IonRow>

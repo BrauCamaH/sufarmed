@@ -25,10 +25,11 @@ import { Product } from '../models/Product';
 
 import './Products.css';
 import { useForm } from 'react-hook-form';
-import { useCreateOrder, useCreateOrderDetail } from '../api/orders';
+
 import { useUserState } from '../providers/UserProvider';
 import { User } from '../models/User';
-import { Order } from '../models/Order';
+import { useCreateOrderDetail } from '../api/order-details';
+import { useCartDispatch, useCartState } from '../providers/CartProvider';
 
 interface ProductPageProps {
   product: Product;
@@ -39,19 +40,20 @@ interface ProductPageProps {
 const MainContent: React.FC<ProductPageProps> = ({ product, token, user }) => {
   const [showToast, setShowToast] = useState(false);
   const { register, errors, handleSubmit } = useForm();
-  const [createOrder] = useCreateOrder();
+  const state = useCartState();
+  const dispatch = useCartDispatch();
   const [createOrderDetail] = useCreateOrderDetail();
 
   const handleCreateOrder = async ({ quantity }: { quantity: number }) => {
     if (token && user) {
-      const order: Order = await createOrder({ token, user: user.id });
-      await createOrderDetail({
-        orderId: order.id,
+      const orderDetail = await createOrderDetail({
+        orderId: state.cart[0].order.id,
         price: product.price,
         productId: product.id,
         token,
         quantity,
       });
+      dispatch({ type: 'set-item', payload: orderDetail });
     } else {
       setShowToast(true);
     }

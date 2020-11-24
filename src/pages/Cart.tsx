@@ -5,44 +5,20 @@ import {
   IonItemDivider,
   IonList,
   IonRow,
+  IonSpinner,
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
-import { Product } from '../models/Product';
 
 import Layout from '../components/Layout';
-import Section from '../components/Section';
 
 import CartItem from '../components/CartItem';
-
-const products: Product[] = [
-  {
-    id: 1,
-    imgUrl: 'https://picsum.photos/200/200',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: 3,
-    imgUrl: 'https://picsum.photos/200/200',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: 4,
-    imgUrl: 'https://picsum.photos/200/200',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: 5,
-    imgUrl: 'https://picsum.photos/200/200',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-];
+import { OrderDetail } from '../models/OrderDetail';
+import { useCartState } from '../providers/CartProvider';
 
 const CategoriesPage: React.FC = () => {
+  const state = useCartState();
+
   return (
     <Layout>
       <IonToolbar>
@@ -50,23 +26,28 @@ const CategoriesPage: React.FC = () => {
           <IonTitle color="tertiary">Carrito</IonTitle>
         </IonItem>
       </IonToolbar>
-      <IonList>
-        <IonRow id="cart-list" className="ion-justify-content-center">
-          {products.map((product) => (
-            <CartItem key={product.id} product={product} />
-          ))}
-        </IonRow>
-        <IonToolbar className="ion-padding-top ion-padding-end">
-          <div slot="end" className="ion-padding-end">
-            <div className="ion-padding-end ">
-              <IonTitle className="ion-padding-bottom">Total $000,0</IonTitle>
-              <IonButton color="secondary">Continuar compra</IonButton>
+      {state.status == 'isLoading' ? (
+        <IonSpinner />
+      ) : state.status !== 'isError' ? (
+        <IonList>
+          <IonRow id="cart-list" className="ion-justify-content-center">
+            {state.cart.map((item: OrderDetail) => (
+              <CartItem key={item.id} orderDetail={item} />
+            ))}
+          </IonRow>
+          <IonToolbar className="ion-padding-top ion-padding-end">
+            <div slot="end" className="ion-padding-end">
+              <div className="ion-padding-end ">
+                <IonTitle className="ion-padding-bottom">Total </IonTitle>
+                <IonButton color="secondary">Continuar compra</IonButton>
+              </div>
             </div>
-          </div>
-        </IonToolbar>
-        <IonItemDivider />
-        <Section />
-      </IonList>
+          </IonToolbar>
+          <IonItemDivider />
+        </IonList>
+      ) : (
+        <p>Revise conexión a internet</p>
+      )}
     </Layout>
   );
 };
