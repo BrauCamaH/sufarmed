@@ -16,7 +16,7 @@ const userReducer = (state: State, action: Action): any => {
     case 'set-user':
       return { ...action.payload };
     case 'sign-out':
-      return null;
+      return { user: undefined, jwt: '' };
     default: {
       return state;
     }

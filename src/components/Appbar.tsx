@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   IonHeader,
   IonButton,
@@ -15,13 +15,23 @@ import {
   IonList,
   IonMenuButton,
   IonBadge,
+  IonPopover,
 } from '@ionic/react';
-import { cart, menu, help, pricetag, calendar, person } from 'ionicons/icons';
+import {
+  cart,
+  menu,
+  help,
+  pricetag,
+  calendar,
+  person,
+  personOutline,
+  logOut,
+} from 'ionicons/icons';
 import { withRouter, useLocation } from 'react-router';
 
 import Searchbar from './Searchbar';
 import ImageItem from './ImageItem';
-import { useUserState } from '../providers/UserProvider';
+import { useUserDispatch, useUserState } from '../providers/UserProvider';
 
 import './Appbar.css';
 import { useCartState } from '../providers/CartProvider';
@@ -95,7 +105,15 @@ export const Menu: React.FC<MenuProps> = ({ menuEnabled }) => {
 };
 
 const AuthAppbar: React.FC = () => {
+  const dispatch = useUserDispatch();
   const state = useCartState();
+  const [showPopover, setShowPopover] = useState<{
+    open: boolean;
+    event: Event | undefined;
+  }>({
+    open: false,
+    event: undefined,
+  });
 
   return (
     <>
@@ -110,7 +128,46 @@ const AuthAppbar: React.FC = () => {
                 <ImageItem />
               </IonRow>
               <IonRow class="ion-justify-content-between ion-align-items-center">
-                <IonButton fill="clear" color="light" routerLink="/account">
+                <IonPopover
+                  isOpen={showPopover.open}
+                  showBackdrop={false}
+                  event={showPopover.event}
+                  onDidDismiss={(e) =>
+                    setShowPopover({ open: false, event: undefined })
+                  }
+                >
+                  <IonList lines="none">
+                    <IonItem
+                      button
+                      routerLink="/account"
+                      onClick={() => {
+                        setShowPopover({ open: false, event: undefined });
+                      }}
+                    >
+                      <IonIcon
+                        className="ion-margin-end"
+                        icon={personOutline}
+                      />
+                      <IonLabel>Mi cuenta </IonLabel>
+                    </IonItem>
+                    <IonItem
+                      button
+                      onClick={() => {
+                        dispatch({ type: 'sign-out' });
+                      }}
+                    >
+                      <IonIcon className="ion-margin-end" icon={logOut} />
+                      <IonLabel>Salir </IonLabel>
+                    </IonItem>
+                  </IonList>
+                </IonPopover>
+                <IonButton
+                  fill="clear"
+                  color="light"
+                  onClick={(e) =>
+                    setShowPopover({ open: true, event: e.nativeEvent })
+                  }
+                >
                   <IonIcon icon={person} />
                 </IonButton>
                 <IonButton fill="clear" color="light" routerLink="/cart">
