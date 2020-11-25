@@ -20,6 +20,11 @@ import { trash } from 'ionicons/icons';
 import { OrderDetail } from '../models/OrderDetail';
 import { useCartDispatch } from '../providers/CartProvider';
 import { useGetProductById } from '../api/products';
+import {
+  useDeleteOrderDetail,
+  useUpdateOrderDetail,
+} from '../api/order-details';
+import { useUserState } from '../providers/UserProvider';
 
 export interface CartProps {
   orderDetail: OrderDetail;
@@ -30,6 +35,9 @@ const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
   const { isLoading, isError, data: product } = useGetProductById(
     orderDetail.product
   );
+  const userState = useUserState();
+  const [deleteOrderDetail] = useDeleteOrderDetail();
+  const [updateOrderDetail, { isLoading: isUpdating }] = useUpdateOrderDetail();
 
   return (
     <IonCard id="cart-item">
@@ -40,7 +48,13 @@ const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
             color="danger"
             slot="end"
             size="small"
-            onClick={() => {
+            onClick={async () => {
+              dispatch({ type: 'set-status', payload: 'isLoading' });
+              await deleteOrderDetail({
+                id: orderDetail.id,
+                token: userState.jwt,
+              });
+              dispatch({ type: 'set-status', payload: 'isFetched' });
               dispatch({ type: 'delete-item', payload: orderDetail.id });
             }}
           >
@@ -73,17 +87,25 @@ const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
                   onIonChange={(e: any) => {
                     setQuantity(e.target.value);
                   }}
-                  onIonBlur={() => {
+                  onIonBlur={async () => {
+                    dispatch({ type: 'set-status', payload: 'isLoading' });
+                    await updateOrderDetail({
+                      id: orderDetail.id,
+                      data: { quantity },
+                      token: userState.jwt,
+                    });
                     dispatch({
                       type: 'update-quantity',
                       payload: { quantity, orderDetail },
                     });
+                    dispatch({ type: 'set-status', payload: 'isFetched' });
                   }}
                   type="number"
                   value={quantity}
                   maxlength={4}
                 />
               </IonItem>
+              {isUpdating && <IonSpinner />}
             </IonCol>
           </>
         ) : null}

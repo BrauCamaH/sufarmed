@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useMutation, useQuery } from 'react-query';
 
 export const useQueryCart = (token: string, userId?: number) => {
-  return useQuery('order-details', async () => {
+  return useQuery(`orders_by_${userId}_${token}`, async () => {
     const { data } = await axios.get(`/orders?user=${userId}&status=created`, {
       headers: { Authorization: `Bearer ${token}` },
     });

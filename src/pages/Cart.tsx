@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   IonButton,
   IonItem,
@@ -18,6 +18,15 @@ import { useCartState } from '../providers/CartProvider';
 
 const CategoriesPage: React.FC = () => {
   const state = useCartState();
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    let calculatedTotal = 0;
+    state.cart.order_details.forEach(
+      (item) => (calculatedTotal += item.price * item.quantity)
+    );
+    setTotal(calculatedTotal);
+  }, [state.status]);
 
   return (
     <Layout>
@@ -38,7 +47,9 @@ const CategoriesPage: React.FC = () => {
           <IonToolbar className="ion-padding-top ion-padding-end">
             <div slot="end" className="ion-padding-end">
               <div className="ion-padding-end ">
-                <IonTitle className="ion-padding-bottom">Total </IonTitle>
+                <IonTitle className="ion-padding-bottom">
+                  Total ${total}
+                </IonTitle>
                 <IonButton color="secondary">Continuar compra</IonButton>
               </div>
             </div>

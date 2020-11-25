@@ -66,18 +66,30 @@ const cartReducer = (state: State, action: Action): any => {
     case 'update-quantity': {
       const newArray = [...state.cart.order_details];
       const index = newArray.findIndex(
-        (item) => item.id == action.payload.orderDetail.id
+        (item) => item.id === action.payload.orderDetail.id
       );
       newArray[index] = {
         ...action.payload.orderDetail,
         quantity: action.payload.quantity,
       };
 
-      return { ...state, cart: { ...state.cart, order_details: newArray } };
+      return {
+        ...state,
+        cart: { ...state.cart, order_details: [...newArray] },
+      };
     }
 
     default: {
-      return state;
+      return {
+        cart: {
+          id: 0,
+          order_details: [],
+          payment: 'cash',
+          ship_date: '',
+          status: 'created',
+        },
+        status: 'isLoading',
+      };
     }
   }
 };

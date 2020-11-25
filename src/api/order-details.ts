@@ -44,11 +44,10 @@ export const updateOrderDetail = async ({
 }: {
   token: string;
   id: number;
-  data: { quantity: number; price: number; discount: number };
+  data: { quantity: number; price?: number; discount?: number };
 }): Promise<any> => {
-  const { data: response } = await axios.put(`/order-details/${id}`, {
+  const { data: response } = await axios.put(`/order-details/${id}`, data, {
     headers: { Authorization: `Bearer ${token}` },
-    data,
   });
   return response;
 };
