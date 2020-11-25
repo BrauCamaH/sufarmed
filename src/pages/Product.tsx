@@ -28,8 +28,10 @@ import { useForm } from 'react-hook-form';
 
 import { useUserState } from '../providers/UserProvider';
 import { User } from '../models/User';
+import { Order } from '../models/Order';
 import { useCreateOrderDetail } from '../api/order-details';
 import { useCartDispatch, useCartState } from '../providers/CartProvider';
+import { useCreateOrder } from '../api/orders';
 
 interface ProductPageProps {
   product: Product;
@@ -37,27 +39,80 @@ interface ProductPageProps {
   user?: User;
 }
 
-const MainContent: React.FC<ProductPageProps> = ({ product, token, user }) => {
-  const [showToast, setShowToast] = useState(false);
+interface AddToCartProps {
+  product: Product;
+  token: string;
+  user: User;
+}
+
+const AddtoCart: React.FC<AddToCartProps> = ({ product, token, user }) => {
   const { register, errors, handleSubmit } = useForm();
   const state = useCartState();
   const dispatch = useCartDispatch();
   const [createOrderDetail] = useCreateOrderDetail();
+  const [createOrder] = useCreateOrder();
 
   const handleCreateOrder = async ({ quantity }: { quantity: number }) => {
-    if (token && user) {
+    if (state.cart.id === 0) {
+      const order: Order = await createOrder({ token, user: user.id });
       const orderDetail = await createOrderDetail({
-        orderId: state.cart[0].order.id,
+        orderId: order.id,
         price: product.price,
         productId: product.id,
         token,
         quantity,
       });
-      dispatch({ type: 'set-item', payload: orderDetail });
+      dispatch({
+        type: 'set-item',
+        payload: { ...orderDetail, product: orderDetail.product.id },
+      });
     } else {
-      setShowToast(true);
+      const orderDetail = await createOrderDetail({
+        orderId: state.cart.id,
+        price: product.price,
+        productId: product.id,
+        token,
+        quantity,
+      });
+      dispatch({
+        type: 'set-item',
+        payload: { ...orderDetail, product: orderDetail.product.id },
+      });
     }
   };
+
+  return (
+    <form onSubmit={handleSubmit(handleCreateOrder)}>
+      <IonItem>
+        <IonLabel>Cantidad :</IonLabel>
+        <IonInput
+          ref={register({
+            required: true,
+            max: product.stock,
+            min: 1,
+          })}
+          className="ion-margin-end"
+          name="quantity"
+          type="number"
+          maxlength={4}
+        />
+        <IonCardSubtitle>({product.stock}) disponibles</IonCardSubtitle>
+      </IonItem>
+      {
+        <IonTitle color="danger">
+          {errors.quantity && <p>Error en cantidad</p>}
+        </IonTitle>
+      }
+      <IonButton color="secondary">Comprar</IonButton>
+      <IonButton color="secondary" type="submit">
+        <IonIcon icon={cart} />
+      </IonButton>
+    </form>
+  );
+};
+
+const MainContent: React.FC<ProductPageProps> = ({ product, token, user }) => {
+  const [showToast, setShowToast] = useState(false);
 
   return (
     <IonCard>
@@ -67,6 +122,9 @@ const MainContent: React.FC<ProductPageProps> = ({ product, token, user }) => {
         isOpen={showToast}
         duration={3000}
         message="No se ha iniciado sesión"
+        onDidDismiss={() => {
+          setShowToast(false);
+        }}
         buttons={[
           {
             text: 'Aceptar',
@@ -100,34 +158,34 @@ const MainContent: React.FC<ProductPageProps> = ({ product, token, user }) => {
               </IonList>
             </IonCol>
             <IonCol size="auto">
-              <form onSubmit={handleSubmit(handleCreateOrder)}>
-                <IonItem>
-                  <IonLabel>Cantidad :</IonLabel>
-                  <IonInput
-                    ref={register({
-                      required: true,
-                      max: product.stock,
-                      min: 1,
-                    })}
-                    className="ion-margin-end"
-                    name="quantity"
-                    type="number"
-                    maxlength={4}
-                  />
-                  <IonCardSubtitle>
-                    ({product.stock}) disponibles
-                  </IonCardSubtitle>
-                </IonItem>
-                {
-                  <IonTitle color="danger">
-                    {errors.quantity && <p>Error en cantidad</p>}
-                  </IonTitle>
-                }
-                <IonButton color="secondary">Comprar</IonButton>
-                <IonButton color="secondary" type="submit">
-                  <IonIcon icon={cart} />
-                </IonButton>
-              </form>
+              {user && token ? (
+                <AddtoCart product={product} token={token} user={user} />
+              ) : (
+                <>
+                  <IonItem>
+                    <IonLabel>Cantidad :</IonLabel>
+                    <IonInput
+                      className="ion-margin-end"
+                      name="quantity"
+                      type="number"
+                      maxlength={4}
+                    />
+                    <IonCardSubtitle>
+                      ({product.stock}) disponibles
+                    </IonCardSubtitle>
+                  </IonItem>
+                  <IonButton color="secondary">Comprar</IonButton>
+                  <IonButton
+                    color="secondary"
+                    type="submit"
+                    onClick={() => {
+                      setShowToast(true);
+                    }}
+                  >
+                    <IonIcon icon={cart} />
+                  </IonButton>
+                </>
+              )}
             </IonCol>
           </IonRow>
         </IonGrid>

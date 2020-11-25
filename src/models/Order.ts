@@ -1,8 +1,8 @@
-import { Product } from './Product';
-import { Multimedia } from './Multimedia';
+import { OrderDetail } from './OrderDetail';
 export interface Order {
   id: number;
-  img: Multimedia;
-  name: string;
-  products: Product[];
+  ship_date: string;
+  status: string;
+  payment: 'cash' | 'credit_card' | 'debit_card';
+  order_details: OrderDetail[];
 }

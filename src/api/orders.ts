@@ -3,18 +3,13 @@ import { useMutation, useQuery } from 'react-query';
 
 export const useQueryCart = (token: string, userId?: number) => {
   return useQuery('order-details', async () => {
-    const { data: orders } = await axios.get(
-      `/orders?user=${userId}&status=created`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    const { data } = await axios.get(`/order-details?order=${orders[0].id}`, {
+    const { data } = await axios.get(`/orders?user=${userId}&status=created`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return data;
   });
 };
+
 export const updateOrder = async ({
   token,
   id,

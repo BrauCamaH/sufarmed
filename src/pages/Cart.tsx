@@ -31,7 +31,7 @@ const CategoriesPage: React.FC = () => {
       ) : state.status !== 'isError' ? (
         <IonList>
           <IonRow id="cart-list" className="ion-justify-content-center">
-            {state.cart.map((item: OrderDetail) => (
+            {state.cart.order_details.map((item: OrderDetail) => (
               <CartItem key={item.id} orderDetail={item} />
             ))}
           </IonRow>

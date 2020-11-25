@@ -172,7 +172,9 @@ const AuthAppbar: React.FC = () => {
                 </IonButton>
                 <IonButton fill="clear" color="light" routerLink="/cart">
                   <IonIcon icon={cart} />
-                  <IonBadge>{state.cart.length}</IonBadge>
+                  <IonBadge>
+                    {state.cart ? state.cart.order_details.length : ''}
+                  </IonBadge>
                 </IonButton>
               </IonRow>
             </IonRow>

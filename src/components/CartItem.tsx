@@ -13,11 +13,13 @@ import {
   IonButton,
   IonIcon,
   IonHeader,
+  IonSpinner,
 } from '@ionic/react';
 import './CartItem.css';
 import { trash } from 'ionicons/icons';
 import { OrderDetail } from '../models/OrderDetail';
 import { useCartDispatch } from '../providers/CartProvider';
+import { useGetProductById } from '../api/products';
 
 export interface CartProps {
   orderDetail: OrderDetail;
@@ -25,6 +27,9 @@ export interface CartProps {
 const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
   const dispatch = useCartDispatch();
   const [quantity, setQuantity] = useState<number>(orderDetail.quantity);
+  const { isLoading, isError, data: product } = useGetProductById(
+    orderDetail.product
+  );
 
   return (
     <IonCard id="cart-item">
@@ -44,38 +49,44 @@ const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
         </IonToolbar>
       </IonHeader>
       <IonRow className="ion-justify-content-center ion-align-items-center">
-        <IonCol>
-          <img
-            alt="card item"
-            style={{ maxWidth: '300px', maxHeight: '300px' }}
-            src={orderDetail.product.img?.formats.small.url}
-          />
-        </IonCol>
-        <IonCol>
-          <IonCardContent>
-            <IonCardSubtitle>{orderDetail.product.name}</IonCardSubtitle>
-            {orderDetail.price}
-          </IonCardContent>
-        </IonCol>
-        <IonCol>
-          <IonItem lines="full">
-            <IonLabel position="stacked">Cantidad</IonLabel>
-            <IonInput
-              onIonChange={(e: any) => {
-                setQuantity(e.target.value);
-              }}
-              onIonBlur={() => {
-                dispatch({
-                  type: 'update-quantity',
-                  payload: { quantity, orderDetail },
-                });
-              }}
-              type="number"
-              value={quantity}
-              maxlength={4}
-            />
-          </IonItem>
-        </IonCol>
+        {isLoading ? (
+          <IonSpinner />
+        ) : !isError ? (
+          <>
+            <IonCol>
+              <img
+                alt="card item"
+                style={{ maxWidth: '300px', maxHeight: '300px' }}
+                src={product.img?.formats.small.url}
+              />
+            </IonCol>
+            <IonCol>
+              <IonCardContent>
+                <IonCardSubtitle>{product.name}</IonCardSubtitle>
+                {product.price}
+              </IonCardContent>
+            </IonCol>
+            <IonCol>
+              <IonItem lines="full">
+                <IonLabel position="stacked">Cantidad</IonLabel>
+                <IonInput
+                  onIonChange={(e: any) => {
+                    setQuantity(e.target.value);
+                  }}
+                  onIonBlur={() => {
+                    dispatch({
+                      type: 'update-quantity',
+                      payload: { quantity, orderDetail },
+                    });
+                  }}
+                  type="number"
+                  value={quantity}
+                  maxlength={4}
+                />
+              </IonItem>
+            </IonCol>
+          </>
+        ) : null}
       </IonRow>
     </IonCard>
   );

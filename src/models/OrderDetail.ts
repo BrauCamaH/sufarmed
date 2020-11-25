@@ -1,4 +1,3 @@
-import { Product } from './Product';
 import { Order } from './Order';
 export interface OrderDetail {
   id: number;
@@ -6,5 +5,5 @@ export interface OrderDetail {
   price: number;
   discount: number;
   order: Order;
-  product: Product;
+  product: number;
 }

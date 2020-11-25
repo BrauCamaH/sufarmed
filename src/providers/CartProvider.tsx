@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import { useQueryCart } from '../api/orders';
+import { Order } from '../models/Order';
 import { OrderDetail } from '../models/OrderDetail';
 import { useUserState } from './UserProvider';
 
 type Action =
   | { type: 'set-item'; payload: OrderDetail }
   | { type: 'delete-item'; payload: number }
-  | { type: 'set-cart'; payload: OrderDetail[] }
+  | { type: 'set-cart'; payload: Order }
   | { type: 'set-status'; payload: 'isLoading' | 'isError' | 'isFetched' }
   | {
       type: 'update-quantity';
@@ -15,7 +16,7 @@ type Action =
 
 type Dispatch = (action: Action) => void;
 type State = {
-  cart: OrderDetail[];
+  cart: Order;
   status: 'isLoading' | 'isError' | 'isFetched';
 };
 type UserProviderProps = { children: React.ReactNode };
@@ -23,7 +24,16 @@ type UserProviderProps = { children: React.ReactNode };
 const CartStateContext = createContext<State | undefined>(undefined);
 const CartDispatchContext = createContext<Dispatch | undefined>(undefined);
 
-const initialState: State = { cart: [], status: 'isLoading' };
+const initialState: State = {
+  cart: {
+    id: 0,
+    order_details: [],
+    payment: 'cash',
+    ship_date: '',
+    status: 'created',
+  },
+  status: 'isLoading',
+};
 
 const cartReducer = (state: State, action: Action): any => {
   switch (action.type) {
@@ -31,17 +41,30 @@ const cartReducer = (state: State, action: Action): any => {
       return { ...state, status: action.payload };
     case 'set-cart':
       return action.payload
-        ? { ...state, cart: [...action.payload] }
+        ? { ...state, cart: { ...action.payload } }
         : { ...state };
     case 'set-item':
-      return { ...state, cart: [...state.cart, { ...action.payload }] };
+      return {
+        ...state,
+        cart: {
+          ...state.cart,
+          order_details: [...state.cart.order_details, { ...action.payload }],
+        },
+      };
     case 'delete-item':
       return {
         ...state,
-        cart: [...state.cart.filter((item) => item.id !== action.payload)],
+        cart: {
+          ...state.cart,
+          order_details: [
+            ...state.cart.order_details.filter(
+              (item: OrderDetail) => item.id !== action.payload
+            ),
+          ],
+        },
       };
     case 'update-quantity': {
-      const newArray = [...state.cart];
+      const newArray = [...state.cart.order_details];
       const index = newArray.findIndex(
         (item) => item.id == action.payload.orderDetail.id
       );
@@ -50,7 +73,7 @@ const cartReducer = (state: State, action: Action): any => {
         quantity: action.payload.quantity,
       };
 
-      return { ...state, cart: newArray };
+      return { ...state, cart: { ...state.cart, order_details: newArray } };
     }
 
     default: {
@@ -62,18 +85,19 @@ const cartReducer = (state: State, action: Action): any => {
 const CartProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
   const userState = useUserState();
-  const { isLoading, isError, data: cart } = useQueryCart(
+  const { isLoading, isError, data: orders } = useQueryCart(
     userState.jwt,
     userState.user?.id
   );
 
   useEffect(() => {
-    dispatch({ type: 'set-cart', payload: cart });
-
-    dispatch({
-      type: 'set-status',
-      payload: isLoading ? 'isLoading' : isError ? 'isError' : 'isFetched',
-    });
+    if (!isLoading) {
+      dispatch({ type: 'set-cart', payload: orders[0] });
+      dispatch({
+        type: 'set-status',
+        payload: isLoading ? 'isLoading' : isError ? 'isError' : 'isFetched',
+      });
+    }
   }, [isLoading]);
 
   return (
