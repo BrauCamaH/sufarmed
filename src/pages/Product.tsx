@@ -8,9 +8,7 @@ import {
   IonCol,
   IonGrid,
   IonIcon,
-  IonInput,
   IonItem,
-  IonLabel,
   IonList,
   IonRow,
   IonSpinner,
@@ -24,7 +22,6 @@ import { useGetProductById } from '../api/products';
 import { Product } from '../models/Product';
 
 import './Products.css';
-import { useForm } from 'react-hook-form';
 
 import { useUserState } from '../providers/UserProvider';
 import { User } from '../models/User';
@@ -35,6 +32,7 @@ import {
 } from '../api/order-details';
 import { useCartDispatch, useCartState } from '../providers/CartProvider';
 import { useCreateOrder } from '../api/orders';
+import QuantityInput from '../components/QuantityInput';
 
 interface ProductPageProps {
   product: Product;
@@ -49,21 +47,19 @@ interface AddToCartProps {
 }
 
 const AddtoCart: React.FC<AddToCartProps> = ({ product, token, user }) => {
-  const { register, errors, handleSubmit } = useForm();
   const state = useCartState();
   const dispatch = useCartDispatch();
   const [updateOrderDetail] = useUpdateOrderDetail();
   const [createOrderDetail] = useCreateOrderDetail();
   const [createOrder] = useCreateOrder();
   const [showToast, setShowToast] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   const existingOrderDetail = state.cart.order_details.find(
     (item) => item.product === product.id
   );
 
-  const handleCreateOrder = async ({ quantity }: { quantity: string }) => {
-    const quantityInNumber = parseInt(quantity);
-
+  const handleCreateOrder = async () => {
     if (state.cart.id === 0) {
       dispatch({ type: 'set-status', payload: 'isLoading' });
       const order: Order = await createOrder({ token, user: user.id });
@@ -72,7 +68,7 @@ const AddtoCart: React.FC<AddToCartProps> = ({ product, token, user }) => {
         price: product.price,
         productId: product.id,
         token,
-        quantity: quantityInNumber,
+        quantity,
       });
       dispatch({ type: 'set-status', payload: 'isFetched' });
       dispatch({
@@ -80,12 +76,12 @@ const AddtoCart: React.FC<AddToCartProps> = ({ product, token, user }) => {
         payload: { ...orderDetail, product: orderDetail.product.id },
       });
     } else if (existingOrderDetail) {
-      const newQuantity = existingOrderDetail.quantity + parseInt(quantity);
+      const newQuantity = existingOrderDetail.quantity + quantity;
       dispatch({ type: 'set-status', payload: 'isLoading' });
       await updateOrderDetail({
         id: existingOrderDetail.id,
         token,
-        data: { quantity: existingOrderDetail.quantity + parseInt(quantity) },
+        data: { quantity: existingOrderDetail.quantity + quantity },
       });
       dispatch({ type: 'set-status', payload: 'isFetched' });
       dispatch({
@@ -102,7 +98,7 @@ const AddtoCart: React.FC<AddToCartProps> = ({ product, token, user }) => {
         price: product.price,
         productId: product.id,
         token,
-        quantity: quantityInNumber,
+        quantity: quantity,
       });
       dispatch({ type: 'set-status', payload: 'isFetched' });
       dispatch({
@@ -135,42 +131,26 @@ const AddtoCart: React.FC<AddToCartProps> = ({ product, token, user }) => {
           },
         ]}
       />
-      <form onSubmit={handleSubmit(handleCreateOrder)}>
-        <IonItem>
-          <IonLabel>Cantidad :</IonLabel>
-          <IonInput
-            ref={register({
-              required: true,
-              max: product.stock,
-              min: 1,
-            })}
-            className="ion-margin-end"
-            name="quantity"
-            type="number"
-            maxlength={4}
-          />
-          <IonCardSubtitle>({product.stock}) disponibles</IonCardSubtitle>
-        </IonItem>
-        {
-          <IonTitle color="danger">
-            {errors.quantity && <p>Error en cantidad</p>}
-          </IonTitle>
-        }
-        <IonButton color="secondary">Comprar</IonButton>
-        <IonButton color="secondary" type="submit">
-          {state.status === 'isLoading' ? (
-            <IonSpinner />
-          ) : (
-            <IonIcon icon={cart} />
-          )}
-        </IonButton>
-      </form>
+      <QuantityInput
+        quantity={quantity}
+        setQuantity={setQuantity}
+        stock={product.stock}
+      />
+      <IonButton color="secondary">Comprar</IonButton>
+      <IonButton color="secondary" onClick={handleCreateOrder}>
+        {state.status === 'isLoading' ? (
+          <IonSpinner />
+        ) : (
+          <IonIcon icon={cart} />
+        )}
+      </IonButton>
     </>
   );
 };
 
 const MainContent: React.FC<ProductPageProps> = ({ product, token, user }) => {
   const [showToast, setShowToast] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   return (
     <IonCard>
@@ -220,18 +200,11 @@ const MainContent: React.FC<ProductPageProps> = ({ product, token, user }) => {
                 <AddtoCart product={product} token={token} user={user} />
               ) : (
                 <>
-                  <IonItem>
-                    <IonLabel>Cantidad :</IonLabel>
-                    <IonInput
-                      className="ion-margin-end"
-                      name="quantity"
-                      type="number"
-                      maxlength={4}
-                    />
-                    <IonCardSubtitle>
-                      ({product.stock}) disponibles
-                    </IonCardSubtitle>
-                  </IonItem>
+                  <QuantityInput
+                    quantity={quantity}
+                    setQuantity={setQuantity}
+                    stock={product.stock}
+                  />
                   <IonButton color="secondary">Comprar</IonButton>
                   <IonButton
                     color="secondary"

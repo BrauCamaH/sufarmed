@@ -8,3 +8,10 @@ export const useQueryCategories = () => {
     return data;
   });
 };
+
+export const useQueryCategoryById = (id: number) => {
+  return useQuery(`category_by_${id}`, async () => {
+    const { data } = await axios.get(`/categories/${id}`);
+    return data;
+  });
+};

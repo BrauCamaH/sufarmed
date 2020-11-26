@@ -4,11 +4,7 @@ import {
   IonCard,
   IonCardContent,
   IonCardSubtitle,
-  IonLabel,
-  IonInput,
   IonRow,
-  IonCol,
-  IonItem,
   IonToolbar,
   IonButton,
   IonIcon,
@@ -25,6 +21,7 @@ import {
   useUpdateOrderDetail,
 } from '../api/order-details';
 import { useUserState } from '../providers/UserProvider';
+import QuantityInput from './QuantityInput';
 
 export interface CartProps {
   orderDetail: OrderDetail;
@@ -37,7 +34,7 @@ const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
   );
   const userState = useUserState();
   const [deleteOrderDetail] = useDeleteOrderDetail();
-  const [updateOrderDetail, { isLoading: isUpdating }] = useUpdateOrderDetail();
+  const [updateOrderDetail] = useUpdateOrderDetail();
 
   return (
     <IonCard id="cart-item">
@@ -49,7 +46,7 @@ const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
             slot="end"
             size="small"
             onClick={async () => {
-              dispatch({ type: 'set-status', payload: 'isLoading' });
+              dispatch({ type: 'set-status', payload: 'isUpdating' });
               await deleteOrderDetail({
                 id: orderDetail.id,
                 token: userState.jwt,
@@ -67,46 +64,33 @@ const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
           <IonSpinner />
         ) : !isError ? (
           <>
-            <IonCol>
-              <img
-                alt="card item"
-                style={{ maxWidth: '300px', maxHeight: '300px' }}
-                src={product.img?.formats.small.url}
-              />
-            </IonCol>
-            <IonCol>
-              <IonCardContent>
-                <IonCardSubtitle>{product.name}</IonCardSubtitle>
-                {product.price}
-              </IonCardContent>
-            </IonCol>
-            <IonCol>
-              <IonItem lines="full">
-                <IonLabel position="stacked">Cantidad</IonLabel>
-                <IonInput
-                  onIonChange={(e: any) => {
-                    setQuantity(e.target.value);
-                  }}
-                  onIonBlur={async () => {
-                    dispatch({ type: 'set-status', payload: 'isLoading' });
-                    await updateOrderDetail({
-                      id: orderDetail.id,
-                      data: { quantity },
-                      token: userState.jwt,
-                    });
-                    dispatch({
-                      type: 'update-quantity',
-                      payload: { quantity, orderDetail },
-                    });
-                    dispatch({ type: 'set-status', payload: 'isFetched' });
-                  }}
-                  type="number"
-                  value={quantity}
-                  maxlength={4}
-                />
-              </IonItem>
-              {isUpdating && <IonSpinner />}
-            </IonCol>
+            <img
+              alt="card item"
+              style={{ maxWidth: '300px', maxHeight: '300px' }}
+              src={product.img?.formats.small.url}
+            />
+            <IonCardContent>
+              <IonCardSubtitle>{product.name}</IonCardSubtitle>
+              {product.price}
+            </IonCardContent>
+            <QuantityInput
+              quantity={quantity}
+              setQuantity={setQuantity}
+              stock={product.stock}
+              onChange={async () => {
+                dispatch({ type: 'set-status', payload: 'isUpdating' });
+                await updateOrderDetail({
+                  id: orderDetail.id,
+                  data: { quantity },
+                  token: userState.jwt,
+                });
+                dispatch({
+                  type: 'update-quantity',
+                  payload: { quantity, orderDetail },
+                });
+                dispatch({ type: 'set-status', payload: 'isFetched' });
+              }}
+            />
           </>
         ) : null}
       </IonRow>

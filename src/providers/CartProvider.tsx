@@ -8,7 +8,10 @@ type Action =
   | { type: 'set-item'; payload: OrderDetail }
   | { type: 'delete-item'; payload: number }
   | { type: 'set-cart'; payload: Order }
-  | { type: 'set-status'; payload: 'isLoading' | 'isError' | 'isFetched' }
+  | {
+      type: 'set-status';
+      payload: 'isLoading' | 'isError' | 'isFetched' | 'isUpdating';
+    }
   | {
       type: 'update-quantity';
       payload: { quantity: number; orderDetail: OrderDetail };
@@ -17,7 +20,7 @@ type Action =
 type Dispatch = (action: Action) => void;
 type State = {
   cart: Order;
-  status: 'isLoading' | 'isError' | 'isFetched';
+  status: 'isLoading' | 'isError' | 'isFetched' | 'isUpdating';
 };
 type UserProviderProps = { children: React.ReactNode };
 

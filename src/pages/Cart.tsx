@@ -48,7 +48,14 @@ const CategoriesPage: React.FC = () => {
             <div slot="end" className="ion-padding-end">
               <div className="ion-padding-end ">
                 <IonTitle className="ion-padding-bottom">
-                  Total ${total}
+                  <IonRow>
+                    {'Total: '}
+                    {state.status === 'isUpdating' ? (
+                      <IonSpinner className="ion-margin-start" />
+                    ) : (
+                      `${total}`
+                    )}
+                  </IonRow>
                 </IonTitle>
                 <IonButton color="secondary">Continuar compra</IonButton>
               </div>
