@@ -14,16 +14,16 @@ const CategoriesPage: React.FC = () => {
 
   return (
     <Layout>
-      <IonList className="categories__list">
+      <IonList>
         <IonRow className="ion-justify-content-center">
           {isLoading ? (
-            <IonSpinner name="crescent" />
-          ) : isError ? (
-            <IonTitle>Error revise la conexión a internet</IonTitle>
-          ) : (
+            <IonSpinner />
+          ) : !isError ? (
             categories.map((category: Category) => (
               <CategoryItem key={category.id} category={category} />
             ))
+          ) : (
+            <IonTitle>Error revise la conexión a internet</IonTitle>
           )}
         </IonRow>
       </IonList>

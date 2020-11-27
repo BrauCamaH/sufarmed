@@ -11,7 +11,12 @@ interface CategoryProps {
 
 const CategoryItem: React.FC<CategoryProps> = ({ category }) => {
   return (
-    <IonItem className="categories__item" lines="none" button routerLink="/">
+    <IonItem
+      className="categories__item"
+      lines="none"
+      button
+      routerLink={`/products?category=${category.id}`}
+    >
       {category.img ? (
         <IonAvatar slot="start">
           <img src={category.img.url} alt="category" />
