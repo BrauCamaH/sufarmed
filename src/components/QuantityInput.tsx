@@ -46,7 +46,7 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
             debounce={800}
             onIonChange={(e: any) => {
               const newQuantity = parseInt(e.target.value);
-              if (newQuantity <= 1 || newQuantity > stock) {
+              if (newQuantity < 1 || newQuantity > stock) {
                 e.target.value = quantity;
               } else {
                 if (Number.isInteger(newQuantity)) {
