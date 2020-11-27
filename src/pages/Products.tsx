@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   IonGrid,
   IonRow,
@@ -8,60 +8,107 @@ import {
   IonToolbar,
 } from '@ionic/react';
 import ProductCard from '../components/Product';
-import Filter from '../components/Filter';
 import { Product } from '../models/Product';
 
 import {
+  useGetCountByCategory,
+  useGetCountByName,
   useGetProductsByCategory,
   useGetProductsByName,
 } from '../api/products';
 import { useLocation } from 'react-router';
 import Layout from '../components/Layout';
+import Pagination from './Pagination';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
 };
 
-const Products: React.FC = () => {
-  const text = useQuery().get('q') || '';
+const ProductsByCategory: React.FC = () => {
+  const [page, setPage] = useState(1);
   const category = useQuery().get('category') || '';
-  const { isLoading, data: products, isError, refetch } = useGetProductsByName(
-    text,
-    1
+  const { data: count } = useGetCountByCategory(parseInt(category), page);
+  const { isLoading, data: products, isError } = useGetProductsByCategory(
+    parseInt(category),
+    page
   );
-  const {
-    isLoading: isLoadingCategory,
-    data: productsByCategory,
-  } = useGetProductsByCategory(parseInt(category), 1);
-
-  useEffect(() => {
-    refetch();
-  }, [text]);
 
   return (
     <Layout>
       <IonHeader>
-        <IonToolbar>Resultados: {} productos</IonToolbar>
+        <IonToolbar>Resultados: {count} productos</IonToolbar>
       </IonHeader>
-      {isLoading || isLoadingCategory ? (
+      {isLoading ? (
         <IonSpinner />
       ) : !isError ? (
         <IonGrid fixed>
           <IonRow>
-            {category
-              ? products.map &&
-                productsByCategory.map((product: Product) => (
-                  <IonCol key={product.id} size="10" size-md="4">
-                    <ProductCard product={product} />
-                  </IonCol>
-                ))
-              : products.map &&
-                products.map((product: Product) => (
-                  <IonCol key={product.id} size="10" size-md="4">
-                    <ProductCard product={product} />
-                  </IonCol>
-                ))}
+            {products.map((product: Product) => (
+              <IonCol key={product.id} size="10" size-md="4">
+                <ProductCard product={product} />
+              </IonCol>
+            ))}
           </IonRow>
+          <Pagination
+            page={page}
+            setPage={setPage}
+            nItems={Math.ceil(count / 10)}
+          />
+        </IonGrid>
+      ) : (
+        <p>Error revise conexión a internet</p>
+      )}
+    </Layout>
+  );
+};
+
+const Products: React.FC = () => {
+  const [page, setPage] = useState(1);
+  const text = useQuery().get('q') || '';
+  const { data: count } = useGetCountByName(text, page);
+  const { isLoading, data: products, isError, refetch } = useGetProductsByName(
+    text,
+    page
+  );
+
+  const contentRef = useRef<HTMLIonContentElement | null>(null);
+
+  const scrollToTop = () => {
+    contentRef.current && contentRef.current.scrollToTop(0);
+  };
+
+  useEffect(() => {
+    setPage(1);
+  }, [text]);
+
+  useEffect(() => {
+    refetch();
+    scrollToTop();
+  }, [text, page]);
+
+  return (
+    <Layout contentRef={contentRef}>
+      <IonHeader>
+        <IonToolbar className="ion-padding-start">
+          Resultado: {count} productos
+        </IonToolbar>
+      </IonHeader>
+      {isLoading ? (
+        <IonSpinner />
+      ) : !isError ? (
+        <IonGrid fixed>
+          <IonRow>
+            {products.map((product: Product) => (
+              <IonCol key={product.id} size="10" size-md="4">
+                <ProductCard product={product} />
+              </IonCol>
+            ))}
+          </IonRow>
+          <Pagination
+            page={page}
+            setPage={setPage}
+            nItems={Math.ceil(count / 10)}
+          />
         </IonGrid>
       ) : (
         <p>Error revise conexión a internet</p>

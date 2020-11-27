@@ -5,11 +5,19 @@ import { IonContent, IonPage } from '@ionic/react';
 
 import './Layout.css';
 
-const Layout: React.FC = ({ children }) => {
+interface LayoutProps {
+  contentRef?: any;
+}
+
+const Layout: React.FC<LayoutProps> = ({ children, contentRef }) => {
   return (
     <IonPage>
-      <IonContent className="layout__content">
-        <Appbar />
+      <IonContent
+        ref={contentRef}
+        className="layout__content"
+        scrollEvents={true}
+      >
+        <Appbar ref={contentRef} />
         <div id="content">{children}</div>
         <Footer />
       </IonContent>
