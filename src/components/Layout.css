@@ -1,5 +1,6 @@
 @media (min-width: 768px) {
-  .layout__content {
-    min-height: 700px;
+  #content {
+    min-height: 100%;
+    position: relative;
   }
 }

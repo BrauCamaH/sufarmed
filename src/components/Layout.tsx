@@ -10,7 +10,7 @@ const Layout: React.FC = ({ children }) => {
     <IonPage>
       <IonContent className="layout__content">
         <Appbar />
-        {children}
+        <div id="content">{children}</div>
         <Footer />
       </IonContent>
     </IonPage>
