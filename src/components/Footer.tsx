@@ -14,7 +14,7 @@ const Link: React.FC<LinkProps> = ({ to, href, title, children }) => {
   return (
     <IonRow>
       {href ? (
-        <a href={href}>children</a>
+        <a href={href}>{children}</a>
       ) : (
         <NavLink
           className={title ? 'footer__item--title' : 'footer__item'}
@@ -32,10 +32,10 @@ const Footer: React.FC = () => {
     <IonFooter className="footer-content">
       <IonToolbar color="secondary">
         <IonGrid id="footer">
-          <IonRow>
+          <IonRow className="ion-margin-start">
             <IonCol>
               <Link title>Acerca de</Link>
-              <Link>Sufarmed</Link>
+              <Link href="https://www.sufarmed.com/">Sufarmed</Link>
             </IonCol>
             <IonCol>
               <Link title>Ayuda</Link>

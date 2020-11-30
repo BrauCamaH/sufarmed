@@ -29,4 +29,10 @@
 .footer__item--title {
   text-decoration: none;
   color: lightgray;
+  pointer-events: none;
+}
+
+a {
+  text-decoration: none;
+  color: white;
 }

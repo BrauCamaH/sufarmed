@@ -17,7 +17,7 @@ const Layout: React.FC<LayoutProps> = ({ children, contentRef }) => {
         className="layout__content"
         scrollEvents={true}
       >
-        <Appbar ref={contentRef} />
+        <Appbar />
         <div id="content">{children}</div>
         <Footer />
       </IonContent>
