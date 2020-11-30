@@ -50,16 +50,17 @@ const ProductsByCategory: React.FC = () => {
     <Layout contentRef={contentRef}>
       <IonHeader>
         <IonToolbar className="ion-padding-start">
-          Resultado: {count} productos
+          Resultado: {Math.ceil(count / 10) == page ? count % 10 : 10} {'de '}
+          {count}
         </IonToolbar>
       </IonHeader>
       {isLoading ? (
         <IonSpinner />
       ) : !isError ? (
         <IonGrid fixed>
-          <IonRow>
+          <IonRow className="ion-margin-bottom">
             {products.map((product: Product) => (
-              <IonCol key={product.id} size="10" size-md="4">
+              <IonCol key={product.id} size="8.5" size-md="4">
                 <ProductCard product={product} />
               </IonCol>
             ))}
@@ -105,7 +106,8 @@ const Products: React.FC = () => {
     <Layout contentRef={contentRef}>
       <IonHeader>
         <IonToolbar className="ion-padding-start">
-          Resultado: {count} productos
+          Resultado: {Math.ceil(count / 10) == page ? count % 10 : 10} {'de '}
+          {count}
         </IonToolbar>
       </IonHeader>
       {isLoading ? (
@@ -114,7 +116,7 @@ const Products: React.FC = () => {
         <IonGrid fixed>
           <IonRow>
             {products.map((product: Product) => (
-              <IonCol key={product.id} size="10" size-md="4">
+              <IonCol key={product.id} size="8.5" size-md="4">
                 <ProductCard product={product} />
               </IonCol>
             ))}

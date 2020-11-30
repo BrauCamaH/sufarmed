@@ -1,6 +1,6 @@
 import React from 'react';
 import { IonButton, IonCard, IonIcon, IonRow } from '@ionic/react';
-import { arrowBack, arrowForward } from 'ionicons/icons';
+import { chevronBack, chevronForward } from 'ionicons/icons';
 
 interface PaginationProps {
   page: number;
@@ -18,28 +18,29 @@ const Pagination: React.FC<PaginationProps> = ({ nItems, page, setPage }) => {
           setPage(page - 1);
         }}
       >
-        <IonIcon icon={arrowBack} />
+        <IonIcon icon={chevronBack} />
       </IonButton>
-      {Array.from(Array(nItems).keys()).map((item) => {
-        return (
-          <div key={item}>
-            {item + 1 == page ? (
-              <IonCard>
-                <IonButton fill="clear">{item + 1}</IonButton>
-              </IonCard>
-            ) : (
-              <IonButton
-                fill="clear"
-                onClick={() => {
-                  setPage(item + 1);
-                }}
-              >
-                {item + 1}
-              </IonButton>
-            )}
-          </div>
-        );
-      })}
+      {nItems &&
+        Array.from(Array(nItems).keys()).map((item) => {
+          return (
+            <div key={item}>
+              {item + 1 == page ? (
+                <IonCard>
+                  <IonButton fill="clear">{item + 1}</IonButton>
+                </IonCard>
+              ) : (
+                <IonButton
+                  fill="clear"
+                  onClick={() => {
+                    setPage(item + 1);
+                  }}
+                >
+                  {item + 1}
+                </IonButton>
+              )}
+            </div>
+          );
+        })}
       <IonButton
         fill="clear"
         disabled={page == nItems}
@@ -47,7 +48,7 @@ const Pagination: React.FC<PaginationProps> = ({ nItems, page, setPage }) => {
           setPage(page + 1);
         }}
       >
-        <IonIcon icon={arrowForward} />
+        <IonIcon icon={chevronForward} />
       </IonButton>
     </IonRow>
   );
