@@ -28,15 +28,30 @@ const ProductsByCategory: React.FC = () => {
   const [page, setPage] = useState(1);
   const category = useQuery().get('category') || '';
   const { data: count } = useGetCountByCategory(parseInt(category), page);
-  const { isLoading, data: products, isError } = useGetProductsByCategory(
-    parseInt(category),
-    page
-  );
+  const {
+    isLoading,
+    data: products,
+    isError,
+    refetch,
+  } = useGetProductsByCategory(parseInt(category), page);
+
+  const contentRef = useRef<HTMLIonContentElement | null>(null);
+
+  const scrollToTop = () => {
+    contentRef.current && contentRef.current.scrollToTop(0);
+  };
+
+  useEffect(() => {
+    refetch();
+    scrollToTop();
+  }, [page]);
 
   return (
-    <Layout>
+    <Layout contentRef={contentRef}>
       <IonHeader>
-        <IonToolbar>Resultados: {count} productos</IonToolbar>
+        <IonToolbar className="ion-padding-start">
+          Resultado: {count} productos
+        </IonToolbar>
       </IonHeader>
       {isLoading ? (
         <IonSpinner />
@@ -117,4 +132,10 @@ const Products: React.FC = () => {
   );
 };
 
-export default Products;
+export const ProductsOrProductsByCategory = () => {
+  const category = useQuery().get('category') || '';
+
+  return category ? <ProductsByCategory /> : <Products />;
+};
+
+export default ProductsOrProductsByCategory;

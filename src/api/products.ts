@@ -18,7 +18,7 @@ export const useGetCountByCategory = (categoryId: number, page: number) => {
 
   return useQuery(`count_product_by_${categoryId}`, async () => {
     const { data } = await axios.get(
-      `/products?category=${categoryId}&_start=${start}&_limit=10`
+      `/products/count?category=${categoryId}&_start=${start}&_limit=10`
     );
     return data;
   });
