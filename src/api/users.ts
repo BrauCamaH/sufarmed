@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import axios from 'axios';
+import axios from './index';
 import { useMutation } from 'react-query';
 
 import { User } from '../models/User';
@@ -39,7 +39,7 @@ export const createUser = async ({
     email,
     last_name,
     password,
-    username: name,
+    username: email,
   });
   return data;
 };

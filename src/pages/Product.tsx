@@ -36,17 +36,15 @@ import QuantityInput from '../components/QuantityInput';
 
 interface ProductPageProps {
   product: Product;
-  token?: string;
   user?: User;
 }
 
 interface AddToCartProps {
   product: Product;
-  token: string;
   user: User;
 }
 
-const AddtoCart: React.FC<AddToCartProps> = ({ product, token, user }) => {
+const AddtoCart: React.FC<AddToCartProps> = ({ product, user }) => {
   const state = useCartState();
   const dispatch = useCartDispatch();
   const [updateOrderDetail] = useUpdateOrderDetail();
@@ -62,12 +60,11 @@ const AddtoCart: React.FC<AddToCartProps> = ({ product, token, user }) => {
   const handleCreateOrder = async () => {
     if (state.cart.id === 0) {
       dispatch({ type: 'set-status', payload: 'isLoading' });
-      const order: Order = await createOrder({ token, user: user.id });
+      const order: Order = await createOrder({ user: user.id });
       const orderDetail = await createOrderDetail({
         orderId: order.id,
         price: product.price,
         productId: product.id,
-        token,
         quantity,
       });
       dispatch({ type: 'set-status', payload: 'isFetched' });
@@ -78,9 +75,8 @@ const AddtoCart: React.FC<AddToCartProps> = ({ product, token, user }) => {
     } else if (existingOrderDetail) {
       const newQuantity = existingOrderDetail.quantity + quantity;
       dispatch({ type: 'set-status', payload: 'isLoading' });
-      await updateOrderDetail({
+      const orderDetail = await updateOrderDetail({
         id: existingOrderDetail.id,
-        token,
         data: { quantity: existingOrderDetail.quantity + quantity },
       });
       dispatch({ type: 'set-status', payload: 'isFetched' });
@@ -88,7 +84,7 @@ const AddtoCart: React.FC<AddToCartProps> = ({ product, token, user }) => {
         type: 'update-quantity',
         payload: {
           quantity: newQuantity,
-          orderDetail: existingOrderDetail,
+          orderDetail: { ...orderDetail, product: orderDetail.product.id },
         },
       });
     } else {
@@ -97,7 +93,6 @@ const AddtoCart: React.FC<AddToCartProps> = ({ product, token, user }) => {
         orderId: state.cart.id,
         price: product.price,
         productId: product.id,
-        token,
         quantity: quantity,
       });
       dispatch({ type: 'set-status', payload: 'isFetched' });
@@ -196,8 +191,8 @@ const MainContent: React.FC<ProductPageProps> = ({ product, token, user }) => {
               </IonList>
             </IonCol>
             <IonCol size="auto">
-              {user && token ? (
-                <AddtoCart product={product} token={token} user={user} />
+              {user ? (
+                <AddtoCart product={product} user={user} />
               ) : (
                 <>
                   <QuantityInput
@@ -302,7 +297,7 @@ const ProductPage: React.FC = () => {
               />
             )}
           </IonRow>
-          <MainContent token={state.jwt} user={state.user} product={product} />
+          <MainContent user={state.user} product={product} />
           <Description product={product} />
           <Especifications product={product} />
         </>

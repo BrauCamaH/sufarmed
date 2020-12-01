@@ -43,7 +43,6 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
             inputmode="numeric"
             value={quantity}
             autofocus
-            debounce={800}
             onIonChange={(e: any) => {
               const newQuantity = parseInt(e.target.value);
               if (newQuantity < 1 || newQuantity > stock) {

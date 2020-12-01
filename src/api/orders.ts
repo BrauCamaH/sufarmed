@@ -1,4 +1,5 @@
-import axios from 'axios';
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import axios from './index';
 import { useMutation, useQuery } from 'react-query';
 
 export const useQueryCart = (token: string, userId?: number) => {
@@ -11,48 +12,23 @@ export const useQueryCart = (token: string, userId?: number) => {
 };
 
 export const updateOrder = async ({
-  token,
   id,
   data,
 }: {
-  token: string;
   id: number;
   data: { status: string; ship_date?: string };
 }): Promise<unknown> => {
-  const { data: response } = await axios.put(`/orders/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-    data,
-  });
+  const { data: response } = await axios.put(`/orders/${id}`, data);
   return response;
 };
 
-export const createOrder = async ({
-  token,
-  user,
-}: {
-  token: string;
-  user: number;
-}): Promise<any> => {
-  const { data } = await axios.post(
-    '/orders',
-    { status: 'created', user },
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
+export const createOrder = async ({ user }: { user: number }): Promise<any> => {
+  const { data } = await axios.post('/orders', { status: 'created', user });
   return data;
 };
 
-export const deleteOrder = async ({
-  token,
-  id,
-}: {
-  token: string;
-  id: number;
-}): Promise<any> => {
-  const { data } = await axios.delete(`/orders/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export const deleteOrder = async ({ id }: { id: number }): Promise<any> => {
+  const { data } = await axios.delete(`/orders/${id}`);
   return data;
 };
 

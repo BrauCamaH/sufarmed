@@ -20,7 +20,6 @@ import {
   useDeleteOrderDetail,
   useUpdateOrderDetail,
 } from '../api/order-details';
-import { useUserState } from '../providers/UserProvider';
 import QuantityInput from './QuantityInput';
 
 export interface CartProps {
@@ -32,7 +31,6 @@ const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
   const { isLoading, isError, data: product } = useGetProductById(
     orderDetail.product
   );
-  const userState = useUserState();
   const [deleteOrderDetail] = useDeleteOrderDetail();
   const [updateOrderDetail] = useUpdateOrderDetail();
 
@@ -49,10 +47,9 @@ const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
               dispatch({ type: 'set-status', payload: 'isUpdating' });
               await deleteOrderDetail({
                 id: orderDetail.id,
-                token: userState.jwt,
               });
-              dispatch({ type: 'set-status', payload: 'isFetched' });
               dispatch({ type: 'delete-item', payload: orderDetail.id });
+              dispatch({ type: 'set-status', payload: 'isFetched' });
             }}
           >
             <IonIcon icon={trash} />
@@ -82,7 +79,6 @@ const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
                 await updateOrderDetail({
                   id: orderDetail.id,
                   data: { quantity },
-                  token: userState.jwt,
                 });
                 dispatch({
                   type: 'update-quantity',

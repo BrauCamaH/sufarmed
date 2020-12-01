@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import { User } from '../models/User';
+import api from '../api/';
 
 type Action = { type: 'set-user'; payload: User } | { type: 'sign-out' };
 type Dispatch = (action: Action) => void;
@@ -25,6 +26,16 @@ const userReducer = (state: State, action: Action): any => {
 
 const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(userReducer, initialState);
+
+  useEffect(() => {
+    if (state.user) {
+      api.defaults.headers.common['Authorization'] = `Bearer ${state.jwt}`;
+    }
+
+    return () => {
+      delete api.defaults.headers.common['Authorization'];
+    };
+  }, [state]);
 
   return (
     <UserStateContext.Provider value={state}>

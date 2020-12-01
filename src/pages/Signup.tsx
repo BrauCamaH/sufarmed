@@ -18,18 +18,17 @@ import {
 } from '@ionic/react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Redirect, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 import Appbar from '../components/MinimalAppBar';
 import { useCreateUser } from '../api/users';
-import { useUserDispatch, useUserState } from '../providers/UserProvider';
+import { useUserDispatch } from '../providers/UserProvider';
 
 import './Login.css';
 
 const SignUp: React.FC = () => {
   const { register, handleSubmit, errors } = useForm();
   const dispatch = useUserDispatch();
-  const state = useUserState();
   const [mutation, { isLoading, isError }] = useCreateUser();
 
   const handleSignUp = async (data: {
@@ -48,11 +47,6 @@ const SignUp: React.FC = () => {
     });
     dispatch({ type: 'set-user', payload: response });
   };
-
-  if (state.user) {
-    return <Redirect to="home" />;
-  }
-
   return (
     <IonPage>
       <IonContent>

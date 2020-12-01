@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import axios from 'axios';
+import axios from './index';
 import { useQuery } from 'react-query';
 
 export const useGetCountByName = (text: string, page: number) => {

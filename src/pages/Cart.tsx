@@ -16,6 +16,11 @@ import CartItem from '../components/CartItem';
 import { OrderDetail } from '../models/OrderDetail';
 import { useCartState } from '../providers/CartProvider';
 
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+});
+
 const CategoriesPage: React.FC = () => {
   const state = useCartState();
   const [total, setTotal] = useState(0);
@@ -26,7 +31,7 @@ const CategoriesPage: React.FC = () => {
       (item) => (calculatedTotal += item.price * item.quantity)
     );
     setTotal(calculatedTotal);
-  }, [state.status]);
+  }, [state.cart.order_details]);
 
   return (
     <Layout>
@@ -53,7 +58,7 @@ const CategoriesPage: React.FC = () => {
                     {state.status === 'isUpdating' ? (
                       <IonSpinner className="ion-margin-start" />
                     ) : (
-                      `${total}`
+                      `${formatter.format(total)}`
                     )}
                   </IonRow>
                 </IonTitle>
