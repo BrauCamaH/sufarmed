@@ -15,6 +15,7 @@ import Help from './pages/Help';
 
 import { CartProvider } from './providers/CartProvider';
 import { useUserState } from './providers/UserProvider';
+import Checkout from './pages/Checkout';
 
 const UnAuthApp: React.FC = () => (
   <IonApp>
@@ -31,6 +32,11 @@ const UnAuthApp: React.FC = () => (
           <Route path="/signup" component={Signup} exact={true} />
 
           <Route exact path="/cart" render={() => <Redirect to="/login" />} />
+          <Route
+            exact
+            path="/checkout"
+            render={() => <Redirect to="/login" />}
+          />
           <Route
             exact
             path="/account"
@@ -57,7 +63,7 @@ const AuthApp: React.FC = () => (
             <Route path="/cart" component={Cart} exact={true} />
             <Route path="/account" component={Account} exact={true} />
             <Route path="/help" component={Help} exact={true} />
-
+            <Route path="/checkout" component={Checkout} exact={true} />
             <Route exact path="/login" render={() => <Redirect to="/home" />} />
             <Route
               exact

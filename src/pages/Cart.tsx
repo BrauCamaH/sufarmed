@@ -62,7 +62,13 @@ const CategoriesPage: React.FC = () => {
                     )}
                   </IonRow>
                 </IonTitle>
-                <IonButton color="secondary">Continuar compra</IonButton>
+                <IonButton
+                  routerLink="/checkout"
+                  routerDirection="none"
+                  color="secondary"
+                >
+                  Continuar compra
+                </IonButton>
               </div>
             </div>
           </IonToolbar>

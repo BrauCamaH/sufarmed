@@ -44,10 +44,19 @@ export const createUser = async ({
   return data;
 };
 
+const updateUser = async ({ user }: { user: User }) => {
+  const { data } = await axios.put('/user', user);
+  return data;
+};
+
 export const useLogin = () => {
   return useMutation(login);
 };
 
 export const useCreateUser = () => {
   return useMutation(createUser);
+};
+
+export const useUpdateUser = () => {
+  return useMutation(updateUser);
 };

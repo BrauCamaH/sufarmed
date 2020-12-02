@@ -131,19 +131,19 @@ const AddtoCart: React.FC<AddToCartProps> = ({ product, user }) => {
         setQuantity={setQuantity}
         stock={product.stock}
       />
-      <IonButton color="secondary">Comprar</IonButton>
       <IonButton color="secondary" onClick={handleCreateOrder}>
+        Agregar a carrito
         {state.status === 'isLoading' ? (
           <IonSpinner />
         ) : (
-          <IonIcon icon={cart} />
+          <IonIcon className="ion-margin-start" icon={cart} />
         )}
       </IonButton>
     </>
   );
 };
 
-const MainContent: React.FC<ProductPageProps> = ({ product, token, user }) => {
+const MainContent: React.FC<ProductPageProps> = ({ product, user }) => {
   const [showToast, setShowToast] = useState(false);
   const [quantity, setQuantity] = useState(1);
 
@@ -200,7 +200,6 @@ const MainContent: React.FC<ProductPageProps> = ({ product, token, user }) => {
                     setQuantity={setQuantity}
                     stock={product.stock}
                   />
-                  <IonButton color="secondary">Comprar</IonButton>
                   <IonButton
                     color="secondary"
                     type="submit"
@@ -208,7 +207,8 @@ const MainContent: React.FC<ProductPageProps> = ({ product, token, user }) => {
                       setShowToast(true);
                     }}
                   >
-                    <IonIcon icon={cart} />
+                    Agregar a carrito
+                    <IonIcon className="ion-margin-start" icon={cart} />
                   </IonButton>
                 </>
               )}

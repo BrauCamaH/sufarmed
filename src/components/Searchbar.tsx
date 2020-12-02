@@ -29,7 +29,6 @@ const SearhModal: React.FC = () => {
             name="text"
             value={text}
             inputMode="search"
-            enterkeyhint="enter"
             placeholder="Buscar productos..."
             type="search"
           />
