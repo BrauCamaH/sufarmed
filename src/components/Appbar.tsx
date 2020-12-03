@@ -153,6 +153,7 @@ const AuthAppbar: React.FC = () => {
                     <IonItem
                       button
                       onClick={() => {
+                        localStorage.removeItem('sufarmedAuth');
                         dispatch({ type: 'sign-out' });
                       }}
                     >
