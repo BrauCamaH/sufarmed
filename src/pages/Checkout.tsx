@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+  IonBackdrop,
   IonButton,
   IonCard,
   IonCol,
   IonContent,
   IonHeader,
-  IonIcon,
   IonInput,
   IonItem,
   IonItemDivider,
@@ -13,82 +13,147 @@ import {
   IonList,
   IonPage,
   IonRow,
+  IonSpinner,
+  IonText,
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
 import CheckoutItem from '../components/CheckoutItem';
 import { useCartState } from '../providers/CartProvider';
 import Appbar from '../components/MinimalAppBar';
-import { chevronBack, chevronForward } from 'ionicons/icons';
+import {
+  CardElement,
+  Elements,
+  useElements,
+  useStripe,
+} from '@stripe/react-stripe-js';
+import {
+  loadStripe,
+  PaymentIntent,
+  StripeCardElementChangeEvent,
+  StripeError,
+} from '@stripe/stripe-js';
+import { useLocation } from 'react-router-dom';
 
-interface ShippingFormProps {
-  setIsInformation: (isInformation: boolean) => void;
-}
+import './Checkout.css';
+import { useForm } from 'react-hook-form';
+import { Order } from '../models/Order';
+import { useCreatePayment } from '../api/orders';
+import PaymentBackdrop from '../components/PaymentBackdrop';
 
-const ShippingForm: React.FC<ShippingFormProps> = ({ setIsInformation }) => {
-  return (
-    <form className="ion-margin">
-      <IonItem>
-        <IonLabel position="floating">Nombre y apellido</IonLabel>
-        <IonInput name="name" />
-      </IonItem>
-      <IonRow>
-        <IonItem>
-          <IonLabel position="floating">Calle</IonLabel>
-          <IonInput name="street" />
-        </IonItem>
-        <IonItem>
-          <IonLabel position="floating">Número</IonLabel>
-          <IonInput name="number" />
-        </IonItem>
-      </IonRow>
-      <IonItem>
-        <IonLabel position="floating">Código postal</IonLabel>
-        <IonInput name="postal-code" />
-      </IonItem>
-      <IonRow>
-        <IonItem>
-          <IonLabel position="floating">Ciudad</IonLabel>
-          <IonInput name="city" />
-        </IonItem>
-        <IonItem>
-          <IonLabel position="floating">Estado</IonLabel>
-          <IonInput name="state" />
-        </IonItem>
-      </IonRow>
-      <IonItem>
-        <IonLabel position="floating">Telefono</IonLabel>
-        <IonInput name="phone" />
-      </IonItem>
-      <IonToolbar>
-        <IonButton
-          slot="end"
-          color="secondary"
-          onClick={() => {
-            setIsInformation(true);
-          }}
-        >
-          Continuar con el pago
-        </IonButton>
-      </IonToolbar>
-    </form>
-  );
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
 };
 
-const Payment: React.FC = () => {
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+});
+
+interface CheckoutFormProps {
+  order: Order;
+  total: number;
+}
+
+const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
+  const { handleSubmit } = useForm();
+  const stripe = useStripe();
+  const elements = useElements();
+  const [createPayment, { isLoading }] = useCreatePayment();
+  const [cardEvent, setCardEvent] = useState<StripeCardElementChangeEvent>();
+  const [cardError, setCardError] = useState<StripeError>();
+  const [loadingPayment, setLoadingPayment] = useState(false);
+
+  const [paymentIntent, setPaymentIntent] = useState<PaymentIntent>();
+  const createPaymentIntent = async () => {
+    const InitialPaymentIntent = await createPayment({
+      amount: Math.floor(total * 100),
+    });
+    setPaymentIntent(InitialPaymentIntent);
+  };
+
+  useEffect(() => {
+    createPaymentIntent();
+  }, []);
+
+  const handlePay = async () => {
+    if (!stripe || !elements) return;
+    const cardElement = elements.getElement(CardElement);
+    if (cardElement && paymentIntent) {
+      cardElement.on('change', function (event) {
+        setCardEvent(event);
+      });
+      // Confirm Card Payment
+      setLoadingPayment(true);
+      if (paymentIntent.client_secret) {
+        const {
+          paymentIntent: updatedPaymentIntent,
+          error,
+        } = await stripe.confirmCardPayment(paymentIntent.client_secret, {
+          payment_method: { card: cardElement },
+        });
+        if (error) {
+          console.error(error);
+          setCardError(error);
+          error.payment_intent && setPaymentIntent(error.payment_intent);
+          setLoadingPayment(false);
+        } else {
+          setPaymentIntent(updatedPaymentIntent);
+          setLoadingPayment(false);
+        }
+      }
+    }
+  };
+
   return (
-    <IonRow>
-      <IonButton fill="clear">
-        <IonIcon icon={chevronBack} />
-        Regresar a información
-      </IonButton>
-    </IonRow>
+    <>
+      <form className="ion-margin" onSubmit={handleSubmit(handlePay)}>
+        {<PaymentBackdrop paymentIntent={paymentIntent} />}
+        <IonTitle className="ion-margin-top ion-margin-bottom">
+          Datos de la tarjeta
+        </IonTitle>
+        <CardElement
+          options={{
+            style: {
+              base: {
+                fontSize: '16px',
+                color: '#424770',
+                '::placeholder': {
+                  color: '#aab7c4',
+                },
+              },
+              invalid: {
+                color: '#9e2146',
+              },
+            },
+          }}
+        />
+        {cardEvent?.error ? (
+          <IonText color="danger">
+            <p>{cardEvent.error.message}</p>
+          </IonText>
+        ) : cardError ? (
+          <IonText color="danger">
+            <p>{cardError.message}</p>
+          </IonText>
+        ) : (
+          ''
+        )}
+        <IonButton slot="start" color="secondary" type="submit">
+          Realizar Pago ${total.toFixed(2)}{' '}
+          {isLoading || loadingPayment ? <IonSpinner /> : ''}
+        </IonButton>
+      </form>
+    </>
   );
 };
 
 const Checkout: React.FC = () => {
+  const total = useQuery().get('total') || '';
   const state = useCartState();
-  const [isInformation, setIsInformation] = useState(false);
+  const stripePromise = loadStripe(
+    'pk_test_F66BY1l50SclBxSGZnve6Mug00lSATA0ll'
+  );
 
   return (
     <IonPage>
@@ -109,7 +174,9 @@ const Checkout: React.FC = () => {
               <IonList lines="none">
                 <IonItem>
                   <IonTitle slot="start">Total</IonTitle>
-                  <IonTitle slot="end">$000,00</IonTitle>
+                  <IonTitle slot="end">
+                    {formatter.format(parseInt(total))}
+                  </IonTitle>
                 </IonItem>
               </IonList>
             </IonCard>
@@ -118,32 +185,12 @@ const Checkout: React.FC = () => {
             <IonCard>
               <IonHeader>
                 <IonToolbar>
-                  <IonItem
-                    button
-                    lines="none"
-                    slot="start"
-                    onClick={() => {
-                      setIsInformation(false);
-                    }}
-                  >
-                    <IonTitle>Información</IonTitle>
-                  </IonItem>
-                  <IonIcon size="large" slot="start" icon={chevronForward} />
-                  <IonItem
-                    disabled={!isInformation}
-                    button
-                    lines="none"
-                    slot="start"
-                  >
-                    <IonTitle>Pago</IonTitle>
-                  </IonItem>
+                  <IonTitle>Realizar compra</IonTitle>
                 </IonToolbar>
               </IonHeader>
-              {isInformation ? (
-                <Payment />
-              ) : (
-                <ShippingForm setIsInformation={setIsInformation} />
-              )}
+              <Elements stripe={stripePromise}>
+                <CheckoutForm order={state.cart} total={+total} />
+              </Elements>
             </IonCard>
           </IonCol>
         </IonRow>

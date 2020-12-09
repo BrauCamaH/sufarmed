@@ -9,6 +9,11 @@ import React from 'react';
 import { useGetProductById } from '../api/products';
 import { OrderDetail } from '../models/OrderDetail';
 
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+});
+
 interface CheckoutItemProps {
   orderDetail: OrderDetail;
 }
@@ -33,13 +38,15 @@ const CheckoutItem: React.FC<CheckoutItemProps> = ({ orderDetail }) => {
               <IonCardSubtitle>
                 Cantidad: {orderDetail.quantity}
               </IonCardSubtitle>
-              <IonCardSubtitle> Precio : {orderDetail.price}</IonCardSubtitle>
+              <IonCardSubtitle>
+                Precio : {formatter.format(orderDetail.price)}
+              </IonCardSubtitle>
             </IonCol>
           </IonRow>
           <IonItem lines="none">
             <IonCardSubtitle slot="start">Precio total: </IonCardSubtitle>
             <IonCardSubtitle slot="end">
-              {orderDetail.price * orderDetail.quantity}
+              {formatter.format(orderDetail.price * orderDetail.quantity)}
             </IonCardSubtitle>
           </IonItem>
         </>

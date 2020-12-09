@@ -63,7 +63,7 @@ const CategoriesPage: React.FC = () => {
                   </IonRow>
                 </IonTitle>
                 <IonButton
-                  routerLink="/checkout"
+                  routerLink={`/checkout?total=${total}`}
                   routerDirection="none"
                   color="secondary"
                 >

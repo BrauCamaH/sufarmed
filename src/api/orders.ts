@@ -1,3 +1,4 @@
+import { Order } from './../models/Order';
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import axios from './index';
 import { useMutation, useQuery } from 'react-query';
@@ -32,6 +33,11 @@ export const deleteOrder = async ({ id }: { id: number }): Promise<any> => {
   return data;
 };
 
+export const createPayment = async ({ amount }: { amount: number }) => {
+  const { data } = await axios.post(`/payments`, { amount });
+  return data;
+};
+
 export const useCreateOrder = () => {
   return useMutation(createOrder);
 };
@@ -42,4 +48,8 @@ export const useDeleteOrder = () => {
 
 export const useUpdateOrder = () => {
   return useMutation(updateOrder);
+};
+
+export const useCreatePayment = () => {
+  return useMutation(createPayment);
 };
