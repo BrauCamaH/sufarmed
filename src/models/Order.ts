@@ -5,4 +5,5 @@ export interface Order {
   status: string;
   payment: 'cash' | 'credit_card' | 'debit_card';
   order_details: OrderDetail[];
+  updated_at?: string;
 }

@@ -7,7 +7,7 @@ import {
   IonTitle,
 } from '@ionic/react';
 import { PaymentIntent } from '@stripe/stripe-js';
-import React from 'react';
+import React, { useState } from 'react';
 
 import './PaymentBackdrop.css';
 
@@ -16,6 +16,7 @@ interface PaymentBackdropProps {
 }
 
 const PaymentBackdrop: React.FC<PaymentBackdropProps> = ({ paymentIntent }) => {
+  const [open, setOpen] = useState(true);
   if (!paymentIntent) {
     return (
       <IonModal id="modal-backdrop" isOpen backdropDismiss={false}>
@@ -23,7 +24,7 @@ const PaymentBackdrop: React.FC<PaymentBackdropProps> = ({ paymentIntent }) => {
           style={{ width: '100%', height: '100%' }}
           className="ion-justify-content-center ion-align-items-center"
         >
-          <IonTitle color="light">Su pago se esta cargando</IonTitle>
+          <IonTitle>Su pago se esta cargando</IonTitle>
           <IonSpinner />
         </IonRow>
       </IonModal>
@@ -34,7 +35,7 @@ const PaymentBackdrop: React.FC<PaymentBackdropProps> = ({ paymentIntent }) => {
   return (
     <IonModal
       id="modal-backdrop"
-      isOpen={status !== 'requires_payment_method'}
+      isOpen={status !== 'requires_payment_method' && open}
       backdropDismiss={false}
     >
       <IonRow
@@ -45,10 +46,23 @@ const PaymentBackdrop: React.FC<PaymentBackdropProps> = ({ paymentIntent }) => {
           <IonRow className="ion-justify-content-center">
             <IonCol>
               <IonTitle color="light">Su pago ser realizó con éxito</IonTitle>
-              <IonButton routerLink="/home" routerDirection="root">
+              <IonButton
+                fill="clear"
+                routerLink="/home"
+                routerDirection="root"
+                onClick={() => {
+                  setOpen(false);
+                }}
+              >
                 Ir a inicio
               </IonButton>
-              <IonButton routerLink="/orders" routerDirection="root">
+              <IonButton
+                routerLink="/orders"
+                routerDirection="root"
+                onClick={() => {
+                  setOpen(false);
+                }}
+              >
                 Ver mis compras
               </IonButton>
             </IonCol>
@@ -58,7 +72,13 @@ const PaymentBackdrop: React.FC<PaymentBackdropProps> = ({ paymentIntent }) => {
             <IonTitle color="light">
               Su pago fue cancelado por algún motivo
             </IonTitle>
-            <IonButton routerLink="/home" routerDirection="root">
+            <IonButton
+              routerLink="/home"
+              routerDirection="root"
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
               Ir a inicio
             </IonButton>
           </>

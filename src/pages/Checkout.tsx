@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import {
-  IonBackdrop,
   IonButton,
   IonCard,
   IonCol,
   IonContent,
   IonHeader,
-  IonInput,
   IonItem,
   IonItemDivider,
-  IonLabel,
   IonList,
   IonPage,
   IonRow,
@@ -19,7 +16,7 @@ import {
   IonToolbar,
 } from '@ionic/react';
 import CheckoutItem from '../components/CheckoutItem';
-import { useCartState } from '../providers/CartProvider';
+import { useCartDispatch, useCartState } from '../providers/CartProvider';
 import Appbar from '../components/MinimalAppBar';
 import {
   CardElement,
@@ -38,7 +35,7 @@ import { useLocation } from 'react-router-dom';
 import './Checkout.css';
 import { useForm } from 'react-hook-form';
 import { Order } from '../models/Order';
-import { useCreatePayment } from '../api/orders';
+import { useCreatePayment, useUpdateOrder } from '../api/orders';
 import PaymentBackdrop from '../components/PaymentBackdrop';
 
 const useQuery = () => {
@@ -59,7 +56,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
   const { handleSubmit } = useForm();
   const stripe = useStripe();
   const elements = useElements();
+  const dispatch = useCartDispatch();
   const [createPayment, { isLoading }] = useCreatePayment();
+  const [updateOrder] = useUpdateOrder();
   const [cardEvent, setCardEvent] = useState<StripeCardElementChangeEvent>();
   const [cardError, setCardError] = useState<StripeError>();
   const [loadingPayment, setLoadingPayment] = useState(false);
@@ -100,6 +99,21 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
         } else {
           setPaymentIntent(updatedPaymentIntent);
           setLoadingPayment(false);
+          updateOrder({
+            id: order.id,
+            data: { status: 'paid' },
+          });
+
+          dispatch({
+            type: 'set-cart',
+            payload: {
+              id: 0,
+              order_details: [],
+              payment: 'cash',
+              ship_date: '',
+              status: 'created',
+            },
+          });
         }
       }
     }

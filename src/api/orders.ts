@@ -1,4 +1,3 @@
-import { Order } from './../models/Order';
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import axios from './index';
 import { useMutation, useQuery } from 'react-query';
@@ -6,6 +5,15 @@ import { useMutation, useQuery } from 'react-query';
 export const useQueryCart = (token: string, userId?: number) => {
   return useQuery(`orders_by_${userId}_${token}`, async () => {
     const { data } = await axios.get(`/orders?user=${userId}&status=created`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return data;
+  });
+};
+
+export const useQueryPaidOrders = (token: string, userId?: number) => {
+  return useQuery(`paid_orders_by_${userId}_${token}`, async () => {
+    const { data } = await axios.get(`/orders?user=${userId}&status=paid`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return data;

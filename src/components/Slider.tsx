@@ -14,8 +14,14 @@ interface HomeSlides {
 // Optional parameters to pass to the swiper instance.
 // See http://idangero.us/swiper/api/ for valid options.
 const slideOpts = {
-  initialSlide: 0,
-  speed: 400,
+  slidesPerView: 1,
+  autoplay: {
+    delay: 5000,
+  },
+  pagination: {
+    el: '.swiper-pagination',
+    type: 'bullets',
+  },
 };
 
 const useGetSliderImages = () => {
@@ -33,7 +39,7 @@ const Slider: React.FC = () => {
       {isLoading ? (
         <IonThumbnail />
       ) : !isError ? (
-        <IonSlides pager={true} options={slideOpts}>
+        <IonSlides pager options={slideOpts}>
           {slides?.imgs.map((img: Multimedia) => (
             <IonSlide key={img.name} className="slide-image">
               <img src={img.url} alt="slider img" className="slide-image" />

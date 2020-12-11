@@ -127,6 +127,7 @@ const Account: React.FC = () => {
             <IonItem
               button
               lines={location.pathname.startsWith('/account') ? 'full' : 'none'}
+              routerLink="/account"
             >
               <h1
                 className={
@@ -141,6 +142,7 @@ const Account: React.FC = () => {
             <IonItem
               button
               lines={location.pathname.startsWith('/orders') ? 'full' : 'none'}
+              routerLink="/orders"
             >
               <h1
                 className={
