@@ -1,0 +1,9 @@
+#image-item {
+  width: 100px;
+}
+
+@media (max-width: 350px) {
+  #image-item {
+    display: none;
+  }
+}

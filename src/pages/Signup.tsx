@@ -12,28 +12,64 @@ import {
   IonList,
   IonPage,
   IonRow,
+  IonSpinner,
   IonTitle,
+  IonToast,
 } from '@ionic/react';
 import React from 'react';
+import { useForm } from 'react-hook-form';
+import { withRouter } from 'react-router-dom';
+
 import Appbar from '../components/MinimalAppBar';
+import { useCreateUser } from '../api/users';
+import { useUserDispatch } from '../providers/UserProvider';
 
 import './Login.css';
 
-const login = (e: React.FormEvent) => {
-  e.preventDefault();
-};
+const SignUp: React.FC = () => {
+  const { register, handleSubmit, errors } = useForm();
+  const dispatch = useUserDispatch();
+  const [mutation, { isLoading, isError }] = useCreateUser();
 
-const Login: React.FC = () => {
+  const handleSignUp = async (data: {
+    name: string;
+    last_name: string;
+    email: string;
+    password: string;
+  }) => {
+    const { email, last_name, name, password } = data;
+
+    const response: any = await mutation({
+      name,
+      last_name,
+      email,
+      password,
+    });
+    dispatch({ type: 'set-user', payload: response });
+  };
   return (
     <IonPage>
       <IonContent>
         <Appbar title="Registrarse" />
+        <IonToast
+          position="top"
+          color="danger"
+          isOpen={isError}
+          duration={3000}
+          message="El usuario ya existe"
+          buttons={[
+            {
+              text: 'Aceptar',
+              role: 'cancel',
+            },
+          ]}
+        />
         <IonCard className="login-form">
           <IonCardHeader>
             <IonTitle>Crear un cuenta en sufarmed</IonTitle>
           </IonCardHeader>
           <IonCardContent>
-            <form noValidate onSubmit={login}>
+            <form noValidate onSubmit={handleSubmit(handleSignUp)}>
               <IonList>
                 <IonRow>
                   <IonCol>
@@ -44,6 +80,7 @@ const Login: React.FC = () => {
                           Nombre
                         </IonLabel>
                         <IonInput
+                          ref={register({ required: true })}
                           name="firtsname"
                           type="text"
                           spellCheck={false}
@@ -51,14 +88,28 @@ const Login: React.FC = () => {
                           required
                         />
                       </IonItem>
+                      {errors.firtsname && (
+                        <IonTitle color="danger">
+                          <p>Se requiere nombre</p>
+                        </IonTitle>
+                      )}
                     </IonRow>
                     <IonRow>
                       <IonItem>
                         <IonLabel position="stacked" color="primary">
                           Apellido
                         </IonLabel>
-                        <IonInput name="lastname" type="text" />
+                        <IonInput
+                          ref={register({ required: true })}
+                          name="lastname"
+                          type="text"
+                        />
                       </IonItem>
+                      {errors.lastname && (
+                        <IonTitle color="danger">
+                          <p>Se requiere apellido</p>
+                        </IonTitle>
+                      )}
                     </IonRow>
                   </IonCol>
                   <IonCol>
@@ -69,6 +120,11 @@ const Login: React.FC = () => {
                           Email
                         </IonLabel>
                         <IonInput
+                          ref={register({
+                            required: true,
+                            maxLength: 20,
+                            pattern: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g,
+                          })}
                           name="email"
                           type="email"
                           spellCheck={false}
@@ -76,22 +132,42 @@ const Login: React.FC = () => {
                           required
                         />
                       </IonItem>
+                      {errors.email && (
+                        <IonTitle color="danger">
+                          <p>Se requiere email</p>
+                        </IonTitle>
+                      )}
                     </IonRow>
                     <IonRow>
                       <IonItem>
                         <IonLabel position="stacked" color="primary">
                           Password
                         </IonLabel>
-                        <IonInput name="password" type="password" />
+                        <IonInput
+                          ref={register({ required: true, minLength: 6 })}
+                          name="password"
+                          type="password"
+                        />
                       </IonItem>
+                      {errors.password && (
+                        <IonTitle color="danger">
+                          <p>Contraseña invalida</p>
+                        </IonTitle>
+                      )}
                     </IonRow>
                   </IonCol>
                 </IonRow>
               </IonList>
               <IonCol>
-                <IonButton type="submit" expand="block" color="secondary">
-                  Crear cuenta
-                </IonButton>
+                {isLoading ? (
+                  <IonButton type="submit" expand="block" color="secondary">
+                    <IonSpinner />
+                  </IonButton>
+                ) : (
+                  <IonButton type="submit" expand="block" color="secondary">
+                    CrearCuenta
+                  </IonButton>
+                )}
               </IonCol>
               <IonCol>
                 <IonButton
@@ -111,4 +187,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default withRouter(SignUp);

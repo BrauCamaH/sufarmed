@@ -6,7 +6,11 @@
   max-height: 100px;
 }
 
-.account__title{
+.account__title {
   padding-left: 20px;
   margin-bottom: 20px;
+}
+
+.account_item--selected {
+  color: var(--ion-color-secondary);
 }

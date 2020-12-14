@@ -1,79 +1,59 @@
 import React from 'react';
+import { useMediaQuery } from 'react-responsive';
 import {
   IonSlides,
   IonSlide,
-  IonGrid,
   IonRow,
   IonButton,
   IonTitle,
+  IonSpinner,
 } from '@ionic/react';
 import ProductCard from '../components/Product';
 import { Product } from '../models/Product';
-
-const slideOpts = {
-  initialSlide: 0,
-  spaceBetween: 0.1,
-  slidesPerView: 4.5,
-};
-
-const productList: Product[] = [
-  {
-    id: Date.now().toString(),
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: Date.now().toString(),
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: Date.now().toString(),
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: Date.now().toString(),
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: Date.now().toString(),
-    imgUrl: 'https://picsum.photos/500/300',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-];
+import { useGetProductsByName } from '../api/products';
 
 interface SectionProps {
-  products?: Product[];
+  name: string;
+  searchId: string;
 }
 
-const Section: React.FC<SectionProps> = ({ products }) => {
-  const mockListItems = productList.map((product) => (
-    <IonSlide key={product.id}>
-      <ProductCard product={product} />
-    </IonSlide>
-  ));
-  const ListItems = products?.map((product) => (
-    <IonSlide key={product.id}>
-      <ProductCard product={product} />
-    </IonSlide>
-  ));
+const Section: React.FC<SectionProps> = ({ name, searchId }) => {
+  const { isLoading, isError, data: products } = useGetProductsByName(
+    searchId,
+    1
+  );
+
+  const isSmall = useMediaQuery({ query: '(max-width: 576px)' });
+  const isMedium = useMediaQuery({ query: '(max-width: 768px)' });
   return (
-    <IonGrid>
+    <div className="ion-margin-bottom">
       <IonRow>
-        <IonTitle>Section Name</IonTitle>
-        <IonButton fill="clear">Ver más</IonButton>
+        <IonTitle>{name}</IonTitle>
+        <IonButton
+          fill="clear"
+          routerLink={`/products?q=${searchId}`}
+          routerDirection="root"
+        >
+          Ver más
+        </IonButton>
       </IonRow>
-      <IonSlides options={slideOpts}>
-        {products ? ListItems : mockListItems}
-      </IonSlides>
-    </IonGrid>
+      {isLoading ? (
+        <IonSpinner />
+      ) : !isError ? (
+        <IonSlides
+          options={{ slidesPerView: isSmall ? 1.6 : isMedium ? 3.6 : 4.6 }}
+        >
+          {products.map &&
+            products.map((product: Product) => (
+              <IonSlide key={product.id}>
+                <ProductCard product={product} />
+              </IonSlide>
+            ))}
+        </IonSlides>
+      ) : (
+        <p>Error revise conexión</p>
+      )}
+    </div>
   );
 };
 

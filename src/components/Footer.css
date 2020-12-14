@@ -1,5 +1,8 @@
 #footer {
-  padding: 3em;
+  position: sticky;
+  bottom: 0;
+  height: auto;
+  margin-top: 10px;
 }
 
 #footer ion-row {
@@ -10,4 +13,26 @@
   .footer-content {
     display: none;
   }
+}
+
+@media (max-height: 400px) {
+  .footer-content {
+    display: none;
+  }
+}
+
+.footer__item {
+  text-decoration: none;
+  color: white;
+}
+
+.footer__item--title {
+  text-decoration: none;
+  color: lightgray;
+  pointer-events: none;
+}
+
+a {
+  text-decoration: none;
+  color: white;
 }

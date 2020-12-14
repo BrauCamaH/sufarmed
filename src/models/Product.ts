@@ -1,6 +1,9 @@
+import { Multimedia } from './Multimedia';
 export interface Product {
-  id: string;
-  imgUrl: string;
+  id: number;
+  price: number;
+  stock?: number;
+  img?: Multimedia;
   name: string;
   summary?: string;
   description?: string;

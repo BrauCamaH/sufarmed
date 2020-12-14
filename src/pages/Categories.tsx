@@ -1,72 +1,33 @@
 import React from 'react';
-import { IonContent, IonList, IonPage, IonRow } from '@ionic/react';
+import { IonList, IonRow, IonSpinner, IonTitle } from '@ionic/react';
 import CategoryItem from '../components/Category';
 
-import Appbar from '../components/Appbar';
-import Footer from '../components/Footer';
+import Layout from '../components/Layout';
 
 import { Category } from '../models/Category';
+import { useQueryCategories } from '../api/categories';
 
 import './Categories.css';
 
-const categories: Category[] = [
-  {
-    id: Date.now().toString(),
-    name: 'category',
-    imgUrl: 'https://picsum.photos/150/150',
-  },
-  {
-    id: Date.now().toString(),
-    name: 'category',
-    imgUrl: 'https://picsum.photos/150/150',
-  },
-  {
-    id: Date.now().toString(),
-    name: 'category',
-    imgUrl: 'https://picsum.photos/150/150',
-  },
-  {
-    id: Date.now().toString(),
-    name: 'category',
-    imgUrl: 'https://picsum.photos/150/150',
-  },
-  {
-    id: Date.now().toString(),
-    name: 'category',
-    imgUrl: 'https://picsum.photos/150/150',
-  },
-  {
-    id: Date.now().toString(),
-    name: 'category',
-    imgUrl: 'https://picsum.photos/150/150',
-  },
-  {
-    id: Date.now().toString(),
-    name: 'category',
-    imgUrl: 'https://picsum.photos/150/150',
-  },
-  {
-    id: Date.now().toString(),
-    name: 'category',
-    imgUrl: 'https://picsum.photos/150/150',
-  },
-];
-
 const CategoriesPage: React.FC = () => {
+  const { isLoading, isError, data: categories } = useQueryCategories();
+
   return (
-    <IonPage>
-      <Appbar />
-      <IonContent>
-        <IonList className="categories__list">
-          <IonRow className="ion-justify-content-center">
-            {categories?.map((category) => (
-              <CategoryItem category={category} />
-            ))}
-          </IonRow>
-        </IonList>
-        <Footer />
-      </IonContent>
-    </IonPage>
+    <Layout>
+      <IonList>
+        <IonRow className="ion-justify-content-center">
+          {isLoading ? (
+            <IonSpinner />
+          ) : !isError ? (
+            categories.map((category: Category) => (
+              <CategoryItem key={category.id} category={category} />
+            ))
+          ) : (
+            <IonTitle>Error revise la conexión a internet</IonTitle>
+          )}
+        </IonRow>
+      </IonList>
+    </Layout>
   );
 };
 

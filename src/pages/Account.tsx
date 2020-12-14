@@ -5,7 +5,6 @@ import {
   IonCardContent,
   IonCardSubtitle,
   IonCol,
-  IonContent,
   IonGrid,
   IonHeader,
   IonIcon,
@@ -13,16 +12,18 @@ import {
   IonItem,
   IonLabel,
   IonModal,
-  IonPage,
   IonRow,
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
 import { pencil, close } from 'ionicons/icons';
-import Appbar from '../components/Appbar';
-import Footer from '../components/Footer';
+import { withRouter, useLocation } from 'react-router';
+
+import Layout from '../components/Layout';
+import { useUserState } from '../providers/UserProvider';
 
 import './Account.css';
+import AddressList from '../components/AddressList';
 
 interface AccountItemProps {
   fieldName: string;
@@ -40,13 +41,16 @@ interface AccountItemProps {
     | 'month'
     | 'datetime-local'
     | undefined;
+  value?: string;
 }
 
 const AccountItem: React.FC<AccountItemProps> = ({
   fieldName,
   type = 'text',
+  value = '',
 }) => {
   const [editField, setEditField] = useState<boolean>(false);
+
   return (
     <>
       <IonCard className="account__item">
@@ -60,7 +64,7 @@ const AccountItem: React.FC<AccountItemProps> = ({
               </IonCol>
               <IonCol>
                 <IonItem disabled>
-                  <IonInput type={type} />
+                  <IonInput type={type} value={value} />
                 </IonItem>
               </IonCol>
               <IonCol slot="end">
@@ -96,7 +100,7 @@ const AccountItem: React.FC<AccountItemProps> = ({
           <IonCard>
             <IonItem>
               <IonLabel position="stacked">{`Ingresa tu ${fieldName}`}</IonLabel>
-              <IonInput type={type} />
+              <IonInput type={type} value={value} />
             </IonItem>
           </IonCard>
           <IonCard>
@@ -112,32 +116,76 @@ const AccountItem: React.FC<AccountItemProps> = ({
   );
 };
 
-const Home: React.FC = () => {
+const Account: React.FC = () => {
+  const location = useLocation();
+  const state = useUserState();
+
   return (
-    <IonPage id="account">
-      <Appbar />
-      <IonContent>
+    <Layout>
+      <div id="account">
+        <IonToolbar>
+          <IonRow className="ion-margin-start ion-margin-bottom">
+            <IonItem
+              button
+              lines={location.pathname.startsWith('/account') ? 'full' : 'none'}
+              routerLink="/account"
+            >
+              <h1
+                className={
+                  location.pathname.startsWith('/account')
+                    ? 'account_item--selected'
+                    : undefined
+                }
+              >
+                Mi Cuenta
+              </h1>
+            </IonItem>
+            <IonItem
+              button
+              lines={location.pathname.startsWith('/orders') ? 'full' : 'none'}
+              routerLink="/orders"
+            >
+              <h1
+                className={
+                  location.pathname.startsWith('/orders')
+                    ? 'account_item--selected'
+                    : undefined
+                }
+              >
+                Mis Compras
+              </h1>
+            </IonItem>
+          </IonRow>
+        </IonToolbar>
         <IonGrid>
           <IonGrid className="ion-justify-content-center account__list">
-            <h1 className="account__title">MiCuenta</h1>
             <IonTitle>Datos de la Cuenta</IonTitle>
             <IonCol>
-              <AccountItem fieldName="E-mail" />
-              <AccountItem fieldName="Contraseña" type="password" />
+              <AccountItem fieldName="E-mail" value={state.user?.email} />
+              <AccountItem fieldName="Contraseña" type="password" value="" />
             </IonCol>
           </IonGrid>
           <IonGrid className="ion-justify-content-center account__list">
             <IonTitle>Datos Personales</IonTitle>
             <IonCol>
-              <AccountItem fieldName="Nombre" />
-              <AccountItem fieldName="Telefono" type="tel" />
+              <AccountItem fieldName="Nombre" value={state.user?.name} />
+              <AccountItem
+                fieldName="Telefono"
+                type="tel"
+                value={state.user?.cellphone}
+              />
+            </IonCol>
+          </IonGrid>
+          <IonGrid className="ion-justify-content-center account__list">
+            <IonTitle>Direcciones</IonTitle>
+            <IonCol>
+              <AddressList />
             </IonCol>
           </IonGrid>
         </IonGrid>
-        <Footer />
-      </IonContent>
-    </IonPage>
+      </div>
+    </Layout>
   );
 };
 
-export default Home;
+export default withRouter(Account);

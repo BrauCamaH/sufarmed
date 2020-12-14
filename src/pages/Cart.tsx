@@ -1,83 +1,83 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   IonButton,
-  IonContent,
   IonItem,
   IonItemDivider,
   IonList,
-  IonPage,
   IonRow,
+  IonSpinner,
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
-import { Product } from '../models/Product';
 
-import Appbar from '../components/Appbar';
-import Footer from '../components/Footer';
-import Section from '../components/Section';
+import Layout from '../components/Layout';
 
 import CartItem from '../components/CartItem';
+import { OrderDetail } from '../models/OrderDetail';
+import { useCartState } from '../providers/CartProvider';
 
-const products: Product[] = [
-  {
-    id: Date.now().toString(),
-    imgUrl: 'https://picsum.photos/200/200',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: Date.now().toString(),
-    imgUrl: 'https://picsum.photos/200/200',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: Date.now().toString(),
-    imgUrl: 'https://picsum.photos/200/200',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-  {
-    id: Date.now().toString(),
-    imgUrl: 'https://picsum.photos/200/200',
-    name: 'Product',
-    summary: '$50 50tabs',
-  },
-];
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+});
 
 const CategoriesPage: React.FC = () => {
+  const state = useCartState();
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    let calculatedTotal = 0;
+    state.cart.order_details.forEach(
+      (item) => (calculatedTotal += item.price * item.quantity)
+    );
+    setTotal(calculatedTotal);
+  }, [state.cart.order_details]);
+
   return (
-    <IonPage>
-      <Appbar />
-      <IonContent>
-        <IonToolbar>
-          <IonItem slot="start">
-            <IonTitle color="tertiary">Carrito</IonTitle>
-          </IonItem>
-        </IonToolbar>
+    <Layout>
+      <IonToolbar>
+        <IonItem slot="start">
+          <IonTitle color="tertiary">Carrito</IonTitle>
+        </IonItem>
+      </IonToolbar>
+      {state.status == 'isLoading' ? (
+        <IonSpinner />
+      ) : state.status !== 'isError' ? (
         <IonList>
-          <IonRow
-            id="cart-list"
-            className="ion-justify-content-center ion-align-items-center"
-          >
-            {products.map((product) => (
-              <CartItem key={product.id} product={product} />
+          <IonRow id="cart-list" className="ion-justify-content-center">
+            {state.cart.order_details.map((item: OrderDetail) => (
+              <CartItem key={item.id} orderDetail={item} />
             ))}
           </IonRow>
           <IonToolbar className="ion-padding-top ion-padding-end">
             <div slot="end" className="ion-padding-end">
               <div className="ion-padding-end ">
-                <IonTitle className="ion-padding-bottom">Total $000,0</IonTitle>
-                <IonButton color="secondary">Continuar compra</IonButton>
+                <IonTitle className="ion-padding-bottom">
+                  <IonRow>
+                    {'Total: '}
+                    {state.status === 'isUpdating' ? (
+                      <IonSpinner className="ion-margin-start" />
+                    ) : (
+                      `${formatter.format(total)}`
+                    )}
+                  </IonRow>
+                </IonTitle>
+                <IonButton
+                  routerLink={`/checkout?total=${total}`}
+                  routerDirection="none"
+                  color="secondary"
+                >
+                  Continuar compra
+                </IonButton>
               </div>
             </div>
           </IonToolbar>
           <IonItemDivider />
-          <Section />
         </IonList>
-        <Footer />
-      </IonContent>
-    </IonPage>
+      ) : (
+        <p>Revise conexión a internet</p>
+      )}
+    </Layout>
   );
 };
 

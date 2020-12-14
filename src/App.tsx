@@ -18,40 +18,13 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 
 import React from 'react';
-import { Redirect, Route } from 'react-router-dom';
-import { IonApp, IonRouterOutlet, IonSplitPane } from '@ionic/react';
-import { IonReactRouter } from '@ionic/react-router';
-import { Menu } from './components/Appbar';
-import Home from './pages/Home';
-import Categories from './pages/Categories';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import Products from './pages/Products';
-import Product from './pages/Product';
-import Cart from './pages/Cart';
-import Account from './pages/Account';
-import Help from './pages/Help';
+import { UserProvider } from './providers/UserProvider';
+import AuthOrDefault from './AuthOrDefault';
 
 const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonSplitPane disabled contentId="main">
-        <Menu menuEnabled={true} />
-        <IonRouterOutlet id="main">
-          <Route path="/home" component={Home} exact={true} />
-          <Route path="/products" component={Products} exact={true} />
-          <Route path="/product" component={Product} exact={true} />
-          <Route path="/categories" component={Categories} exact={true} />
-          <Route path="/cart" component={Cart} exact={true} />
-          <Route path="/account" component={Account} exact={true} />
-          <Route path="/help" component={Help} exact={true} />
-          <Route path="/login" component={Login} exact={true} />
-          <Route path="/signup" component={Signup} exact={true} />
-          <Route exact path="/" render={() => <Redirect to="/home" />} />
-        </IonRouterOutlet>
-      </IonSplitPane>
-    </IonReactRouter>
-  </IonApp>
+  <UserProvider>
+    <AuthOrDefault />
+  </UserProvider>
 );
 
 export default App;

@@ -1,0 +1,5 @@
+#modal-backdrop .modal-wrapper{
+  min-height: 100vh;
+  background-color: var(--ion-backdrop-color);
+  box-shadow: none;
+}

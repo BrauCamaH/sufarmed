@@ -1,38 +1,58 @@
 import React from 'react';
 import { IonCol, IonFooter, IonToolbar, IonGrid, IonRow } from '@ionic/react';
+import { NavLink } from 'react-router-dom';
 
 import './Footer.css';
+
+export interface LinkProps {
+  title?: boolean;
+  href?: string;
+  to?: string;
+}
+
+const Link: React.FC<LinkProps> = ({ to, href, title, children }) => {
+  return (
+    <IonRow>
+      {href ? (
+        <a href={href}>{children}</a>
+      ) : (
+        <NavLink
+          className={title ? 'footer__item--title' : 'footer__item'}
+          to={to || ''}
+        >
+          {children}
+        </NavLink>
+      )}
+    </IonRow>
+  );
+};
 
 const Footer: React.FC = () => {
   return (
     <IonFooter className="footer-content">
       <IonToolbar color="secondary">
         <IonGrid id="footer">
-          <IonRow>
+          <IonRow className="ion-margin-start">
             <IonCol>
-              <IonRow>Acerca de</IonRow>
-              <IonRow>Sufarmed</IonRow>
+              <Link title>Acerca de</Link>
+              <Link href="https://www.sufarmed.com/">Sufarmed</Link>
             </IonCol>
             <IonCol>
-              <IonRow>Otros Sitios</IonRow>
-              <IonRow>Página de la empresa</IonRow>
+              <Link title>Ayuda</Link>
+              <Link to="/account">Configuración</Link>
+              <Link>Comprar</Link>
+              <Link to="/help">Solución de Problemas</Link>
             </IonCol>
             <IonCol>
-              <IonRow>Ayuda</IonRow>
-              <IonRow>Configuración</IonRow>
-              <IonRow>Comprar</IonRow>
-              <IonRow>Solución de Problemas</IonRow>
+              <Link title>Redes Sociales</Link>
+              <Link>Facebook</Link>
+              <Link>Instagram</Link>
+              <Link>Youtube</Link>
             </IonCol>
             <IonCol>
-              <IonRow>Redes Sociales</IonRow>
-              <IonRow>Facebook</IonRow>
-              <IonRow>Instagram</IonRow>
-              <IonRow>Youtube</IonRow>
-            </IonCol>
-            <IonCol>
-              <IonRow>Mi Cuenta</IonRow>
-              <IonRow>Ingresar</IonRow>
-              <IonRow>Crear cuenta</IonRow>
+              <Link title>Mi Cuenta</Link>
+              <Link to="/login">Ingresar</Link>
+              <Link to="/signup">Crear cuenta</Link>
             </IonCol>
           </IonRow>
         </IonGrid>
