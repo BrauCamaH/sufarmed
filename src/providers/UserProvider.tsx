@@ -2,8 +2,13 @@ import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import { User } from '../models/User';
 import api from '../api/';
 import axios from 'axios';
+import { Address } from '../models/Address';
 
-type Action = { type: 'set-user'; payload: State } | { type: 'sign-out' };
+type Action =
+  | { type: 'set-user'; payload: State }
+  | { type: 'set-token'; payload: string }
+  | { type: 'add-address'; payload: Address }
+  | { type: 'sign-out' };
 type Dispatch = (action: Action) => void;
 type State = { user?: User; jwt: string };
 type UserProviderProps = { children: React.ReactNode };
@@ -15,12 +20,27 @@ const initialState: State = { jwt: '', user: undefined };
 
 const userReducer = (state: State, action: Action): State => {
   switch (action.type) {
+    case 'add-address':
+      if (state.user) {
+        return {
+          ...state,
+          user: {
+            ...state.user,
+            addresses: [...state.user.addresses, { ...action.payload }],
+          },
+        };
+      } else {
+        return { ...state };
+      }
+
+    case 'set-token':
+      return { ...state, jwt: action.payload };
     case 'set-user':
       return { ...state, ...action.payload };
     case 'sign-out':
       return { user: undefined, jwt: '' };
     default: {
-      return state;
+      return { ...state };
     }
   }
 };
@@ -29,18 +49,18 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(userReducer, initialState);
 
   useEffect(() => {
-    const token = localStorage.getItem('sufarmedAuth');
-    if (token !== null && !state.user) {
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    if (state.jwt) {
+      api.defaults.headers.common['Authorization'] = `Bearer ${state.jwt}`;
+
       axios
-        .get('/users/me', { headers: { Authorization: `Bearer ${token}` } })
+        .get('/users/me')
         .then(({ data }: { data: User }) =>
-          dispatch({ type: 'set-user', payload: { jwt: token, user: data } })
+          dispatch({
+            type: 'set-user',
+            payload: { jwt: state.jwt, user: data },
+          })
         )
         .catch((e) => console.log(e));
-    } else if (state.jwt) {
-      api.defaults.headers.common['Authorization'] = `Bearer ${state.jwt}`;
-      localStorage.setItem('sufarmedAuth', state.jwt);
     }
 
     return () => {

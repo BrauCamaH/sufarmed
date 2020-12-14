@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   IonAvatar,
   IonButton,
+  IonCard,
   IonCardSubtitle,
   IonCol,
   IonIcon,
@@ -71,7 +72,7 @@ const HistoryDetailsItem: React.FC<HistoryDetailsItemProps> = ({
   if (!showDetail) return null;
 
   return (
-    <IonList>
+    <IonList style={{ width: '100%' }}>
       {orderDetails.map((item) => (
         <DetailItem key={item.id} detail={item} />
       ))}
@@ -111,6 +112,7 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ order }) => {
           <IonIcon icon={showDetails ? chevronDown : chevronForward} />
         </IonButton>
       </IonCol>
+
       {showDetails && (
         <HistoryDetailsItem
           showDetail={showDetails}
@@ -131,48 +133,44 @@ const ShoppingHistory: React.FC = () => {
 
   return (
     <Layout>
+      <IonToolbar>
+        <IonRow className="ion-margin-start ion-margin-bottom">
+          <IonItem
+            button
+            lines={location.pathname.startsWith('/account') ? 'full' : 'none'}
+            routerLink="/account"
+          >
+            <h1
+              className={
+                location.pathname.startsWith('/account')
+                  ? 'account_item--selected'
+                  : undefined
+              }
+            >
+              Mi Cuenta
+            </h1>
+          </IonItem>
+          <IonItem
+            button
+            lines={location.pathname.startsWith('/orders') ? 'full' : 'none'}
+            routerLink="/orders"
+          >
+            <h1
+              className={
+                location.pathname.startsWith('/orders')
+                  ? 'account_item--selected'
+                  : undefined
+              }
+            >
+              Mis Compras
+            </h1>
+          </IonItem>
+        </IonRow>
+      </IonToolbar>
       {isLoading ? (
         <IonSpinner />
       ) : !isError ? (
         <>
-          <IonToolbar>
-            <IonRow className="ion-margin-start ion-margin-bottom">
-              <IonItem
-                button
-                lines={
-                  location.pathname.startsWith('/account') ? 'full' : 'none'
-                }
-                routerLink="/account"
-              >
-                <h1
-                  className={
-                    location.pathname.startsWith('/account')
-                      ? 'account_item--selected'
-                      : undefined
-                  }
-                >
-                  Mi Cuenta
-                </h1>
-              </IonItem>
-              <IonItem
-                button
-                lines={
-                  location.pathname.startsWith('/orders') ? 'full' : 'none'
-                }
-                routerLink="/orders"
-              >
-                <h1
-                  className={
-                    location.pathname.startsWith('/orders')
-                      ? 'account_item--selected'
-                      : undefined
-                  }
-                >
-                  Mis Compras
-                </h1>
-              </IonItem>
-            </IonRow>
-          </IonToolbar>
           <div className="ion-margin">
             <IonRow class="header-row">
               <IonCol size="3">Fecha</IonCol>

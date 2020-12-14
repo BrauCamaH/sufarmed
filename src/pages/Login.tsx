@@ -37,6 +37,7 @@ const Login: React.FC = () => {
         password: data.password,
       });
       dispatch({ type: 'set-user', payload: response });
+      localStorage.setItem('sufarmedAuth', response.jwt);
     } catch (error) {
       console.log();
     }

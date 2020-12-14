@@ -23,6 +23,7 @@ import Layout from '../components/Layout';
 import { useUserState } from '../providers/UserProvider';
 
 import './Account.css';
+import AddressList from '../components/AddressList';
 
 interface AccountItemProps {
   fieldName: string;
@@ -173,6 +174,12 @@ const Account: React.FC = () => {
                 type="tel"
                 value={state.user?.cellphone}
               />
+            </IonCol>
+          </IonGrid>
+          <IonGrid className="ion-justify-content-center account__list">
+            <IonTitle>Direcciones</IonTitle>
+            <IonCol>
+              <AddressList />
             </IonCol>
           </IonGrid>
         </IonGrid>

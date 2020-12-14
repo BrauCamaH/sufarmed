@@ -35,6 +35,7 @@ import { useUserDispatch, useUserState } from '../providers/UserProvider';
 
 import './Appbar.css';
 import { useCartState } from '../providers/CartProvider';
+import { User } from '../models/User';
 
 interface Pages {
   title: string;
@@ -104,7 +105,11 @@ export const Menu: React.FC<MenuProps> = ({ menuEnabled }) => {
   );
 };
 
-const AuthAppbar: React.FC = () => {
+interface AuthAppbarProps {
+  user: User;
+}
+
+const AuthAppbar: React.FC<AuthAppbarProps> = ({ user }) => {
   const dispatch = useUserDispatch();
   const state = useCartState();
   const [showPopover, setShowPopover] = useState<{
@@ -169,8 +174,10 @@ const AuthAppbar: React.FC = () => {
                     setShowPopover({ open: true, event: e.nativeEvent })
                   }
                 >
-                  <IonIcon icon={person} />
+                  <IonIcon style={{ marginRight: '2px' }} icon={person} />
+                  <p>{user.name}</p>
                 </IonButton>
+
                 <IonButton fill="clear" color="light" routerLink="/cart">
                   <IonIcon icon={cart} />
                   <IonBadge>
@@ -226,7 +233,7 @@ const UnAuthAppbar: React.FC = () => {
 
 const Appbar: React.FC = () => {
   const state = useUserState();
-  return state.user ? <AuthAppbar /> : <UnAuthAppbar />;
+  return state.user ? <AuthAppbar user={state.user} /> : <UnAuthAppbar />;
 };
 
 export default withRouter(Appbar);

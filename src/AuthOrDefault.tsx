@@ -12,6 +12,7 @@ import Product from './pages/Product';
 import Cart from './pages/Cart';
 import Account from './pages/Account';
 import Help from './pages/Help';
+import AddAddress from './pages/AddAddress';
 
 import { CartProvider } from './providers/CartProvider';
 import { useUserState } from './providers/UserProvider';
@@ -67,6 +68,7 @@ const AuthApp: React.FC = () => (
             <Route path="/orders" component={ShoppingHistory} exact={true} />
             <Route path="/help" component={Help} exact={true} />
             <Route path="/checkout" component={Checkout} exact={true} />
+            <Route path="/address" component={AddAddress} exact={true} />
             <Route exact path="/login" render={() => <Redirect to="/home" />} />
             <Route
               exact

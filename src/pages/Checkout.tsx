@@ -10,10 +10,13 @@ import {
   IonList,
   IonPage,
   IonRow,
+  IonSelect,
   IonSpinner,
+  IonSelectOption,
   IonText,
   IonTitle,
   IonToolbar,
+  IonCardContent,
 } from '@ionic/react';
 import CheckoutItem from '../components/CheckoutItem';
 import { useCartDispatch, useCartState } from '../providers/CartProvider';
@@ -37,6 +40,8 @@ import { useForm } from 'react-hook-form';
 import { Order } from '../models/Order';
 import { useCreatePayment, useUpdateOrder } from '../api/orders';
 import PaymentBackdrop from '../components/PaymentBackdrop';
+import { useUserState } from '../providers/UserProvider';
+import { AddressItem } from '../components/AddressList';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -54,6 +59,7 @@ interface CheckoutFormProps {
 
 const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
   const { handleSubmit } = useForm();
+  const state = useUserState();
   const stripe = useStripe();
   const elements = useElements();
   const dispatch = useCartDispatch();
@@ -123,6 +129,27 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
     <>
       <form className="ion-margin" onSubmit={handleSubmit(handlePay)}>
         {<PaymentBackdrop paymentIntent={paymentIntent} />}
+        <IonTitle className="ion-margin-top ion-margin-bottom">
+          Seleccione Domicilio
+        </IonTitle>
+        <IonCard>
+          <IonCardContent>
+            <IonSelect
+              interface="action-sheet"
+              value={state.user?.addresses[0].id}
+              okText="Aceptar"
+              cancelText="Cancelar"
+            >
+              {state.user?.addresses.map((item) => {
+                return (
+                  <IonSelectOption value={item.id}>
+                    {item.address} {item.city},{item.state}
+                  </IonSelectOption>
+                );
+              })}
+            </IonSelect>
+          </IonCardContent>
+        </IonCard>
         <IonTitle className="ion-margin-top ion-margin-bottom">
           Datos de la tarjeta
         </IonTitle>
