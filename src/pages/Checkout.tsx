@@ -18,9 +18,7 @@ import {
   IonToolbar,
   IonCardContent,
 } from '@ionic/react';
-import CheckoutItem from '../components/CheckoutItem';
 import { useCartDispatch, useCartState } from '../providers/CartProvider';
-import Appbar from '../components/MinimalAppBar';
 import {
   CardElement,
   Elements,
@@ -33,24 +31,18 @@ import {
   StripeCardElementChangeEvent,
   StripeError,
 } from '@stripe/stripe-js';
-import { useLocation } from 'react-router-dom';
-
-import './Checkout.css';
+import { Redirect } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Order } from '../models/Order';
 import { useCreatePayment, useUpdateOrder } from '../api/orders';
-import PaymentBackdrop from '../components/PaymentBackdrop';
 import { useUserState } from '../providers/UserProvider';
-import { AddressItem } from '../components/AddressList';
+import { formatToCurrency } from '../utils';
 
-const useQuery = () => {
-  return new URLSearchParams(useLocation().search);
-};
+import Appbar from '../components/MinimalAppBar';
+import CheckoutItem from '../components/CheckoutItem';
+import PaymentBackdrop from '../components/PaymentBackdrop';
 
-const formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-});
+import './Checkout.css';
 
 interface CheckoutFormProps {
   order: Order;
@@ -79,7 +71,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
 
   useEffect(() => {
     createPaymentIntent();
-  }, []);
+  }, [total]);
 
   const handlePay = async () => {
     if (!stripe || !elements) return;
@@ -104,11 +96,12 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
           setLoadingPayment(false);
         } else {
           setPaymentIntent(updatedPaymentIntent);
-          setLoadingPayment(false);
-          updateOrder({
+          await updateOrder({
             id: order.id,
             data: { status: 'paid' },
           });
+
+          setLoadingPayment(false);
 
           dispatch({
             type: 'set-cart',
@@ -190,11 +183,14 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
 };
 
 const Checkout: React.FC = () => {
-  const total = useQuery().get('total') || '';
   const state = useCartState();
   const stripePromise = loadStripe(
     'pk_test_F66BY1l50SclBxSGZnve6Mug00lSATA0ll'
   );
+
+  if (!state.cart.total) {
+    return <Redirect to="home" />;
+  }
 
   return (
     <IonPage>
@@ -216,7 +212,7 @@ const Checkout: React.FC = () => {
                 <IonItem>
                   <IonTitle slot="start">Total</IonTitle>
                   <IonTitle slot="end">
-                    {formatter.format(parseInt(total))}
+                    {formatToCurrency(state.cart.total)}
                   </IonTitle>
                 </IonItem>
               </IonList>
@@ -230,7 +226,7 @@ const Checkout: React.FC = () => {
                 </IonToolbar>
               </IonHeader>
               <Elements stripe={stripePromise}>
-                <CheckoutForm order={state.cart} total={+total} />
+                <CheckoutForm order={state.cart} total={state.cart.total} />
               </Elements>
             </IonCard>
           </IonCol>

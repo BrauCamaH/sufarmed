@@ -1,12 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonSpinner,
-  IonHeader,
-  IonToolbar,
-} from '@ionic/react';
+import { IonGrid, IonRow, IonCol, IonHeader, IonToolbar } from '@ionic/react';
 import ProductCard from '../components/Product';
 import { Product } from '../models/Product';
 
@@ -19,6 +12,7 @@ import {
 import { useLocation } from 'react-router';
 import Layout from '../components/Layout';
 import Pagination from './Pagination';
+import Spinner from '../components/loaders/Spinner';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -55,7 +49,7 @@ const ProductsByCategory: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       {isLoading ? (
-        <IonSpinner />
+        <Spinner />
       ) : !isError ? (
         <IonGrid fixed>
           <IonRow className="ion-margin-bottom">
@@ -111,7 +105,7 @@ const Products: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       {isLoading ? (
-        <IonSpinner />
+        <Spinner />
       ) : !isError ? (
         <IonGrid fixed>
           <IonRow>

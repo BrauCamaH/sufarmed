@@ -14,6 +14,7 @@ import {
   IonSpinner,
   IonTitle,
   IonToast,
+  IonToolbar,
 } from '@ionic/react';
 import { cart } from 'ionicons/icons';
 import Layout from '../components/Layout';
@@ -33,6 +34,7 @@ import {
 import { useCartDispatch, useCartState } from '../providers/CartProvider';
 import { useCreateOrder } from '../api/orders';
 import QuantityInput from '../components/QuantityInput';
+import Spinner from '../components/loaders/Spinner';
 
 interface ProductPageProps {
   product: Product;
@@ -131,10 +133,14 @@ const AddtoCart: React.FC<AddToCartProps> = ({ product, user }) => {
         setQuantity={setQuantity}
         stock={product.stock}
       />
-      <IonButton color="secondary" onClick={handleCreateOrder}>
+      <IonButton
+        disabled={state.status === 'isLoading'}
+        color="secondary"
+        onClick={handleCreateOrder}
+      >
         Agregar a carrito
         {state.status === 'isLoading' ? (
-          <IonSpinner />
+          <IonSpinner className="ion-margin-start" />
         ) : (
           <IonIcon className="ion-margin-start" icon={cart} />
         )}
@@ -166,16 +172,14 @@ const MainContent: React.FC<ProductPageProps> = ({ product, user }) => {
         ]}
       />
       <IonCardContent>
-        <IonItem>
-          <IonRow>
-            <IonCol>
-              <IonTitle color="tertiary">{product.name}</IonTitle>
-            </IonCol>
-            <IonCol>
-              <IonTitle color="dark">${product.price}</IonTitle>
-            </IonCol>
-          </IonRow>
-        </IonItem>
+        <IonToolbar>
+          <IonTitle slot="start" color="tertiary">
+            {product.name}
+          </IonTitle>
+          <IonTitle slot="end" color="dark">
+            ${product.price}
+          </IonTitle>
+        </IonToolbar>
         <IonGrid>
           <IonRow>
             <IonCol sizeLg="6" sizeSm="auto" sizeMd="6">
@@ -285,7 +289,7 @@ const ProductPage: React.FC = () => {
   return (
     <Layout>
       {isLoading ? (
-        <IonSpinner />
+        <Spinner />
       ) : !isError ? (
         <>
           <IonRow className="ion-justify-content-center">

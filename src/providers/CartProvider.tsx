@@ -8,6 +8,7 @@ type Action =
   | { type: 'set-item'; payload: OrderDetail }
   | { type: 'delete-item'; payload: number }
   | { type: 'set-cart'; payload: Order }
+  | { type: 'set-total'; payload: number }
   | {
       type: 'set-status';
       payload: 'isLoading' | 'isError' | 'isFetched' | 'isUpdating';
@@ -38,7 +39,7 @@ const initialState: State = {
   status: 'isLoading',
 };
 
-const cartReducer = (state: State, action: Action): any => {
+const cartReducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'set-status':
       return { ...state, status: action.payload };
@@ -81,7 +82,8 @@ const cartReducer = (state: State, action: Action): any => {
         cart: { ...state.cart, order_details: [...newArray] },
       };
     }
-
+    case 'set-total':
+      return { ...state, cart: { ...state.cart, total: action.payload } };
     default: {
       return {
         cart: {

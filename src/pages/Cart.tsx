@@ -10,19 +10,16 @@ import {
   IonToolbar,
 } from '@ionic/react';
 
-import Layout from '../components/Layout';
-
-import CartItem from '../components/CartItem';
 import { OrderDetail } from '../models/OrderDetail';
-import { useCartState } from '../providers/CartProvider';
+import { useCartDispatch, useCartState } from '../providers/CartProvider';
+import { formatToCurrency } from '../utils';
 
-const formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-});
+import Layout from '../components/Layout';
+import CartItem from '../components/CartItem';
 
 const CategoriesPage: React.FC = () => {
   const state = useCartState();
+  const dispatch = useCartDispatch();
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
@@ -32,6 +29,21 @@ const CategoriesPage: React.FC = () => {
     );
     setTotal(calculatedTotal);
   }, [state.cart.order_details]);
+
+  if (state.cart.order_details.length === 0) {
+    return (
+      <Layout>
+        <IonToolbar>
+          <IonItem slot="start">
+            <IonTitle color="tertiary">Carrito</IonTitle>
+          </IonItem>
+        </IonToolbar>
+        <IonTitle className="ion-margin">
+          No has agregado nada al carrito
+        </IonTitle>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -58,14 +70,18 @@ const CategoriesPage: React.FC = () => {
                     {state.status === 'isUpdating' ? (
                       <IonSpinner className="ion-margin-start" />
                     ) : (
-                      `${formatter.format(total)}`
+                      `${formatToCurrency(total)}`
                     )}
                   </IonRow>
                 </IonTitle>
                 <IonButton
-                  routerLink={`/checkout?total=${total}`}
+                  disabled={state.status === 'isUpdating'}
+                  routerLink={`/checkout`}
                   routerDirection="none"
                   color="secondary"
+                  onClick={() => {
+                    dispatch({ type: 'set-total', payload: total });
+                  }}
                 >
                   Continuar compra
                 </IonButton>
