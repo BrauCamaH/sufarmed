@@ -38,7 +38,7 @@ const ProductsByCategory: React.FC = () => {
   useEffect(() => {
     refetch();
     scrollToTop();
-  }, [page]);
+  }, [page, refetch]);
 
   return (
     <Layout contentRef={contentRef}>
@@ -89,7 +89,7 @@ const Products: React.FC = () => {
 
   useEffect(() => {
     setPage(1);
-  }, [text]);
+  }, [text, refetch]);
 
   useEffect(() => {
     refetch();

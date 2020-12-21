@@ -61,7 +61,7 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
       <IonButton
         fill="clear"
         size="small"
-        disabled={quantity == stock}
+        disabled={quantity === stock}
         onClick={() => {
           setQuantity(quantity + 1);
         }}
