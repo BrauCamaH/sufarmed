@@ -77,7 +77,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
 
   useEffect(() => {
     createPaymentIntent();
-  }, [total]);
+  }, [total, createPaymentIntent]);
 
   const handlePay = async () => {
     if (!stripe || !elements) return;

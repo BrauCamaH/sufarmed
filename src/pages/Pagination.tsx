@@ -12,7 +12,7 @@ const Pagination: React.FC<PaginationProps> = ({ nItems, page, setPage }) => {
   return (
     <IonRow className="ion-justify-content-center ion-align-items-center ion-margin-top">
       <IonButton
-        disabled={page == 1}
+        disabled={page === 1}
         fill="clear"
         onClick={() => {
           setPage(page - 1);
@@ -24,7 +24,7 @@ const Pagination: React.FC<PaginationProps> = ({ nItems, page, setPage }) => {
         Array.from(Array(nItems).keys()).map((item) => {
           return (
             <div key={item}>
-              {item + 1 == page ? (
+              {item + 1 === page ? (
                 <IonCard>
                   <IonButton fill="clear">{item + 1}</IonButton>
                 </IonCard>
@@ -43,7 +43,7 @@ const Pagination: React.FC<PaginationProps> = ({ nItems, page, setPage }) => {
         })}
       <IonButton
         fill="clear"
-        disabled={page == nItems}
+        disabled={page === nItems}
         onClick={() => {
           setPage(page + 1);
         }}

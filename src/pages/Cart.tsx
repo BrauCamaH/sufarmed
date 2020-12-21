@@ -52,7 +52,7 @@ const CategoriesPage: React.FC = () => {
           <IonTitle color="tertiary">Carrito</IonTitle>
         </IonItem>
       </IonToolbar>
-      {state.status == 'isLoading' ? (
+      {state.status === 'isLoading' ? (
         <IonSpinner />
       ) : state.status !== 'isError' ? (
         <IonList>
