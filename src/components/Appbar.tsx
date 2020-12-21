@@ -36,6 +36,7 @@ import { useUserDispatch, useUserState } from '../providers/UserProvider';
 import './Appbar.css';
 import { useCartState } from '../providers/CartProvider';
 import { User } from '../models/User';
+import { capitalizeWord } from '../utils';
 
 interface Pages {
   title: string;
@@ -167,16 +168,17 @@ const AuthAppbar: React.FC<AuthAppbarProps> = ({ user }) => {
                     </IonItem>
                   </IonList>
                 </IonPopover>
-                <IonButton
-                  fill="clear"
-                  color="light"
+                <IonItem
+                  button
+                  lines="none"
+                  color="primary"
                   onClick={(e) =>
                     setShowPopover({ open: true, event: e.nativeEvent })
                   }
                 >
                   <IonIcon style={{ marginRight: '2px' }} icon={person} />
-                  <p>{user.name}</p>
-                </IonButton>
+                  <p>{capitalizeWord(user.name)}</p>
+                </IonItem>
 
                 <IonButton fill="clear" color="light" routerLink="/cart">
                   <IonIcon icon={cart} />

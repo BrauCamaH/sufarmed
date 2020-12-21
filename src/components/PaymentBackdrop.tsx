@@ -1,5 +1,6 @@
 import {
   IonButton,
+  IonCard,
   IonCol,
   IonModal,
   IonRow,
@@ -45,31 +46,35 @@ const PaymentBackdrop: React.FC<PaymentBackdropProps> = ({ paymentIntent }) => {
         {status === 'succeeded' ? (
           <IonRow className="ion-justify-content-center">
             <IonCol>
-              <IonTitle color="light">Su pago ser realizó con éxito</IonTitle>
-              <IonButton
-                fill="clear"
-                routerLink="/home"
-                routerDirection="root"
-                onClick={() => {
-                  setOpen(false);
-                }}
-              >
-                Ir a inicio
-              </IonButton>
-              <IonButton
-                routerLink="/orders"
-                routerDirection="root"
-                onClick={() => {
-                  setOpen(false);
-                }}
-              >
-                Ver mis compras
-              </IonButton>
+              <IonCard className="ion-padding">
+                <IonTitle color="success">
+                  Su pago se realizó con éxito
+                </IonTitle>
+                <IonButton
+                  fill="outline"
+                  routerLink="/home"
+                  routerDirection="root"
+                  onClick={() => {
+                    setOpen(false);
+                  }}
+                >
+                  Ir a inicio
+                </IonButton>
+                <IonButton
+                  routerLink="/orders"
+                  routerDirection="root"
+                  onClick={() => {
+                    setOpen(false);
+                  }}
+                >
+                  Ver mis compras
+                </IonButton>
+              </IonCard>
             </IonCol>
           </IonRow>
         ) : status === 'canceled' ? (
-          <>
-            <IonTitle color="light">
+          <IonCard className="ion-padding">
+            <IonTitle color="warning">
               Su pago fue cancelado por algún motivo
             </IonTitle>
             <IonButton
@@ -81,7 +86,7 @@ const PaymentBackdrop: React.FC<PaymentBackdropProps> = ({ paymentIntent }) => {
             >
               Ir a inicio
             </IonButton>
-          </>
+          </IonCard>
         ) : (
           <IonSpinner />
         )}

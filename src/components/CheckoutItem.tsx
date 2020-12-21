@@ -2,17 +2,14 @@ import {
   IonCardSubtitle,
   IonCol,
   IonItem,
+  IonLabel,
   IonRow,
-  IonSpinner,
 } from '@ionic/react';
 import React from 'react';
 import { useGetProductById } from '../api/products';
 import { OrderDetail } from '../models/OrderDetail';
-
-const formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-});
+import { formatToCurrency } from '../utils';
+import Spinner from './loaders/Spinner';
 
 interface CheckoutItemProps {
   orderDetail: OrderDetail;
@@ -24,7 +21,7 @@ const CheckoutItem: React.FC<CheckoutItemProps> = ({ orderDetail }) => {
   return (
     <IonRow>
       {isLoading ? (
-        <IonSpinner />
+        <Spinner />
       ) : (
         <>
           <IonRow className="ion-align-items-center">
@@ -38,15 +35,17 @@ const CheckoutItem: React.FC<CheckoutItemProps> = ({ orderDetail }) => {
               <IonCardSubtitle>
                 Cantidad: {orderDetail.quantity}
               </IonCardSubtitle>
-              <IonCardSubtitle>
-                Precio : {formatter.format(orderDetail.price)}
-              </IonCardSubtitle>
+              <IonLabel>
+                Precio : {formatToCurrency(orderDetail.price)}
+              </IonLabel>
             </IonCol>
           </IonRow>
           <IonItem lines="none">
-            <IonCardSubtitle slot="start">Precio total: </IonCardSubtitle>
-            <IonCardSubtitle slot="end">
-              {formatter.format(orderDetail.price * orderDetail.quantity)}
+            <IonCardSubtitle color="dark" slot="start">
+              Precio total:
+            </IonCardSubtitle>
+            <IonCardSubtitle color="dark" slot="end">
+              {formatToCurrency(orderDetail.price * orderDetail.quantity)}
             </IonCardSubtitle>
           </IonItem>
         </>

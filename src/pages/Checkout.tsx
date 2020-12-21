@@ -17,10 +17,9 @@ import {
   IonTitle,
   IonToolbar,
   IonCardContent,
+  IonIcon,
 } from '@ionic/react';
-import CheckoutItem from '../components/CheckoutItem';
 import { useCartDispatch, useCartState } from '../providers/CartProvider';
-import Appbar from '../components/MinimalAppBar';
 import {
   CardElement,
   Elements,
@@ -33,24 +32,20 @@ import {
   StripeCardElementChangeEvent,
   StripeError,
 } from '@stripe/stripe-js';
-import { useLocation } from 'react-router-dom';
-
-import './Checkout.css';
+import { Redirect } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Order } from '../models/Order';
 import { useCreatePayment, useUpdateOrder } from '../api/orders';
-import PaymentBackdrop from '../components/PaymentBackdrop';
 import { useUserState } from '../providers/UserProvider';
-import { AddressItem } from '../components/AddressList';
+import { formatToCurrency } from '../utils';
 
-const useQuery = () => {
-  return new URLSearchParams(useLocation().search);
-};
+import Appbar from '../components/MinimalAppBar';
+import CheckoutItem from '../components/CheckoutItem';
+import PaymentBackdrop from '../components/PaymentBackdrop';
 
-const formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-});
+import './Checkout.css';
+import { Address } from '../models/Address';
+import { add } from 'ionicons/icons';
 
 interface CheckoutFormProps {
   order: Order;
@@ -68,6 +63,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
   const [cardEvent, setCardEvent] = useState<StripeCardElementChangeEvent>();
   const [cardError, setCardError] = useState<StripeError>();
   const [loadingPayment, setLoadingPayment] = useState(false);
+  const [selectedAddress, setSelectedAdress] = useState<Address | undefined>(
+    state.user?.addresses[0]
+  );
 
   const [paymentIntent, setPaymentIntent] = useState<PaymentIntent>();
   const createPaymentIntent = async () => {
@@ -79,7 +77,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
 
   useEffect(() => {
     createPaymentIntent();
-  }, []);
+  }, [total]);
 
   const handlePay = async () => {
     if (!stripe || !elements) return;
@@ -104,11 +102,31 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
           setLoadingPayment(false);
         } else {
           setPaymentIntent(updatedPaymentIntent);
-          setLoadingPayment(false);
-          updateOrder({
+          if (!selectedAddress) {
+            return;
+          }
+          const {
+            name,
+            address,
+            city,
+            state,
+            phone,
+            indications,
+          } = selectedAddress;
+          await updateOrder({
             id: order.id,
-            data: { status: 'paid' },
+            data: {
+              status: 'paid',
+              name,
+              address,
+              city,
+              state,
+              phone,
+              indications,
+            },
           });
+
+          setLoadingPayment(false);
 
           dispatch({
             type: 'set-cart',
@@ -132,24 +150,38 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
         <IonTitle className="ion-margin-top ion-margin-bottom">
           Seleccione Domicilio
         </IonTitle>
-        <IonCard>
-          <IonCardContent>
-            <IonSelect
-              interface="action-sheet"
-              value={state.user?.addresses[0].id}
-              okText="Aceptar"
-              cancelText="Cancelar"
-            >
-              {state.user?.addresses.map((item) => {
-                return (
-                  <IonSelectOption value={item.id}>
-                    {item.address} {item.city},{item.state}
-                  </IonSelectOption>
-                );
-              })}
-            </IonSelect>
-          </IonCardContent>
-        </IonCard>
+        {state.user?.addresses.length !== 0 ? (
+          <IonCard>
+            <IonCardContent>
+              <IonSelect
+                placeholder="Seleccionar domicilio"
+                interface="action-sheet"
+                okText="Aceptar"
+                cancelText="Cancelar"
+                value={selectedAddress?.id}
+                onIonChange={(e) =>
+                  setSelectedAdress(
+                    state.user?.addresses.find(
+                      (item) => (item.id = e.detail.value)
+                    )
+                  )
+                }
+              >
+                {state.user?.addresses.map((item) => {
+                  return (
+                    <IonSelectOption value={item.id}>
+                      {item.address} {item.city}, {item.state}
+                    </IonSelectOption>
+                  );
+                })}
+              </IonSelect>
+            </IonCardContent>
+          </IonCard>
+        ) : (
+          <IonButton color="secondary" routerLink="/address">
+            {'Agregar Domicilio  '} <IonIcon icon={add} />
+          </IonButton>
+        )}
         <IonTitle className="ion-margin-top ion-margin-bottom">
           Datos de la tarjeta
         </IonTitle>
@@ -180,21 +212,34 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
         ) : (
           ''
         )}
-        <IonButton slot="start" color="secondary" type="submit">
-          Realizar Pago ${total.toFixed(2)}{' '}
+        <IonButton
+          disabled={!selectedAddress}
+          slot="start"
+          color="secondary"
+          type="submit"
+        >
+          Realizar Pago ${total.toFixed(2)}
           {isLoading || loadingPayment ? <IonSpinner /> : ''}
         </IonButton>
+        {!selectedAddress && (
+          <IonText color="warning">
+            <p>Se requiere domicilio</p>
+          </IonText>
+        )}
       </form>
     </>
   );
 };
 
 const Checkout: React.FC = () => {
-  const total = useQuery().get('total') || '';
   const state = useCartState();
   const stripePromise = loadStripe(
     'pk_test_F66BY1l50SclBxSGZnve6Mug00lSATA0ll'
   );
+
+  if (!state.cart.total) {
+    return <Redirect to="home" />;
+  }
 
   return (
     <IonPage>
@@ -216,7 +261,7 @@ const Checkout: React.FC = () => {
                 <IonItem>
                   <IonTitle slot="start">Total</IonTitle>
                   <IonTitle slot="end">
-                    {formatter.format(parseInt(total))}
+                    {formatToCurrency(state.cart.total)}
                   </IonTitle>
                 </IonItem>
               </IonList>
@@ -230,7 +275,7 @@ const Checkout: React.FC = () => {
                 </IonToolbar>
               </IonHeader>
               <Elements stripe={stripePromise}>
-                <CheckoutForm order={state.cart} total={+total} />
+                <CheckoutForm order={state.cart} total={state.cart.total} />
               </Elements>
             </IonCard>
           </IonCol>

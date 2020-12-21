@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   IonAvatar,
   IonButton,
-  IonCard,
   IonCardSubtitle,
   IonCol,
   IonIcon,
@@ -21,6 +20,7 @@ import { useUserState } from '../providers/UserProvider';
 import { chevronDown, chevronForward } from 'ionicons/icons';
 import { OrderDetail } from '../models/OrderDetail';
 import { useGetProductById } from '../api/products';
+import Spinner from '../components/loaders/Spinner';
 
 interface DetailItemProps {
   detail: OrderDetail;
@@ -168,7 +168,7 @@ const ShoppingHistory: React.FC = () => {
         </IonRow>
       </IonToolbar>
       {isLoading ? (
-        <IonSpinner />
+        <Spinner />
       ) : !isError ? (
         <>
           <div className="ion-margin">

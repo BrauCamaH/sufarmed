@@ -3,7 +3,7 @@ import { IonSlides, IonSlide, IonThumbnail } from '@ionic/react';
 
 import './Slider.css';
 import { useQuery } from 'react-query';
-import axios from 'axios';
+import axios from '../api/';
 import { Multimedia } from '../models/Multimedia';
 
 interface HomeSlides {

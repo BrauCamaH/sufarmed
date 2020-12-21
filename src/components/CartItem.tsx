@@ -14,12 +14,14 @@ import {
 import './CartItem.css';
 import { trash } from 'ionicons/icons';
 import { OrderDetail } from '../models/OrderDetail';
-import { useCartDispatch } from '../providers/CartProvider';
+import { useCartDispatch, useCartState } from '../providers/CartProvider';
 import { useGetProductById } from '../api/products';
 import {
   useDeleteOrderDetail,
   useUpdateOrderDetail,
 } from '../api/order-details';
+import { formatToCurrency } from '../utils';
+
 import QuantityInput from './QuantityInput';
 
 export interface CartProps {
@@ -27,6 +29,7 @@ export interface CartProps {
 }
 const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
   const dispatch = useCartDispatch();
+  const state = useCartState();
   const [quantity, setQuantity] = useState<number>(orderDetail.quantity);
   const { isLoading, isError, data: product } = useGetProductById(
     orderDetail.product
@@ -35,7 +38,7 @@ const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
   const [updateOrderDetail] = useUpdateOrderDetail();
 
   return (
-    <IonCard id="cart-item">
+    <IonCard id="cart-item" disabled={state.status === 'isUpdating'}>
       <IonHeader>
         <IonToolbar>
           <IonButton
@@ -68,7 +71,7 @@ const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
             />
             <IonCardContent>
               <IonCardSubtitle>{product.name}</IonCardSubtitle>
-              {product.price}
+              {formatToCurrency(product.price)}
             </IonCardContent>
             <QuantityInput
               quantity={quantity}

@@ -25,7 +25,16 @@ export const updateOrder = async ({
   data,
 }: {
   id: number;
-  data: { status: string; ship_date?: string };
+  data: {
+    status: string;
+    ship_date?: string;
+    address: string;
+    name: string;
+    city: string;
+    state: string;
+    phone: string;
+    indications?: string;
+  };
 }): Promise<unknown> => {
   const { data: response } = await axios.put(`/orders/${id}`, data);
   return response;

@@ -32,15 +32,15 @@ const SignUp: React.FC = () => {
   const [mutation, { isLoading, isError }] = useCreateUser();
 
   const handleSignUp = async (data: {
-    name: string;
+    firstname: string;
     last_name: string;
     email: string;
     password: string;
   }) => {
-    const { email, last_name, name, password } = data;
+    const { email, last_name, firstname, password } = data;
 
     const response: any = await mutation({
-      name,
+      name: firstname,
       last_name,
       email,
       password,
@@ -81,7 +81,7 @@ const SignUp: React.FC = () => {
                         </IonLabel>
                         <IonInput
                           ref={register({ required: true })}
-                          name="firtsname"
+                          name="firstname"
                           type="text"
                           spellCheck={false}
                           autoCapitalize="off"
