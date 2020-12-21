@@ -41,8 +41,6 @@ const AddAddress: React.FC = () => {
     if (address) {
       dispatch({ type: 'add-address', payload: address });
     }
-
-    history.push('/account');
   };
 
   return (
@@ -113,14 +111,22 @@ const AddAddress: React.FC = () => {
           </IonItem>
         </IonCard>
         <IonRow className="ion-margin-start">
-          <IonButton type="submit" color="secondary">
+          <IonButton
+            type="submit"
+            color="secondary"
+            onClick={() => {
+              history.goBack();
+            }}
+          >
             Guardar
           </IonButton>
           <IonButton
-            routerLink="/account"
             color="secondary"
             routerDirection="back"
             fill="clear"
+            onClick={() => {
+              history.goBack();
+            }}
           >
             Cancelar
           </IonButton>

@@ -17,6 +17,7 @@ import {
   IonTitle,
   IonToolbar,
   IonCardContent,
+  IonIcon,
 } from '@ionic/react';
 import { useCartDispatch, useCartState } from '../providers/CartProvider';
 import {
@@ -43,6 +44,8 @@ import CheckoutItem from '../components/CheckoutItem';
 import PaymentBackdrop from '../components/PaymentBackdrop';
 
 import './Checkout.css';
+import { Address } from '../models/Address';
+import { add } from 'ionicons/icons';
 
 interface CheckoutFormProps {
   order: Order;
@@ -60,6 +63,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
   const [cardEvent, setCardEvent] = useState<StripeCardElementChangeEvent>();
   const [cardError, setCardError] = useState<StripeError>();
   const [loadingPayment, setLoadingPayment] = useState(false);
+  const [selectedAddress, setSelectedAdress] = useState<Address | undefined>(
+    state.user?.addresses[0]
+  );
 
   const [paymentIntent, setPaymentIntent] = useState<PaymentIntent>();
   const createPaymentIntent = async () => {
@@ -96,9 +102,28 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
           setLoadingPayment(false);
         } else {
           setPaymentIntent(updatedPaymentIntent);
+          if (!selectedAddress) {
+            return;
+          }
+          const {
+            name,
+            address,
+            city,
+            state,
+            phone,
+            indications,
+          } = selectedAddress;
           await updateOrder({
             id: order.id,
-            data: { status: 'paid' },
+            data: {
+              status: 'paid',
+              name,
+              address,
+              city,
+              state,
+              phone,
+              indications,
+            },
           });
 
           setLoadingPayment(false);
@@ -125,24 +150,38 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
         <IonTitle className="ion-margin-top ion-margin-bottom">
           Seleccione Domicilio
         </IonTitle>
-        <IonCard>
-          <IonCardContent>
-            <IonSelect
-              interface="action-sheet"
-              value={state.user?.addresses[0].id}
-              okText="Aceptar"
-              cancelText="Cancelar"
-            >
-              {state.user?.addresses.map((item) => {
-                return (
-                  <IonSelectOption value={item.id}>
-                    {item.address} {item.city},{item.state}
-                  </IonSelectOption>
-                );
-              })}
-            </IonSelect>
-          </IonCardContent>
-        </IonCard>
+        {state.user?.addresses.length !== 0 ? (
+          <IonCard>
+            <IonCardContent>
+              <IonSelect
+                placeholder="Seleccionar domicilio"
+                interface="action-sheet"
+                okText="Aceptar"
+                cancelText="Cancelar"
+                value={selectedAddress?.id}
+                onIonChange={(e) =>
+                  setSelectedAdress(
+                    state.user?.addresses.find(
+                      (item) => (item.id = e.detail.value)
+                    )
+                  )
+                }
+              >
+                {state.user?.addresses.map((item) => {
+                  return (
+                    <IonSelectOption value={item.id}>
+                      {item.address} {item.city}, {item.state}
+                    </IonSelectOption>
+                  );
+                })}
+              </IonSelect>
+            </IonCardContent>
+          </IonCard>
+        ) : (
+          <IonButton color="secondary" routerLink="/address">
+            {'Agregar Domicilio  '} <IonIcon icon={add} />
+          </IonButton>
+        )}
         <IonTitle className="ion-margin-top ion-margin-bottom">
           Datos de la tarjeta
         </IonTitle>
@@ -173,10 +212,20 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
         ) : (
           ''
         )}
-        <IonButton slot="start" color="secondary" type="submit">
-          Realizar Pago ${total.toFixed(2)}{' '}
+        <IonButton
+          disabled={!selectedAddress}
+          slot="start"
+          color="secondary"
+          type="submit"
+        >
+          Realizar Pago ${total.toFixed(2)}
           {isLoading || loadingPayment ? <IonSpinner /> : ''}
         </IonButton>
+        {!selectedAddress && (
+          <IonText color="warning">
+            <p>Se requiere domicilio</p>
+          </IonText>
+        )}
       </form>
     </>
   );

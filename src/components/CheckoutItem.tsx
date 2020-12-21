@@ -4,17 +4,12 @@ import {
   IonItem,
   IonLabel,
   IonRow,
-  IonSpinner,
 } from '@ionic/react';
 import React from 'react';
 import { useGetProductById } from '../api/products';
 import { OrderDetail } from '../models/OrderDetail';
+import { formatToCurrency } from '../utils';
 import Spinner from './loaders/Spinner';
-
-const formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-});
 
 interface CheckoutItemProps {
   orderDetail: OrderDetail;
@@ -41,7 +36,7 @@ const CheckoutItem: React.FC<CheckoutItemProps> = ({ orderDetail }) => {
                 Cantidad: {orderDetail.quantity}
               </IonCardSubtitle>
               <IonLabel>
-                Precio : {formatter.format(orderDetail.price)}
+                Precio : {formatToCurrency(orderDetail.price)}
               </IonLabel>
             </IonCol>
           </IonRow>
@@ -50,7 +45,7 @@ const CheckoutItem: React.FC<CheckoutItemProps> = ({ orderDetail }) => {
               Precio total:
             </IonCardSubtitle>
             <IonCardSubtitle color="dark" slot="end">
-              {formatter.format(orderDetail.price * orderDetail.quantity)}
+              {formatToCurrency(orderDetail.price * orderDetail.quantity)}
             </IonCardSubtitle>
           </IonItem>
         </>
