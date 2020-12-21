@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   IonButton,
   IonCard,
@@ -68,12 +68,12 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
   );
 
   const [paymentIntent, setPaymentIntent] = useState<PaymentIntent>();
-  const createPaymentIntent = async () => {
+  const createPaymentIntent = useCallback(async () => {
     const InitialPaymentIntent = await createPayment({
       amount: Math.floor(total * 100),
     });
     setPaymentIntent(InitialPaymentIntent);
-  };
+  }, []);
 
   useEffect(() => {
     createPaymentIntent();
@@ -169,7 +169,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
               >
                 {state.user?.addresses.map((item) => {
                   return (
-                    <IonSelectOption value={item.id}>
+                    <IonSelectOption key={item.id} value={item.id}>
                       {item.address} {item.city}, {item.state}
                     </IonSelectOption>
                   );

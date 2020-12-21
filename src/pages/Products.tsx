@@ -44,7 +44,7 @@ const ProductsByCategory: React.FC = () => {
     <Layout contentRef={contentRef}>
       <IonHeader>
         <IonToolbar className="ion-padding-start">
-          Resultado: {Math.ceil(count / 10) == page ? count % 10 : 10} {'de '}
+          Resultado: {Math.ceil(count / 10) === page ? count % 10 : 10} {'de '}
           {count}
         </IonToolbar>
       </IonHeader>
@@ -94,13 +94,13 @@ const Products: React.FC = () => {
   useEffect(() => {
     refetch();
     scrollToTop();
-  }, [text, page]);
+  }, [text, page, refetch]);
 
   return (
     <Layout contentRef={contentRef}>
       <IonHeader>
         <IonToolbar className="ion-padding-start">
-          Resultado: {Math.ceil(count / 10) == page ? count % 10 : 10} {'de '}
+          Resultado: {Math.ceil(count / 10) === page ? count % 10 : 10} {'de '}
           {count}
         </IonToolbar>
       </IonHeader>
