@@ -109,7 +109,9 @@ const CartProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (!isLoading) {
-      dispatch({ type: 'set-cart', payload: orders[0] });
+      if (orders) {
+        dispatch({ type: 'set-cart', payload: orders[0] });
+      }
       dispatch({
         type: 'set-status',
         payload: isLoading ? 'isLoading' : isError ? 'isError' : 'isFetched',

@@ -14,7 +14,6 @@ import { OrderDetail } from '../models/OrderDetail';
 import { useCartDispatch, useCartState } from '../providers/CartProvider';
 import { formatToCurrency } from '../utils';
 
-import Layout from '../components/Layout';
 import CartItem from '../components/CartItem';
 
 const CategoriesPage: React.FC = () => {
@@ -32,7 +31,7 @@ const CategoriesPage: React.FC = () => {
 
   if (state.cart.order_details.length === 0) {
     return (
-      <Layout>
+      <div>
         <IonToolbar>
           <IonItem slot="start">
             <IonTitle color="tertiary">Carrito</IonTitle>
@@ -41,12 +40,12 @@ const CategoriesPage: React.FC = () => {
         <IonTitle className="ion-margin">
           No has agregado nada al carrito
         </IonTitle>
-      </Layout>
+      </div>
     );
   }
 
   return (
-    <Layout>
+    <div>
       <IonToolbar>
         <IonItem slot="start">
           <IonTitle color="tertiary">Carrito</IonTitle>
@@ -93,7 +92,7 @@ const CategoriesPage: React.FC = () => {
       ) : (
         <p>Revise conexión a internet</p>
       )}
-    </Layout>
+    </div>
   );
 };
 

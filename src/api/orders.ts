@@ -1,8 +1,12 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import axios from './index';
-import { useMutation, useQuery } from 'react-query';
+import { QueryResult, useMutation, useQuery } from 'react-query';
+import { Order } from '../models/Order';
+import { PaymentIntent } from '@stripe/stripe-js';
 
-export const useQueryCart = (token: string, userId?: number) => {
+export const useQueryCart = (
+  token: string,
+  userId?: number
+): QueryResult<Order[], unknown> => {
   return useQuery(`orders_by_${userId}_${token}`, async () => {
     const { data } = await axios.get(`/orders?user=${userId}&status=created`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -11,11 +15,17 @@ export const useQueryCart = (token: string, userId?: number) => {
   });
 };
 
-export const useQueryPaidOrders = (token: string, userId?: number) => {
+export const useQueryPaidOrders = (
+  token: string,
+  userId?: number
+): QueryResult<Order[], unknown> => {
   return useQuery(`paid_orders_by_${userId}_${token}`, async () => {
-    const { data } = await axios.get(`/orders?user=${userId}&status=paid`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const { data } = await axios.get<Order[]>(
+      `/orders?user=${userId}&status=paid`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
     return data;
   });
 };
@@ -35,22 +45,33 @@ export const updateOrder = async ({
     phone: string;
     indications?: string;
   };
-}): Promise<unknown> => {
-  const { data: response } = await axios.put(`/orders/${id}`, data);
+}): Promise<Order> => {
+  const { data: response } = await axios.put<Order>(`/orders/${id}`, data);
   return response;
 };
 
-export const createOrder = async ({ user }: { user: number }): Promise<any> => {
-  const { data } = await axios.post('/orders', { status: 'created', user });
+export const createOrder = async ({
+  user,
+}: {
+  user: number;
+}): Promise<Order> => {
+  const { data } = await axios.post<Order>('/orders', {
+    status: 'created',
+    user,
+  });
   return data;
 };
 
-export const deleteOrder = async ({ id }: { id: number }): Promise<any> => {
-  const { data } = await axios.delete(`/orders/${id}`);
+export const deleteOrder = async ({ id }: { id: number }): Promise<Order> => {
+  const { data } = await axios.delete<Order>(`/orders/${id}`);
   return data;
 };
 
-export const createPayment = async ({ amount }: { amount: number }) => {
+export const createPayment = async ({
+  amount,
+}: {
+  amount: number;
+}): Promise<PaymentIntent> => {
   const { data } = await axios.post(`/payments`, { amount });
   return data;
 };

@@ -27,7 +27,7 @@ import {
   personOutline,
   logOut,
 } from 'ionicons/icons';
-import { withRouter, useLocation } from 'react-router';
+import { withRouter, useLocation, useHistory } from 'react-router';
 
 import Searchbar from './Searchbar';
 import ImageItem from './ImageItem';
@@ -111,6 +111,7 @@ interface AuthAppbarProps {
 }
 
 const AuthAppbar: React.FC<AuthAppbarProps> = ({ user }) => {
+  const history = useHistory();
   const dispatch = useUserDispatch();
   const state = useCartState();
   const [showPopover, setShowPopover] = useState<{
@@ -138,7 +139,7 @@ const AuthAppbar: React.FC<AuthAppbarProps> = ({ user }) => {
                   isOpen={showPopover.open}
                   showBackdrop={false}
                   event={showPopover.event}
-                  onDidDismiss={(e) =>
+                  onDidDismiss={() =>
                     setShowPopover({ open: false, event: undefined })
                   }
                 >
@@ -160,6 +161,7 @@ const AuthAppbar: React.FC<AuthAppbarProps> = ({ user }) => {
                       button
                       onClick={() => {
                         localStorage.removeItem('sufarmedAuth');
+                        history.push('/home');
                         dispatch({ type: 'sign-out' });
                       }}
                     >
