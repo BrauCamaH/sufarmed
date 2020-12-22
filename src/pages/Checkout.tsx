@@ -3,12 +3,10 @@ import {
   IonButton,
   IonCard,
   IonCol,
-  IonContent,
   IonHeader,
   IonItem,
   IonItemDivider,
   IonList,
-  IonPage,
   IonRow,
   IonSelect,
   IonSpinner,
@@ -32,27 +30,35 @@ import {
   StripeCardElementChangeEvent,
   StripeError,
 } from '@stripe/stripe-js';
-import { Redirect } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Order } from '../models/Order';
 import { useCreatePayment, useUpdateOrder } from '../api/orders';
 import { useUserState } from '../providers/UserProvider';
 import { formatToCurrency } from '../utils';
 
-import Appbar from '../components/MinimalAppBar';
 import CheckoutItem from '../components/CheckoutItem';
 import PaymentBackdrop from '../components/PaymentBackdrop';
 
 import './Checkout.css';
 import { Address } from '../models/Address';
 import { add } from 'ionicons/icons';
+import { useShoppingDispatch } from '../providers/ShoppingProvider';
 
 interface CheckoutFormProps {
   order: Order;
   total: number;
+  paymentIntent: PaymentIntent | undefined;
+  setPaymentIntent: React.Dispatch<
+    React.SetStateAction<PaymentIntent | undefined>
+  >;
 }
 
-const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
+const CheckoutForm: React.FC<CheckoutFormProps> = ({
+  order,
+  total,
+  paymentIntent,
+  setPaymentIntent,
+}) => {
   const { handleSubmit } = useForm();
   const state = useUserState();
   const stripe = useStripe();
@@ -66,8 +72,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
   const [selectedAddress, setSelectedAdress] = useState<Address | undefined>(
     state.user?.addresses[0]
   );
+  const shoppingDispatch = useShoppingDispatch();
 
-  const [paymentIntent, setPaymentIntent] = useState<PaymentIntent>();
   const createPaymentIntent = useCallback(async () => {
     const InitialPaymentIntent = await createPayment({
       amount: Math.floor(total * 100),
@@ -113,7 +119,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
             phone,
             indications,
           } = selectedAddress;
-          await updateOrder({
+          const paidOrder = await updateOrder({
             id: order.id,
             data: {
               status: 'paid',
@@ -127,6 +133,10 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
           });
 
           setLoadingPayment(false);
+
+          if (paidOrder) {
+            shoppingDispatch({ type: 'add-order', payload: paidOrder });
+          }
 
           dispatch({
             type: 'set-cart',
@@ -219,7 +229,11 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
           type="submit"
         >
           Realizar Pago ${total.toFixed(2)}
-          {isLoading || loadingPayment ? <IonSpinner /> : ''}
+          {isLoading || loadingPayment ? (
+            <IonSpinner className="ion-margin-start" />
+          ) : (
+            ''
+          )}
         </IonButton>
         {!selectedAddress && (
           <IonText color="warning">
@@ -232,56 +246,58 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ order, total }) => {
 };
 
 const Checkout: React.FC = () => {
+  const STRIPE_PUBLIC_KEY = 'pk_test_F66BY1l50SclBxSGZnve6Mug00lSATA0ll';
   const state = useCartState();
-  const stripePromise = loadStripe(
-    'pk_test_F66BY1l50SclBxSGZnve6Mug00lSATA0ll'
-  );
+  const stripePromise = loadStripe(STRIPE_PUBLIC_KEY);
+  const [paymentIntent, setPaymentIntent] = useState<PaymentIntent>();
 
   if (!state.cart.total) {
-    return <Redirect to="home" />;
+    return <PaymentBackdrop paymentIntent={paymentIntent} />;
   }
 
   return (
-    <IonPage>
-      <IonContent>
-        <Appbar title="Comprar" />
-        <IonRow>
-          <IonCol style={{ maxWidth: '450px' }}>
-            <IonCard>
-              <IonHeader>
-                <IonToolbar>
-                  <IonTitle>Resumen de compra</IonTitle>
-                </IonToolbar>
-              </IonHeader>
-              {state.cart.order_details.map((item) => (
-                <CheckoutItem key={item.id} orderDetail={item} />
-              ))}
-              <IonItemDivider />
-              <IonList lines="none">
-                <IonItem>
-                  <IonTitle slot="start">Total</IonTitle>
-                  <IonTitle slot="end">
-                    {formatToCurrency(state.cart.total)}
-                  </IonTitle>
-                </IonItem>
-              </IonList>
-            </IonCard>
-          </IonCol>
-          <IonCol>
-            <IonCard>
-              <IonHeader>
-                <IonToolbar>
-                  <IonTitle>Realizar compra</IonTitle>
-                </IonToolbar>
-              </IonHeader>
-              <Elements stripe={stripePromise}>
-                <CheckoutForm order={state.cart} total={state.cart.total} />
-              </Elements>
-            </IonCard>
-          </IonCol>
-        </IonRow>
-      </IonContent>
-    </IonPage>
+    <div>
+      <IonRow>
+        <IonCol style={{ maxWidth: '450px' }}>
+          <IonCard>
+            <IonHeader>
+              <IonToolbar>
+                <IonTitle>Resumen de compra</IonTitle>
+              </IonToolbar>
+            </IonHeader>
+            {state.cart.order_details.map((item) => (
+              <CheckoutItem key={item.id} orderDetail={item} />
+            ))}
+            <IonItemDivider />
+            <IonList lines="none">
+              <IonItem>
+                <IonTitle slot="start">Total</IonTitle>
+                <IonTitle slot="end">
+                  {formatToCurrency(state.cart.total)}
+                </IonTitle>
+              </IonItem>
+            </IonList>
+          </IonCard>
+        </IonCol>
+        <IonCol>
+          <IonCard>
+            <IonHeader>
+              <IonToolbar>
+                <IonTitle>Realizar compra</IonTitle>
+              </IonToolbar>
+            </IonHeader>
+            <Elements stripe={stripePromise}>
+              <CheckoutForm
+                order={state.cart}
+                total={state.cart.total}
+                paymentIntent={paymentIntent}
+                setPaymentIntent={setPaymentIntent}
+              />
+            </Elements>
+          </IonCard>
+        </IonCol>
+      </IonRow>
+    </div>
   );
 };
 
