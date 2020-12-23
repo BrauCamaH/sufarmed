@@ -11,7 +11,6 @@ import {
   IonTitle,
 } from '@ionic/react';
 
-import Layout from '../components/Layout';
 import { useForm } from 'react-hook-form';
 import { useUserDispatch, useUserState } from '../providers/UserProvider';
 import { useCreateAddress } from '../api/addresses';
@@ -44,7 +43,7 @@ const AddAddress: React.FC = () => {
   };
 
   return (
-    <Layout>
+    <div>
       <IonTitle className="ion-margin-top">Agregar un domicilio</IonTitle>
       <form onSubmit={handleSubmit(handleSave)}>
         <IonCard className="ion-margin ion-padding">
@@ -132,7 +131,7 @@ const AddAddress: React.FC = () => {
           </IonButton>
         </IonRow>
       </form>
-    </Layout>
+    </div>
   );
 };
 

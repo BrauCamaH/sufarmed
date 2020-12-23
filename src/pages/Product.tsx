@@ -14,27 +14,26 @@ import {
   IonSpinner,
   IonTitle,
   IonToast,
-  IonToolbar,
 } from '@ionic/react';
 import { cart } from 'ionicons/icons';
-import Layout from '../components/Layout';
 import { useParams } from 'react-router-dom';
 import { useGetProductById } from '../api/products';
 import { Product } from '../models/Product';
 
-import './Products.css';
-
 import { useUserState } from '../providers/UserProvider';
 import { User } from '../models/User';
-import { Order } from '../models/Order';
 import {
   useCreateOrderDetail,
   useUpdateOrderDetail,
 } from '../api/order-details';
 import { useCartDispatch, useCartState } from '../providers/CartProvider';
 import { useCreateOrder } from '../api/orders';
+
 import QuantityInput from '../components/QuantityInput';
 import Spinner from '../components/loaders/Spinner';
+
+import './Products.css';
+import { formatToCurrency } from '../utils';
 
 interface ProductPageProps {
   product: Product;
@@ -62,7 +61,7 @@ const AddtoCart: React.FC<AddToCartProps> = ({ product, user }) => {
   const handleCreateOrder = async () => {
     if (state.cart.id === 0) {
       dispatch({ type: 'set-status', payload: 'isLoading' });
-      const order: Order = await createOrder({ user: user.id });
+      const order: any = await createOrder({ user: user.id });
       const orderDetail = await createOrderDetail({
         orderId: order.id,
         price: product.price,
@@ -171,15 +170,17 @@ const MainContent: React.FC<ProductPageProps> = ({ product, user }) => {
           },
         ]}
       />
+      <IonCardHeader>
+        <IonRow>
+          <IonCol>
+            <IonTitle color="tertiary">{product.name}</IonTitle>
+          </IonCol>
+          <IonCol>
+            <IonTitle color="dark">{formatToCurrency(product.price)}</IonTitle>
+          </IonCol>
+        </IonRow>
+      </IonCardHeader>
       <IonCardContent>
-        <IonToolbar>
-          <IonTitle slot="start" color="tertiary">
-            {product.name}
-          </IonTitle>
-          <IonTitle slot="end" color="dark">
-            ${product.price}
-          </IonTitle>
-        </IonToolbar>
         <IonGrid>
           <IonRow>
             <IonCol sizeLg="6" sizeSm="auto" sizeMd="6">
@@ -282,12 +283,12 @@ const Especifications: React.FC<ProductPageProps> = ({ product }) => {
 };
 
 const ProductPage: React.FC = () => {
-  const { id } = useParams<any>();
-  const { isLoading, isError, data: product } = useGetProductById(id);
+  const { id } = useParams<{ id: string }>();
+  const { isLoading, isError, data: product } = useGetProductById(+id);
   const state = useUserState();
 
   return (
-    <Layout>
+    <>
       {isLoading ? (
         <Spinner />
       ) : !isError ? (
@@ -308,7 +309,7 @@ const ProductPage: React.FC = () => {
       ) : (
         <p>Error revise conexión a internet</p>
       )}
-    </Layout>
+    </>
   );
 };
 

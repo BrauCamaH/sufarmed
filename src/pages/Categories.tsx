@@ -14,7 +14,7 @@ const CategoriesPage: React.FC = () => {
   const { isLoading, isError, data: categories } = useQueryCategories();
 
   return (
-    <Layout>
+    <div>
       <IonList>
         <IonRow className="ion-justify-content-center">
           {isLoading ? (
@@ -28,7 +28,7 @@ const CategoriesPage: React.FC = () => {
           )}
         </IonRow>
       </IonList>
-    </Layout>
+    </div>
   );
 };
 

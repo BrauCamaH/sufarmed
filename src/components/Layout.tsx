@@ -9,14 +9,10 @@ interface LayoutProps {
   contentRef?: any;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, contentRef }) => {
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <IonPage>
-      <IonContent
-        ref={contentRef}
-        className="layout__content"
-        scrollEvents={true}
-      >
+      <IonContent className="layout__content">
         <Appbar />
         <div id="content">{children}</div>
         <Footer />

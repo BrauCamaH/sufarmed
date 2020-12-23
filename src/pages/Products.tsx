@@ -10,7 +10,6 @@ import {
   useGetProductsByName,
 } from '../api/products';
 import { useLocation } from 'react-router';
-import Layout from '../components/Layout';
 import Pagination from './Pagination';
 import Spinner from '../components/loaders/Spinner';
 
@@ -41,7 +40,7 @@ const ProductsByCategory: React.FC = () => {
   }, [page, refetch]);
 
   return (
-    <Layout contentRef={contentRef}>
+    <div>
       <IonHeader>
         <IonToolbar className="ion-padding-start">
           Resultado: {Math.ceil(count / 10) === page ? count % 10 : 10} {'de '}
@@ -68,7 +67,7 @@ const ProductsByCategory: React.FC = () => {
       ) : (
         <p>Error revise conexión a internet</p>
       )}
-    </Layout>
+    </div>
   );
 };
 
@@ -97,7 +96,7 @@ const Products: React.FC = () => {
   }, [text, page, refetch]);
 
   return (
-    <Layout contentRef={contentRef}>
+    <div>
       <IonHeader>
         <IonToolbar className="ion-padding-start">
           Resultado: {Math.ceil(count / 10) === page ? count % 10 : 10} {'de '}
@@ -124,7 +123,7 @@ const Products: React.FC = () => {
       ) : (
         <p>Error revise conexión a internet</p>
       )}
-    </Layout>
+    </div>
   );
 };
 

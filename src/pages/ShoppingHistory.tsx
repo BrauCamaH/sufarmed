@@ -12,15 +12,13 @@ import {
   IonToolbar,
 } from '@ionic/react';
 import { useLocation } from 'react-router-dom';
-import { useQueryPaidOrders } from '../api/orders';
 
-import Layout from '../components/Layout';
 import { Order } from '../models/Order';
-import { useUserState } from '../providers/UserProvider';
 import { chevronDown, chevronForward } from 'ionicons/icons';
 import { OrderDetail } from '../models/OrderDetail';
 import { useGetProductById } from '../api/products';
 import Spinner from '../components/loaders/Spinner';
+import { useShoppingState } from '../providers/ShoppingProvider';
 
 interface DetailItemProps {
   detail: OrderDetail;
@@ -125,14 +123,10 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ order }) => {
 
 const ShoppingHistory: React.FC = () => {
   const location = useLocation();
-  const state = useUserState();
-  const { data: orders, isLoading, isError } = useQueryPaidOrders(
-    state.jwt,
-    state.user?.id
-  );
+  const state = useShoppingState();
 
   return (
-    <Layout>
+    <div>
       <IonToolbar>
         <IonRow className="ion-margin-start ion-margin-bottom">
           <IonItem
@@ -167,9 +161,9 @@ const ShoppingHistory: React.FC = () => {
           </IonItem>
         </IonRow>
       </IonToolbar>
-      {isLoading ? (
+      {state.status === 'isLoading' ? (
         <Spinner />
-      ) : !isError ? (
+      ) : state.status !== 'isError' ? (
         <>
           <div className="ion-margin">
             <IonRow class="header-row">
@@ -179,7 +173,7 @@ const ShoppingHistory: React.FC = () => {
               <IonCol size="1"> </IonCol>
             </IonRow>
             <IonRow>
-              {orders.map((order: Order) => (
+              {state.shopping.map((order: Order) => (
                 <HistoryItem key={order.id} order={order} />
               ))}
             </IonRow>
@@ -188,7 +182,7 @@ const ShoppingHistory: React.FC = () => {
       ) : (
         <p>Error revise conexión a internet</p>
       )}
-    </Layout>
+    </div>
   );
 };
 
