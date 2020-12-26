@@ -49,7 +49,7 @@ const AddAddress: React.FC = () => {
   return (
     <div>
       <>
-        <IonTitle className="ion-margin-top">Agregar un domicilio</IonTitle>
+        <IonTitle className="ion-margin-top">Editar domicilio</IonTitle>
         <form onSubmit={handleSubmit(handleSave)}>
           <IonCard className="ion-margin ion-padding" disabled={isUpdating}>
             <IonItem>
