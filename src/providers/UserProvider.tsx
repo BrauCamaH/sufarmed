@@ -8,6 +8,10 @@ type Action =
   | { type: 'set-user'; payload: State }
   | { type: 'set-token'; payload: string }
   | { type: 'add-address'; payload: Address }
+  | { type: 'delete-address'; payload: Address }
+  | { type: 'delete-address'; payload: Address }
+  | { type: 'update-address'; payload: Address }
+  | { type: 'update-user'; payload: User }
   | { type: 'sign-out' };
 type Dispatch = (action: Action) => void;
 type State = { user?: User; jwt: string };
@@ -32,11 +36,44 @@ const userReducer = (state: State, action: Action): State => {
       } else {
         return { ...state };
       }
+    case 'delete-address':
+      if (state.user) {
+        const updatedAdresses =
+          state.user.addresses.filter(
+            (item) => item.id !== action.payload.id
+          ) || state.user.addresses;
 
+        return {
+          ...state,
+          user: {
+            ...state.user,
+            addresses: [...updatedAdresses],
+          },
+        };
+      } else {
+        return { ...state };
+      }
+    case 'update-address':
+      if (state.user) {
+        const updatedAddresses = [...state.user.addresses];
+        const index = updatedAddresses.findIndex(
+          (item) => item.id === action.payload.id
+        );
+        updatedAddresses[index] = { ...action.payload };
+
+        return {
+          ...state,
+          user: { ...state.user, addresses: [...updatedAddresses] },
+        };
+      } else {
+        return { ...state };
+      }
     case 'set-token':
       return { ...state, jwt: action.payload };
     case 'set-user':
       return { ...state, ...action.payload };
+    case 'update-user':
+      return { ...state, user: { ...state.user, ...action.payload } };
     case 'sign-out':
       return { user: undefined, jwt: '' };
     default: {

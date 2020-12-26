@@ -26,7 +26,7 @@ const list: HelpItemProps[] = [
 
 const HelpItem: React.FC<HelpItemProps> = ({ title, icon }) => {
   return (
-    <IonItem className="help__item" lines="none" button routerLink="/">
+    <IonItem className="help__item" lines="none" button routerLink="/home">
       <IonIcon icon={icon} className="ion-padding-end" />
       <IonLabel>
         <h1>{title}</h1>

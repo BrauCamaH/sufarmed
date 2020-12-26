@@ -7,7 +7,6 @@ import {
   IonRow,
   IonItem,
   IonLabel,
-  IonImg,
   IonToolbar,
   IonMenuToggle,
   IonMenu,
@@ -84,20 +83,12 @@ export const Menu: React.FC<MenuProps> = ({ menuEnabled }) => {
       <IonContent forceOverscroll={false}>
         <IonHeader>
           <IonToolbar color="primary">
-            <IonItem
-              color="primary"
-              lines="none"
-              routerLink="/home"
-              routerDirection="root"
-            >
-              <IonMenuButton>
-                <IonIcon icon={menu} />
+            <IonRow class="ion-align-items-center">
+              <IonMenuButton style={{ marginLeft: '5px' }}>
+                <IonIcon id="drawer" icon={menu} />
               </IonMenuButton>
-              <IonImg
-                style={{ width: 150, heigth: 150 }}
-                src="assets/logo-sufarmed.png"
-              />
-            </IonItem>
+              <ImageItem />
+            </IonRow>
           </IonToolbar>
         </IonHeader>
         <IonList lines="none">{renderlistItems(routes.appPages)}</IonList>
@@ -160,7 +151,6 @@ const AuthAppbar: React.FC<AuthAppbarProps> = ({ user }) => {
                     <IonItem
                       button
                       onClick={() => {
-                        localStorage.removeItem('sufarmedAuth');
                         history.push('/home');
                         dispatch({ type: 'sign-out' });
                       }}

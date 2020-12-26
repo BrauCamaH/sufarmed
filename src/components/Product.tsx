@@ -4,6 +4,7 @@ import {
   IonCardContent,
   IonCardSubtitle,
   IonItem,
+  IonThumbnail,
 } from '@ionic/react';
 import { Product } from '../models/Product';
 
@@ -24,11 +25,9 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
           routerDirection="none"
           routerLink={`/product/${product.id}`}
         >
-          <img
-            className="product__img"
-            src={product.img?.formats.small.url}
-            alt="product"
-          />
+          <IonThumbnail className="product__img">
+            <img src={product.img?.formats.small.url} alt="product" />
+          </IonThumbnail>
         </IonItem>
         <IonCardContent>
           <IonCardSubtitle>{product.name}</IonCardSubtitle>${product.price}

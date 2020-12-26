@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import { useQueryPaidOrders } from '../api/orders';
 import { Order } from '../models/Order';
+import { User } from '../models/User';
 import { useUserState } from './UserProvider';
 
 type Action =
@@ -24,7 +25,10 @@ type State = {
 const ShoppingStateContext = createContext<State | undefined>(undefined);
 const ShoppingDispatchContext = createContext<Dispatch | undefined>(undefined);
 
-type ShoppingProviderProps = { children: React.ReactNode };
+type ShoppingProviderProps = {
+  children: React.ReactNode;
+  userState: { user?: User; jwt: string };
+};
 
 const initialState: State = {
   shopping: [],
@@ -42,9 +46,8 @@ const shoppingReducer = (state: State, action: Action): State => {
   }
 };
 
-const ShoppingProvider: React.FC<ShoppingProviderProps> = ({ children }) => {
+const Provider: React.FC<ShoppingProviderProps> = ({ children, userState }) => {
   const [state, dispatch] = useReducer(shoppingReducer, initialState);
-  const userState = useUserState();
   const { isLoading, isError, data: shopping } = useQueryPaidOrders(
     userState.jwt,
     userState.user?.id
@@ -78,6 +81,16 @@ const useShoppingState = (): State => {
   }
 
   return context;
+};
+
+const ShoppingProvider: React.FC = ({ children }) => {
+  const userState = useUserState();
+
+  return userState ? (
+    <Provider userState={userState}>{children}</Provider>
+  ) : (
+    <> {children}</>
+  );
 };
 
 const useShoppingDispatch = (): Dispatch => {

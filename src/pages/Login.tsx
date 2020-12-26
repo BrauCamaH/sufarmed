@@ -20,6 +20,7 @@ import { useUserDispatch } from '../providers/UserProvider';
 
 import './Login.css';
 import { useHistory } from 'react-router';
+import { User } from '../models/User';
 
 const Login: React.FC = () => {
   const history = useHistory();
@@ -28,17 +29,12 @@ const Login: React.FC = () => {
   const [mutation, { isLoading, isError }] = useLogin();
 
   const handleLogin = async (data: { email: string; password: string }) => {
-    try {
-      const response: any = await mutation({
-        email: data.email,
-        password: data.password,
-      });
-      dispatch({ type: 'set-user', payload: response });
-      localStorage.setItem('sufarmedAuth', response.jwt);
-      history.push('/home');
-    } catch (error) {
-      console.log();
-    }
+    const response: { user: User; jwt: string } = await mutation({
+      email: data.email,
+      password: data.password,
+    });
+    dispatch({ type: 'set-user', payload: response });
+    history.push('/home');
   };
 
   return (

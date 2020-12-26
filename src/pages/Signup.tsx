@@ -37,7 +37,7 @@ const SignUp: React.FC = () => {
   }) => {
     const { email, last_name, firstname, password } = data;
 
-    const response: any = await mutation({
+    const response: { user: User; jwt: string } = await mutation({
       name: firstname,
       last_name,
       email,

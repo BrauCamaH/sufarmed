@@ -1,5 +1,5 @@
 import React from 'react';
-import { IonSlides, IonSlide, IonThumbnail } from '@ionic/react';
+import { IonSlides, IonSlide, IonSkeletonText } from '@ionic/react';
 
 import './Slider.css';
 import { useQuery } from 'react-query';
@@ -37,7 +37,7 @@ const Slider: React.FC = () => {
   return (
     <div id="slider">
       {isLoading ? (
-        <IonThumbnail />
+        <IonSkeletonText animated style={{ width: '100%', height: '350px' }} />
       ) : !isError ? (
         <IonSlides pager options={slideOpts}>
           {slides?.imgs.map((img: Multimedia) => (
