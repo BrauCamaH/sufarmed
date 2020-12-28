@@ -16,15 +16,11 @@ export const useQueryCart = (
 };
 
 export const useQueryPaidOrders = (
-  token: string,
   userId?: number
 ): QueryResult<Order[], unknown> => {
-  return useQuery(`paid_orders_by_${userId}_${token}`, async () => {
+  return useQuery(`paid_orders_by_${userId}`, async () => {
     const { data } = await axios.get<Order[]>(
-      `/orders?user=${userId}&status=paid`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+      `/orders?user=${userId}&status=paid`
     );
     return data;
   });

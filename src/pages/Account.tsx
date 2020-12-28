@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import {
   IonButton,
   IonCard,
@@ -6,23 +6,25 @@ import {
   IonCardSubtitle,
   IonCol,
   IonGrid,
-  IonHeader,
   IonIcon,
   IonInput,
   IonItem,
   IonLabel,
   IonModal,
   IonRow,
+  IonSpinner,
+  IonText,
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
 import { pencil, close } from 'ionicons/icons';
 import { useLocation } from 'react-router';
 
-import { useUserState } from '../providers/UserProvider';
+import { useUserDispatch, useUserState } from '../providers/UserProvider';
 
 import './Account.css';
 import AddressList from '../components/AddressList';
+import { useUpdateUser } from '../api/users';
 
 interface AccountItemProps {
   fieldName: string;
@@ -41,14 +43,61 @@ interface AccountItemProps {
     | 'datetime-local'
     | undefined;
   value?: string;
+  valueToEdit: string;
 }
 
 const AccountItem: React.FC<AccountItemProps> = ({
   fieldName,
+  valueToEdit,
   type = 'text',
   value = '',
 }) => {
+  const userState = useUserState();
+  const dispatch = useUserDispatch();
+  const [updateUser, { isLoading }] = useUpdateUser();
   const [editField, setEditField] = useState<boolean>(false);
+  const [error, setError] = useState<{ message?: string; isError: boolean }>({
+    isError: true,
+    message: undefined,
+  });
+
+  const [fieldValue, setFieldValue] = useState<string>();
+  const [confirmFieldValue, setConfirmFieldValue] = useState<string>();
+
+  const handleEdit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!fieldValue) {
+      setError({
+        message: 'Se debe ingresar un valor en ' + fieldName,
+        isError: true,
+      });
+      return;
+    } else if (!confirmFieldValue) {
+      setError({ message: 'Se debe confirmar ' + fieldName, isError: true });
+      return;
+    } else if (fieldValue !== confirmFieldValue) {
+      setError({
+        message: 'El valor de confirmación es diferente',
+        isError: true,
+      });
+      return;
+    } else {
+      setError({ message: '', isError: false });
+    }
+
+    if (userState.user) {
+      const user = await updateUser({
+        userId: userState.user.id,
+        req: { [valueToEdit]: fieldValue },
+      });
+
+      if (user) {
+        dispatch({ type: 'update-user', payload: user });
+      }
+      setEditField(false);
+    }
+  };
 
   return (
     <>
@@ -81,35 +130,60 @@ const AccountItem: React.FC<AccountItemProps> = ({
           </IonRow>
         </IonCardContent>
       </IonCard>
-      <IonModal isOpen={editField}>
-        <IonHeader>
+      <IonModal
+        isOpen={editField}
+        onDidDismiss={() => {
+          setEditField(false);
+          setError({ message: '', isError: true });
+        }}
+      >
+        <form onSubmit={handleEdit}>
           <IonToolbar color="primary">
-            <IonTitle slot="start">Modificar {fieldName}</IonTitle>
+            <IonTitle slot="start">
+              Modificar {fieldName}: {value}
+            </IonTitle>
             <IonButton
               slot="end"
               fill="clear"
               color="light"
               onClick={() => {
                 setEditField(false);
+                setError({ message: '', isError: true });
               }}
             >
               <IonIcon icon={close} />
             </IonButton>
           </IonToolbar>
-          <IonCard>
-            <IonItem>
-              <IonLabel position="stacked">{`Ingresa tu ${fieldName}`}</IonLabel>
-              <IonInput type={type} value={value} />
-            </IonItem>
-          </IonCard>
-          <IonCard>
-            <IonItem>
-              <IonLabel position="stacked">{`Repite tu ${fieldName}`}</IonLabel>
-              <IonInput type={type} />
-            </IonItem>
-          </IonCard>
-        </IonHeader>
-        <IonButton>Aceptar</IonButton>
+          <IonItem>
+            <IonLabel position="floating">{`Ingresa tu ${fieldName}`}</IonLabel>
+            <IonInput
+              name="field"
+              type={type}
+              onIonChange={(e) => {
+                setFieldValue(e.detail.value!);
+              }}
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel position="floating">{`Repite tu ${fieldName}`}</IonLabel>
+            <IonInput
+              name="confirmField"
+              type={type}
+              onIonChange={(e) => setConfirmFieldValue(e.detail.value!)}
+            />
+          </IonItem>
+          <IonButton
+            expand="block"
+            type="submit"
+            color="secondary"
+            disabled={isLoading}
+          >
+            {isLoading ? <IonSpinner /> : 'Aceptar'}
+          </IonButton>
+          <IonText color="danger">
+            <p>{error.message}</p>
+          </IonText>
+        </form>
       </IonModal>
     </>
   );
@@ -159,15 +233,28 @@ const Account: React.FC = () => {
         <IonGrid className="ion-justify-content-center account__list">
           <IonTitle>Datos de la Cuenta</IonTitle>
           <IonCol>
-            <AccountItem fieldName="E-mail" value={state.user?.email} />
-            <AccountItem fieldName="Contraseña" type="password" value="" />
+            <AccountItem
+              valueToEdit="email"
+              fieldName="E-mail"
+              value={state.user?.email}
+            />
+            <AccountItem
+              valueToEdit="password"
+              fieldName="Contraseña"
+              type="password"
+            />
           </IonCol>
         </IonGrid>
         <IonGrid className="ion-justify-content-center account__list">
           <IonTitle>Datos Personales</IonTitle>
           <IonCol>
-            <AccountItem fieldName="Nombre" value={state.user?.name} />
             <AccountItem
+              valueToEdit="name"
+              fieldName="Nombre"
+              value={state.user?.name}
+            />
+            <AccountItem
+              valueToEdit="cellphone"
               fieldName="Telefono"
               type="tel"
               value={state.user?.cellphone}

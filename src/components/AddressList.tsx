@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   IonButton,
   IonCard,
@@ -16,15 +17,17 @@ import {
   pencil,
   trash,
 } from 'ionicons/icons';
-import React, { useState } from 'react';
-import { useUserState } from '../providers/UserProvider';
+import { useUserDispatch, useUserState } from '../providers/UserProvider';
 import { Address } from '../models/Address';
+import { useDeleteAddress } from '../api/addresses';
 
 interface AddressItemProps {
   address: Address;
 }
 
 export const AddressItem: React.FC<AddressItemProps> = ({ address }) => {
+  const dispatch = useUserDispatch();
+  const [deleteAddress, { isLoading }] = useDeleteAddress();
   const [showPopover, setShowPopover] = useState<{
     open: boolean;
     event: Event | undefined;
@@ -33,7 +36,7 @@ export const AddressItem: React.FC<AddressItemProps> = ({ address }) => {
     event: undefined,
   });
   return (
-    <IonItem>
+    <IonItem disabled={isLoading}>
       <IonButton
         fill="clear"
         slot="end"
@@ -45,12 +48,12 @@ export const AddressItem: React.FC<AddressItemProps> = ({ address }) => {
         isOpen={showPopover.open}
         showBackdrop={false}
         event={showPopover.event}
-        onDidDismiss={(e) => setShowPopover({ open: false, event: undefined })}
+        onDidDismiss={() => setShowPopover({ open: false, event: undefined })}
       >
         <IonList lines="none">
           <IonItem
             button
-            routerLink="/account"
+            routerLink={`/address/${address.id}`}
             onClick={() => {
               setShowPopover({ open: false, event: undefined });
             }}
@@ -60,8 +63,14 @@ export const AddressItem: React.FC<AddressItemProps> = ({ address }) => {
           </IonItem>
           <IonItem
             button
-            routerLink="/account"
-            onClick={() => {
+            onClick={async () => {
+              const deletedAddress = await deleteAddress(address.id);
+              if (deletedAddress) {
+                dispatch({
+                  type: 'delete-address',
+                  payload: deletedAddress,
+                });
+              }
               setShowPopover({ open: false, event: undefined });
             }}
           >
@@ -94,7 +103,7 @@ const AddressList: React.FC = () => {
   return (
     <IonCard className="ion-padding">
       <>
-        {state.user.addresses ? (
+        {state.user.addresses.length !== 0 ? (
           <IonList>
             {state.user.addresses.map((address) => (
               <AddressItem key={address.id} address={address} />

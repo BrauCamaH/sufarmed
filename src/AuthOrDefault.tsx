@@ -21,6 +21,7 @@ import Account from './pages/Account';
 import Help from './pages/Help';
 import AddAddress from './pages/AddAddress';
 import Checkout from './pages/Checkout';
+import EditAddress from './pages/EditAddress';
 
 const AuthOrDefault: React.FC = () => {
   const state = useUserState();
@@ -110,6 +111,17 @@ const AuthOrDefault: React.FC = () => {
                         }}
                       />
 
+                      <Route
+                        exact
+                        path="/address/:id"
+                        render={() => {
+                          return isAuthed ? (
+                            <EditAddress />
+                          ) : (
+                            <Redirect to="login" />
+                          );
+                        }}
+                      />
                       {!isAuthed && (
                         <>
                           <Route path="/login" component={Login} exact={true} />{' '}

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import { useQueryCart } from '../api/orders';
 import { Order } from '../models/Order';
 import { OrderDetail } from '../models/OrderDetail';
+import { User } from '../models/User';
 import { useUserState } from './UserProvider';
 
 type Action =
@@ -23,7 +24,10 @@ type State = {
   cart: Order;
   status: 'isLoading' | 'isError' | 'isFetched' | 'isUpdating';
 };
-type UserProviderProps = { children: React.ReactNode };
+type UserProviderProps = {
+  children: React.ReactNode;
+  userState: { user?: User; jwt: string };
+};
 
 const CartStateContext = createContext<State | undefined>(undefined);
 const CartDispatchContext = createContext<Dispatch | undefined>(undefined);
@@ -99,9 +103,8 @@ const cartReducer = (state: State, action: Action): State => {
   }
 };
 
-const CartProvider: React.FC<UserProviderProps> = ({ children }) => {
+const Provider: React.FC<UserProviderProps> = ({ children, userState }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
-  const userState = useUserState();
   const { isLoading, isError, data: orders } = useQueryCart(
     userState.jwt,
     userState.user?.id
@@ -110,7 +113,11 @@ const CartProvider: React.FC<UserProviderProps> = ({ children }) => {
   useEffect(() => {
     if (!isLoading) {
       if (orders) {
-        dispatch({ type: 'set-cart', payload: orders[0] });
+        if (orders?.length !== 0) {
+          dispatch({ type: 'set-cart', payload: orders[0] });
+        }
+      } else {
+        dispatch({ type: 'set-cart', payload: initialState.cart });
       }
       dispatch({
         type: 'set-status',
@@ -125,6 +132,16 @@ const CartProvider: React.FC<UserProviderProps> = ({ children }) => {
         {children}
       </CartDispatchContext.Provider>
     </CartStateContext.Provider>
+  );
+};
+
+const CartProvider: React.FC = ({ children }) => {
+  const userState = useUserState();
+
+  return userState.user ? (
+    <Provider userState={userState}>{children}</Provider>
+  ) : (
+    <> {children}</>
   );
 };
 
