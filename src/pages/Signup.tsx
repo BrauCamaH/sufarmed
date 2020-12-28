@@ -16,18 +16,17 @@ import {
 } from '@ionic/react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useHistory } from 'react-router';
 
 import { useCreateUser } from '../api/users';
+import { User } from '../models/User';
 import { useUserDispatch } from '../providers/UserProvider';
 
 import './Login.css';
 
 const SignUp: React.FC = () => {
-  const history = useHistory();
   const { register, handleSubmit, errors } = useForm();
   const dispatch = useUserDispatch();
-  const [mutation, { isLoading, isError }] = useCreateUser();
+  const [signUp, { isLoading, isError }] = useCreateUser();
 
   const handleSignUp = async (data: {
     firstname: string;
@@ -37,14 +36,13 @@ const SignUp: React.FC = () => {
   }) => {
     const { email, last_name, firstname, password } = data;
 
-    const response: { user: User; jwt: string } = await mutation({
+    const response: { user: User; jwt: string } = await signUp({
       name: firstname,
       last_name,
       email,
       password,
     });
     dispatch({ type: 'set-user', payload: response });
-    history.push('/home');
   };
   return (
     <>
@@ -85,7 +83,7 @@ const SignUp: React.FC = () => {
                         required
                       />
                     </IonItem>
-                    {errors.firtsname && (
+                    {errors.firstname && (
                       <IonTitle color="danger">
                         <p>Se requiere nombre</p>
                       </IonTitle>
@@ -156,15 +154,9 @@ const SignUp: React.FC = () => {
               </IonRow>
             </IonList>
             <IonCol>
-              {isLoading ? (
-                <IonButton type="submit" expand="block" color="secondary">
-                  <IonSpinner />
-                </IonButton>
-              ) : (
-                <IonButton type="submit" expand="block" color="secondary">
-                  CrearCuenta
-                </IonButton>
-              )}
+              <IonButton type="submit" expand="block" color="secondary">
+                {isLoading ? <IonSpinner /> : 'Crear Cuenta'}
+              </IonButton>
             </IonCol>
             <IonCol>
               <IonButton

@@ -19,22 +19,19 @@ import { useLogin } from '../api/users';
 import { useUserDispatch } from '../providers/UserProvider';
 
 import './Login.css';
-import { useHistory } from 'react-router';
 import { User } from '../models/User';
 
 const Login: React.FC = () => {
-  const history = useHistory();
   const { register, handleSubmit, errors } = useForm();
   const dispatch = useUserDispatch();
-  const [mutation, { isLoading, isError }] = useLogin();
+  const [login, { isLoading, isError }] = useLogin();
 
   const handleLogin = async (data: { email: string; password: string }) => {
-    const response: { user: User; jwt: string } = await mutation({
+    const response: { user: User; jwt: string } = await login({
       email: data.email,
       password: data.password,
     });
     dispatch({ type: 'set-user', payload: response });
-    history.push('/home');
   };
 
   return (
@@ -98,15 +95,14 @@ const Login: React.FC = () => {
               )}
             </IonList>
             <IonCol>
-              {isLoading ? (
-                <IonButton type="submit" expand="block" color="secondary">
-                  <IonSpinner />
-                </IonButton>
-              ) : (
-                <IonButton type="submit" expand="block" color="secondary">
-                  Iniciar Sesión
-                </IonButton>
-              )}
+              <IonButton
+                disabled={isLoading}
+                type="submit"
+                expand="block"
+                color="secondary"
+              >
+                {isLoading ? <IonSpinner /> : 'Iniciar Sesión'}
+              </IonButton>
             </IonCol>
             <IonCol>
               <IonButton

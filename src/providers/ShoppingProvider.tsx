@@ -49,7 +49,6 @@ const shoppingReducer = (state: State, action: Action): State => {
 const Provider: React.FC<ShoppingProviderProps> = ({ children, userState }) => {
   const [state, dispatch] = useReducer(shoppingReducer, initialState);
   const { isLoading, isError, data: shopping } = useQueryPaidOrders(
-    userState.jwt,
     userState.user?.id
   );
 
@@ -86,7 +85,7 @@ const useShoppingState = (): State => {
 const ShoppingProvider: React.FC = ({ children }) => {
   const userState = useUserState();
 
-  return userState ? (
+  return userState.user ? (
     <Provider userState={userState}>{children}</Provider>
   ) : (
     <> {children}</>

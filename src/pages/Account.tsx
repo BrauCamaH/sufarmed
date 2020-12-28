@@ -13,8 +13,8 @@ import {
   IonModal,
   IonRow,
   IonSpinner,
+  IonText,
   IonTitle,
-  IonToast,
   IonToolbar,
 } from '@ionic/react';
 import { pencil, close } from 'ionicons/icons';
@@ -56,7 +56,10 @@ const AccountItem: React.FC<AccountItemProps> = ({
   const dispatch = useUserDispatch();
   const [updateUser, { isLoading }] = useUpdateUser();
   const [editField, setEditField] = useState<boolean>(false);
-  const [error, setError] = useState<{ message?: string }>({});
+  const [error, setError] = useState<{ message?: string; isError: boolean }>({
+    isError: true,
+    message: undefined,
+  });
 
   const [fieldValue, setFieldValue] = useState<string>();
   const [confirmFieldValue, setConfirmFieldValue] = useState<string>();
@@ -64,43 +67,40 @@ const AccountItem: React.FC<AccountItemProps> = ({
   const handleEdit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!fieldValue)
-      setError({ message: 'Se debe ingresar un valor en ' + fieldName });
-    if (!confirmFieldValue)
-      setError({ message: 'Se debe confirmar ' + fieldName });
-    if (fieldValue !== confirmFieldValue)
-      setError({ message: 'El valor de confirmación es diferente' });
+    if (!fieldValue) {
+      setError({
+        message: 'Se debe ingresar un valor en ' + fieldName,
+        isError: true,
+      });
+      return;
+    } else if (!confirmFieldValue) {
+      setError({ message: 'Se debe confirmar ' + fieldName, isError: true });
+      return;
+    } else if (fieldValue !== confirmFieldValue) {
+      setError({
+        message: 'El valor de confirmación es diferente',
+        isError: true,
+      });
+      return;
+    } else {
+      setError({ message: '', isError: false });
+    }
 
-    if (!error.message) {
-      if (userState.user) {
-        const user = await updateUser({
-          userId: userState.user.id,
-          req: { [valueToEdit]: fieldValue },
-        });
+    if (userState.user) {
+      const user = await updateUser({
+        userId: userState.user.id,
+        req: { [valueToEdit]: fieldValue },
+      });
 
-        if (user) {
-          dispatch({ type: 'update-user', payload: user });
-        }
-        setEditField(false);
+      if (user) {
+        dispatch({ type: 'update-user', payload: user });
       }
+      setEditField(false);
     }
   };
 
   return (
     <>
-      <IonToast
-        position="middle"
-        color="danger"
-        isOpen={error.message !== undefined}
-        duration={3000}
-        message={error.message}
-        buttons={[
-          {
-            text: 'Aceptar',
-            role: 'cancel',
-          },
-        ]}
-      />
       <IonCard className="account__item">
         <IonCardContent>
           <IonRow>
@@ -130,7 +130,13 @@ const AccountItem: React.FC<AccountItemProps> = ({
           </IonRow>
         </IonCardContent>
       </IonCard>
-      <IonModal isOpen={editField}>
+      <IonModal
+        isOpen={editField}
+        onDidDismiss={() => {
+          setEditField(false);
+          setError({ message: '', isError: true });
+        }}
+      >
         <form onSubmit={handleEdit}>
           <IonToolbar color="primary">
             <IonTitle slot="start">
@@ -142,6 +148,7 @@ const AccountItem: React.FC<AccountItemProps> = ({
               color="light"
               onClick={() => {
                 setEditField(false);
+                setError({ message: '', isError: true });
               }}
             >
               <IonIcon icon={close} />
@@ -165,9 +172,17 @@ const AccountItem: React.FC<AccountItemProps> = ({
               onIonChange={(e) => setConfirmFieldValue(e.detail.value!)}
             />
           </IonItem>
-          <IonButton expand="block" type="submit" color="secondary">
+          <IonButton
+            expand="block"
+            type="submit"
+            color="secondary"
+            disabled={isLoading}
+          >
             {isLoading ? <IonSpinner /> : 'Aceptar'}
           </IonButton>
+          <IonText color="danger">
+            <p>{error.message}</p>
+          </IonText>
         </form>
       </IonModal>
     </>

@@ -138,7 +138,7 @@ const Provider: React.FC<UserProviderProps> = ({ children, userState }) => {
 const CartProvider: React.FC = ({ children }) => {
   const userState = useUserState();
 
-  return userState ? (
+  return userState.user ? (
     <Provider userState={userState}>{children}</Provider>
   ) : (
     <> {children}</>
