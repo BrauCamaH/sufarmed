@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import { User } from '../models/User';
 import api from '../api/';
-import axios from 'axios';
 import { Address } from '../models/Address';
+import { isFunctionDeclaration } from 'typescript';
 
 type Action =
   | { type: 'set-user'; payload: State }
@@ -86,18 +86,8 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(userReducer, initialState);
 
   useEffect(() => {
-    if (state.jwt) {
+    if (state.jwt !== '') {
       api.defaults.headers.common['Authorization'] = `Bearer ${state.jwt}`;
-
-      axios
-        .get('/users/me')
-        .then(({ data }: { data: User }) =>
-          dispatch({
-            type: 'set-user',
-            payload: { jwt: state.jwt, user: data },
-          })
-        )
-        .catch((e) => console.log(e));
     }
 
     return () => {
