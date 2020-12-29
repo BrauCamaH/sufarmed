@@ -42,7 +42,6 @@ import PaymentBackdrop from '../components/PaymentBackdrop';
 import './Checkout.css';
 import { Address } from '../models/Address';
 import { add } from 'ionicons/icons';
-import { useShoppingDispatch } from '../providers/ShoppingProvider';
 
 interface CheckoutFormProps {
   order: Order;
@@ -72,8 +71,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   const [selectedAddress, setSelectedAdress] = useState<Address | undefined>(
     state.user?.addresses[0]
   );
-  const shoppingDispatch = useShoppingDispatch();
-
   const createPaymentIntent = useCallback(async () => {
     const InitialPaymentIntent = await createPayment({
       amount: Math.floor(total * 100),
@@ -119,7 +116,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
             phone,
             indications,
           } = selectedAddress;
-          const paidOrder = await updateOrder({
+          await updateOrder({
             id: order.id,
             data: {
               status: 'paid',
@@ -133,10 +130,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
           });
 
           setLoadingPayment(false);
-
-          if (paidOrder) {
-            shoppingDispatch({ type: 'add-order', payload: paidOrder });
-          }
 
           dispatch({
             type: 'set-cart',
