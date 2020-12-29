@@ -1,7 +1,5 @@
-import React, { createContext, useContext, useEffect, useReducer } from 'react';
-import { useQueryPaidOrders } from '../api/orders';
+import React, { createContext, useContext, useReducer } from 'react';
 import { Order } from '../models/Order';
-import { User } from '../models/User';
 import { useUserState } from './UserProvider';
 
 type Action =
@@ -27,7 +25,6 @@ const ShoppingDispatchContext = createContext<Dispatch | undefined>(undefined);
 
 type ShoppingProviderProps = {
   children: React.ReactNode;
-  userState: { user?: User; jwt: string };
 };
 
 const initialState: State = {
@@ -46,24 +43,8 @@ const shoppingReducer = (state: State, action: Action): State => {
   }
 };
 
-const Provider: React.FC<ShoppingProviderProps> = ({ children, userState }) => {
+const Provider: React.FC<ShoppingProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(shoppingReducer, initialState);
-  const { isLoading, isError, data: shopping } = useQueryPaidOrders(
-    userState.jwt,
-    userState.user?.id
-  );
-
-  useEffect(() => {
-    if (!isLoading) {
-      if (shopping) {
-        dispatch({ type: 'set-shopping', payload: shopping });
-      }
-    }
-    dispatch({
-      type: 'set-status',
-      payload: isLoading ? 'isLoading' : isError ? 'isError' : 'isFetched',
-    });
-  }, [isLoading]);
 
   return (
     <ShoppingStateContext.Provider value={state}>
@@ -86,11 +67,7 @@ const useShoppingState = (): State => {
 const ShoppingProvider: React.FC = ({ children }) => {
   const userState = useUserState();
 
-  return userState.user ? (
-    <Provider userState={userState}>{children}</Provider>
-  ) : (
-    <> {children}</>
-  );
+  return userState.user ? <Provider>{children}</Provider> : <> {children}</>;
 };
 
 const useShoppingDispatch = (): Dispatch => {
