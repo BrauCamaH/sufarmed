@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   IonButton,
+  IonGrid,
   IonItem,
   IonItemDivider,
   IonList,
@@ -37,9 +38,20 @@ const CategoriesPage: React.FC = () => {
             <IonTitle color="tertiary">Carrito</IonTitle>
           </IonItem>
         </IonToolbar>
-        <IonTitle className="ion-margin">
-          No has agregado nada al carrito
-        </IonTitle>
+        <IonRow className="ion-justify-content-center ion-align-items-center">
+          <IonRow>
+            <img
+              style={{ width: '300px' }}
+              src="assets/cart.svg"
+              alt="sufarmed"
+            />
+          </IonRow>
+          <IonToolbar>
+            <IonTitle className="ion-margin ion-text-center">
+              Carrito vacío
+            </IonTitle>
+          </IonToolbar>
+        </IonRow>
       </div>
     );
   }
