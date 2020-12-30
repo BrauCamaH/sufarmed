@@ -10,6 +10,8 @@ import {
   IonIcon,
   IonHeader,
   IonSpinner,
+  IonCardTitle,
+  IonItem,
 } from '@ionic/react';
 import './CartItem.css';
 import { trash } from 'ionicons/icons';
@@ -93,6 +95,14 @@ const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
           </>
         ) : null}
       </IonRow>
+      <IonToolbar>
+        <IonItem lines="full" disabled>
+          <IonCardTitle slot="end" class="ion-margin">
+            Precio total :{' '}
+            {formatToCurrency(orderDetail.price * orderDetail.quantity)}
+          </IonCardTitle>
+        </IonItem>
+      </IonToolbar>
     </IonCard>
   );
 };

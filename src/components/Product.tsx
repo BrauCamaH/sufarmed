@@ -2,13 +2,14 @@ import React from 'react';
 import {
   IonCard,
   IonCardContent,
-  IonCardSubtitle,
   IonItem,
+  IonText,
   IonThumbnail,
 } from '@ionic/react';
 import { Product } from '../models/Product';
 
 import './Product.css';
+import { formatToCurrency } from '../utils';
 
 export interface ProductProps {
   product: Product;
@@ -30,7 +31,14 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
           </IonThumbnail>
         </IonItem>
         <IonCardContent>
-          <IonCardSubtitle>{product.name}</IonCardSubtitle>${product.price}
+          <IonText class="ion-text-start" color="medium">
+            <h3>{product.name}</h3>
+          </IonText>
+          <IonText class="ion-text-start" color="tertiary">
+            <h2>
+              <b> MXN {formatToCurrency(product.price)}</b>
+            </h2>
+          </IonText>
         </IonCardContent>
       </IonCard>
     </div>

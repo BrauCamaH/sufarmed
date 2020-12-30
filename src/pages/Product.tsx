@@ -171,16 +171,14 @@ const MainContent: React.FC<ProductPageProps> = ({ product, user }) => {
           },
         ]}
       />
-      <IonCardHeader>
-        <IonRow>
-          <IonCol>
-            <IonTitle color="tertiary">{product.name}</IonTitle>
-          </IonCol>
-          <IonCol>
-            <IonTitle color="dark">{formatToCurrency(product.price)}</IonTitle>
-          </IonCol>
-        </IonRow>
-      </IonCardHeader>
+      <IonRow class="ion-margin-top">
+        <IonCol>
+          <IonTitle color="tertiary">{product.name}</IonTitle>
+        </IonCol>
+        <IonCol>
+          <IonTitle color="dark">{formatToCurrency(product.price)}</IonTitle>
+        </IonCol>
+      </IonRow>
       <IonCardContent>
         <IonGrid>
           <IonRow>
