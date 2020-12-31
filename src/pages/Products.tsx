@@ -155,7 +155,7 @@ const Products: React.FC = () => {
   );
 };
 
-export const ProductsOrProductsByCategory = (): React.ReactNode => {
+export const ProductsOrProductsByCategory = () => {
   const category = useQuery().get('category') || '';
 
   return category ? <ProductsByCategory /> : <Products />;
