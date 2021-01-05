@@ -3,6 +3,7 @@ import { IonCol, IonFooter, IonToolbar, IonGrid, IonRow } from '@ionic/react';
 import { NavLink } from 'react-router-dom';
 
 import './Footer.css';
+import { useUserState } from '../providers/UserProvider';
 
 export interface LinkProps {
   title?: boolean;
@@ -28,6 +29,8 @@ const Link: React.FC<LinkProps> = ({ to, href, title, children }) => {
 };
 
 const Footer: React.FC = () => {
+  const state = useUserState();
+
   return (
     <IonFooter className="footer-content">
       <IonToolbar color="secondary">
@@ -39,9 +42,9 @@ const Footer: React.FC = () => {
             </IonCol>
             <IonCol>
               <Link title>Ayuda</Link>
-              <Link to="/account">Configuración</Link>
-              <Link>Comprar</Link>
-              <Link to="/help">Solución de Problemas</Link>
+              <Link to="/account-info">Configuración</Link>
+              <Link to="/shopping-info">Comprar</Link>
+              <Link to="/contact">Solución de Problemas</Link>
             </IonCol>
             <IonCol>
               <Link title>Redes Sociales</Link>
@@ -51,8 +54,19 @@ const Footer: React.FC = () => {
             </IonCol>
             <IonCol>
               <Link title>Mi Cuenta</Link>
-              <Link to="/login">Ingresar</Link>
-              <Link to="/signup">Crear cuenta</Link>
+              <>
+                {state.user ? (
+                  <>
+                    <Link to="/account">Mi datos</Link>
+                    <Link to="/orders">Mis compras</Link>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/login">Ingresar</Link>
+                    <Link to="/signup">Crear cuenta</Link>
+                  </>
+                )}
+              </>
             </IonCol>
           </IonRow>
         </IonGrid>
