@@ -7,6 +7,7 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  IonRow,
 } from '@ionic/react';
 import { add, remove } from 'ionicons/icons';
 
@@ -25,51 +26,58 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
   onChange,
 }) => {
   return (
-    <IonItem lines="none">
-      <IonLabel slot="start">Cantidad:</IonLabel>
-      <IonButton
-        fill="clear"
-        size="small"
-        disabled={quantity <= 1}
-        onClick={() => {
-          setQuantity(quantity - 1);
-        }}
-      >
-        <IonIcon icon={remove} />
-      </IonButton>
-      <IonList>
-        <IonItem style={{ maxWidth: '60px' }}>
-          <IonInput
-            inputmode="numeric"
-            value={quantity}
-            onIonChange={(e: any) => {
-              const newQuantity = parseInt(e.target.value);
-              if (newQuantity < 1 || newQuantity > stock) {
-                e.target.value = quantity;
-              } else {
-                if (Number.isInteger(newQuantity)) {
-                  setQuantity(newQuantity);
-                  if (onChange) onChange();
+    <IonRow class="ion-align-items-center ion-justify-content-center">
+      <IonItem lines="none">
+        <IonLabel>Cantidad:</IonLabel>
+        <IonButton
+          fill="clear"
+          size="small"
+          disabled={quantity <= 1}
+          onClick={() => {
+            setQuantity(quantity - 1);
+          }}
+        >
+          <IonIcon icon={remove} />
+        </IonButton>
+        <IonList>
+          <IonItem style={{ maxWidth: '60px' }}>
+            <IonInput
+              inputmode="numeric"
+              value={quantity}
+              onIonChange={(e: any) => {
+                const newQuantity = parseInt(e.target.value);
+                if (newQuantity < 1 || newQuantity > stock) {
+                  e.target.value = newQuantity;
                 } else {
-                  e.target.value = quantity;
+                  if (Number.isInteger(newQuantity)) {
+                    setQuantity(newQuantity);
+                    if (onChange) onChange();
+                  } else {
+                    e.target.value = quantity;
+                  }
                 }
-              }
-            }}
-          />
-        </IonItem>
-      </IonList>
-      <IonButton
-        fill="clear"
-        size="small"
-        disabled={quantity === stock}
-        onClick={() => {
-          setQuantity(quantity + 1);
-        }}
-      >
-        <IonIcon icon={add} />
-      </IonButton>
-      <IonCardSubtitle>(stock {stock})</IonCardSubtitle>
-    </IonItem>
+              }}
+              onBlur={(e) => {
+                e.target.value = quantity;
+              }}
+            />
+          </IonItem>
+        </IonList>
+        <IonButton
+          fill="clear"
+          size="small"
+          disabled={quantity === stock}
+          onClick={() => {
+            setQuantity(quantity + 1);
+          }}
+        >
+          <IonIcon icon={add} />
+        </IonButton>
+      </IonItem>
+      <IonRow>
+        <IonCardSubtitle>(stock {stock})</IonCardSubtitle>
+      </IonRow>
+    </IonRow>
   );
 };
 

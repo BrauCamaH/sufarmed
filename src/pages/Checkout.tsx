@@ -42,7 +42,6 @@ import PaymentBackdrop from '../components/PaymentBackdrop';
 import './Checkout.css';
 import { Address } from '../models/Address';
 import { add } from 'ionicons/icons';
-import { useShoppingDispatch } from '../providers/ShoppingProvider';
 
 interface CheckoutFormProps {
   order: Order;
@@ -72,7 +71,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   const [selectedAddress, setSelectedAdress] = useState<Address | undefined>(
     state.user?.addresses[0]
   );
-  const shoppingDispatch = useShoppingDispatch();
 
   const createPaymentIntent = useCallback(async () => {
     const InitialPaymentIntent = await createPayment({
@@ -119,7 +117,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
             phone,
             indications,
           } = selectedAddress;
-          const paidOrder = await updateOrder({
+          await updateOrder({
             id: order.id,
             data: {
               status: 'paid',
@@ -133,10 +131,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
           });
 
           setLoadingPayment(false);
-
-          if (paidOrder) {
-            shoppingDispatch({ type: 'add-order', payload: paidOrder });
-          }
 
           dispatch({
             type: 'set-cart',
@@ -157,7 +151,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
     <>
       <form className="ion-margin" onSubmit={handleSubmit(handlePay)}>
         {<PaymentBackdrop paymentIntent={paymentIntent} />}
-        <IonTitle className="ion-margin-top ion-margin-bottom">
+        <IonTitle className="ion-text-start ion-margin-top ion-margin-bottom">
           Seleccione Domicilio
         </IonTitle>
         {state.user?.addresses.length !== 0 ? (
@@ -192,7 +186,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
             {'Agregar Domicilio  '} <IonIcon icon={add} />
           </IonButton>
         )}
-        <IonTitle className="ion-margin-top ion-margin-bottom">
+        <IonTitle className="ion-text-start ion-margin-top ion-margin-bottom">
           Datos de la tarjeta
         </IonTitle>
         <CardElement
@@ -246,7 +240,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
 };
 
 const Checkout: React.FC = () => {
-  const STRIPE_PUBLIC_KEY = 'pk_test_F66BY1l50SclBxSGZnve6Mug00lSATA0ll';
+  const STRIPE_PUBLIC_KEY = process.env.REACT_APP_STRIPE_PUBLIC_KEY || '';
   const state = useCartState();
   const stripePromise = loadStripe(STRIPE_PUBLIC_KEY);
   const [paymentIntent, setPaymentIntent] = useState<PaymentIntent>();

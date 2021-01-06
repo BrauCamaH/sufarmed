@@ -26,6 +26,7 @@ const SearhModal: React.FC = () => {
           <IonInput
             id="searchbar"
             ref={register}
+            class="ion-margin-start"
             name="text"
             value={text}
             inputMode="search"

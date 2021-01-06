@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   IonAvatar,
   IonButton,
@@ -18,7 +18,8 @@ import { chevronDown, chevronForward } from 'ionicons/icons';
 import { OrderDetail } from '../models/OrderDetail';
 import { useGetProductById } from '../api/products';
 import Spinner from '../components/loaders/Spinner';
-import { useShoppingState } from '../providers/ShoppingProvider';
+import { useGetShoppingCount, useQueryPaidOrders } from '../api/orders';
+import { useUserState } from '../providers/UserProvider';
 
 interface DetailItemProps {
   detail: OrderDetail;
@@ -123,7 +124,32 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ order }) => {
 
 const ShoppingHistory: React.FC = () => {
   const location = useLocation();
-  const state = useShoppingState();
+  const userState = useUserState();
+  const [page, setPage] = useState(1);
+  const [shoppingHistory, setShoppingHistory] = useState<Order[]>([]);
+
+  const { data: count, isLoading: isLoadingCount } = useGetShoppingCount(
+    userState.user?.id || 0
+  );
+
+  const { refetch, isLoading, data: shopping } = useQueryPaidOrders({
+    token: userState.jwt,
+    userId: userState.user?.id,
+    page,
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [page]);
+
+  useEffect(() => {
+    if (shopping) {
+      setShoppingHistory((state) => [...state, ...shopping]);
+    }
+  }, [isLoading, page]);
+
+  if (isLoading || isLoadingCount) return <Spinner />;
+  if (!shopping) return <Spinner />;
 
   return (
     <div>
@@ -161,27 +187,37 @@ const ShoppingHistory: React.FC = () => {
           </IonItem>
         </IonRow>
       </IonToolbar>
-      {state.status === 'isLoading' ? (
-        <Spinner />
-      ) : state.status !== 'isError' ? (
-        <>
-          <div className="ion-margin">
-            <IonRow class="header-row">
-              <IonCol size="3">Fecha</IonCol>
-              <IonCol size="3">Estado</IonCol>
-              <IonCol size="3">Productos</IonCol>
-              <IonCol size="1"> </IonCol>
-            </IonRow>
-            <IonRow>
-              {state.shopping.map((order: Order) => (
-                <HistoryItem key={order.id} order={order} />
-              ))}
-            </IonRow>
-          </div>
-        </>
-      ) : (
-        <p>Error revise conexión a internet</p>
-      )}
+
+      <div className="ion-margin">
+        <IonRow class="header-row">
+          <IonCol size="3">Fecha</IonCol>
+          <IonCol size="3">Estado</IonCol>
+          <IonCol size="3">Productos</IonCol>
+          <IonCol size="1"> </IonCol>
+        </IonRow>
+        <IonRow>
+          {shoppingHistory.map((order: Order) => (
+            <HistoryItem key={order.id} order={order} />
+          ))}
+        </IonRow>
+        <IonRow
+          style={{ width: '100%' }}
+          className="ion-justify-content-center"
+        >
+          {count ? (
+            count > page * 10 ? (
+              <IonButton
+                color="secondary"
+                onClick={() => {
+                  setPage((n) => n + 1);
+                }}
+              >
+                Mostrar más
+              </IonButton>
+            ) : null
+          ) : null}
+        </IonRow>
+      </div>
     </div>
   );
 };

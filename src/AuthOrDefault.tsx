@@ -22,6 +22,9 @@ import Help from './pages/Help';
 import AddAddress from './pages/AddAddress';
 import Checkout from './pages/Checkout';
 import EditAddress from './pages/EditAddress';
+import { AccountDoc } from './documentation/AccountDoc';
+import { BuyDoc } from './documentation/BuyDoc';
+import { Contact } from './documentation/Contact';
 
 const AuthOrDefault: React.FC = () => {
   const state = useUserState();
@@ -122,6 +125,13 @@ const AuthOrDefault: React.FC = () => {
                           );
                         }}
                       />
+                      <Route
+                        exact
+                        path="/account-info"
+                        component={AccountDoc}
+                      />
+                      <Route exact path="/shopping-info" component={BuyDoc} />
+                      <Route exact path="/contact" component={Contact} />
                       {!isAuthed && (
                         <>
                           <Route path="/login" component={Login} exact={true} />{' '}

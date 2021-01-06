@@ -1,5 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { IonGrid, IonRow, IonCol, IonHeader, IonToolbar } from '@ionic/react';
+import React, { useEffect, useState } from 'react';
+import {
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonHeader,
+  IonToolbar,
+  IonCard,
+  IonIcon,
+  IonCardTitle,
+  IonButton,
+  IonCardContent,
+} from '@ionic/react';
 import ProductCard from '../components/Product';
 import { Product } from '../models/Product';
 
@@ -12,9 +23,27 @@ import {
 import { useLocation } from 'react-router';
 import Pagination from './Pagination';
 import Spinner from '../components/loaders/Spinner';
+import { search } from 'ionicons/icons';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
+};
+
+const NotFound: React.FC = () => {
+  return (
+    <IonCard class="ion-margin-top">
+      <IonCardContent>
+        <IonRow class="ion-align-items-center ion-justify-content-center">
+          <IonButton color="warning" fill="clear" disabled>
+            <IonIcon icon={search} />
+          </IonButton>
+          <IonCardTitle class="ion-margin-start">
+            No exiten productos que coincidan con la búsqueda
+          </IonCardTitle>
+        </IonRow>
+      </IonCardContent>
+    </IonCard>
+  );
 };
 
 const ProductsByCategory: React.FC = () => {
@@ -28,16 +57,14 @@ const ProductsByCategory: React.FC = () => {
     refetch,
   } = useGetProductsByCategory(parseInt(category), page);
 
-  const contentRef = useRef<HTMLIonContentElement | null>(null);
-
-  const scrollToTop = () => {
-    contentRef.current && contentRef.current.scrollToTop(0);
-  };
-
   useEffect(() => {
     refetch();
-    scrollToTop();
   }, [page, refetch]);
+
+  if (isLoading) return <Spinner />;
+  if (isError) return <p>Error revise conexión a internet</p>;
+
+  if (products.length === 0) return <NotFound />;
 
   return (
     <div>
@@ -47,26 +74,28 @@ const ProductsByCategory: React.FC = () => {
           {count}
         </IonToolbar>
       </IonHeader>
-      {isLoading ? (
-        <Spinner />
-      ) : !isError ? (
-        <IonGrid fixed>
-          <IonRow className="ion-margin-bottom">
-            {products.map((product: Product) => (
-              <IonCol key={product.id} size="8.5" size-md="4">
-                <ProductCard product={product} />
-              </IonCol>
-            ))}
-          </IonRow>
-          <Pagination
-            page={page}
-            setPage={setPage}
-            nItems={Math.ceil(count / 10)}
-          />
-        </IonGrid>
-      ) : (
-        <p>Error revise conexión a internet</p>
-      )}
+
+      <IonGrid fixed>
+        <IonRow className="ion-margin-bottom">
+          {products.map((product: Product) => (
+            <IonCol
+              class="ion-margin-bottom"
+              key={product.id}
+              size="8"
+              sizeLg="3"
+              sizeMd="3.8"
+              sizeSm="5.9"
+            >
+              <ProductCard product={product} />
+            </IonCol>
+          ))}
+        </IonRow>
+        <Pagination
+          page={page}
+          setPage={setPage}
+          nItems={Math.ceil(count / 10)}
+        />
+      </IonGrid>
     </div>
   );
 };
@@ -80,20 +109,18 @@ const Products: React.FC = () => {
     page
   );
 
-  const contentRef = useRef<HTMLIonContentElement | null>(null);
-
-  const scrollToTop = () => {
-    contentRef.current && contentRef.current.scrollToTop(0);
-  };
-
   useEffect(() => {
     setPage(1);
   }, [text, refetch]);
 
   useEffect(() => {
     refetch();
-    scrollToTop();
   }, [text, page, refetch]);
+
+  if (isLoading) return <Spinner />;
+  if (isError) return <p>Error revise conexión a internet</p>;
+
+  if (products.length === 0) return <NotFound />;
 
   return (
     <div>
@@ -103,26 +130,27 @@ const Products: React.FC = () => {
           {count}
         </IonToolbar>
       </IonHeader>
-      {isLoading ? (
-        <Spinner />
-      ) : !isError ? (
-        <IonGrid fixed>
-          <IonRow>
-            {products.map((product: Product) => (
-              <IonCol key={product.id} size="8.5" size-md="4">
-                <ProductCard product={product} />
-              </IonCol>
-            ))}
-          </IonRow>
-          <Pagination
-            page={page}
-            setPage={setPage}
-            nItems={Math.ceil(count / 10)}
-          />
-        </IonGrid>
-      ) : (
-        <p>Error revise conexión a internet</p>
-      )}
+      <IonGrid>
+        <IonRow>
+          {products.map((product: Product) => (
+            <IonCol
+              class="ion-margin-bottom"
+              key={product.id}
+              size="8"
+              sizeLg="3"
+              sizeMd="3.8"
+              sizeSm="5.9"
+            >
+              <ProductCard product={product} />
+            </IonCol>
+          ))}
+        </IonRow>
+        <Pagination
+          page={page}
+          setPage={setPage}
+          nItems={Math.ceil(count / 10)}
+        />
+      </IonGrid>
     </div>
   );
 };

@@ -21,10 +21,11 @@ import {
   menu,
   help,
   pricetag,
-  calendar,
   person,
   personOutline,
   logOut,
+  home,
+  calendar,
 } from 'ionicons/icons';
 import { withRouter, useLocation, useHistory } from 'react-router';
 
@@ -50,9 +51,9 @@ interface MenuProps {
 
 const routes = {
   appPages: [
+    { title: 'Inicio', path: '/home', icon: home },
     { title: 'Categorias', path: '/categories', icon: pricetag },
     { title: 'Ayuda', path: '/help', icon: help },
-    { title: 'Mis compras', path: '/orders', icon: calendar },
   ],
 };
 
@@ -147,6 +148,16 @@ const AuthAppbar: React.FC<AuthAppbarProps> = ({ user }) => {
                         icon={personOutline}
                       />
                       <IonLabel>Mi cuenta </IonLabel>
+                    </IonItem>
+                    <IonItem
+                      button
+                      routerLink="/orders"
+                      onClick={() => {
+                        setShowPopover({ open: false, event: undefined });
+                      }}
+                    >
+                      <IonIcon className="ion-margin-end" icon={calendar} />
+                      <IonLabel>Mis compras </IonLabel>
                     </IonItem>
                     <IonItem
                       button
