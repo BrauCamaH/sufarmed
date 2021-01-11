@@ -42,6 +42,7 @@ import PaymentBackdrop from '../components/PaymentBackdrop';
 import './Checkout.css';
 import { Address } from '../models/Address';
 import { add } from 'ionicons/icons';
+import { useUpdateInventory } from '../api/products';
 
 interface CheckoutFormProps {
   order: Order;
@@ -71,6 +72,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   const [selectedAddress, setSelectedAdress] = useState<Address | undefined>(
     state.user?.addresses[0]
   );
+  const [updateInventory] = useUpdateInventory();
 
   const createPaymentIntent = useCallback(async () => {
     const InitialPaymentIntent = await createPayment({
@@ -129,6 +131,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
               indications,
             },
           });
+          await updateInventory(order.id);
 
           setLoadingPayment(false);
 

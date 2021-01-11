@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   IonCardSubtitle,
   IonCol,
@@ -5,7 +6,6 @@ import {
   IonLabel,
   IonRow,
 } from '@ionic/react';
-import React from 'react';
 import { useGetProductById } from '../api/products';
 import { OrderDetail } from '../models/OrderDetail';
 import { formatToCurrency } from '../utils';

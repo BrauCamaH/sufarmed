@@ -1,6 +1,8 @@
+import { useMutation } from 'react-query';
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import axios from './index';
 import { useQuery } from 'react-query';
+import { Order } from '../models/Order';
 
 export const useGetCountByName = (text: string, page: number) => {
   const start = (page - 1) * 10;
@@ -51,4 +53,13 @@ export const useGetProductById = (id: number) => {
     const { data } = await axios.get(`/products/${id}`);
     return data;
   });
+};
+
+export const updateInventory = async (orderId: number): Promise<Order> => {
+  const { data } = await axios.put(`/products/inventory/${orderId}`);
+  return data;
+};
+
+export const useUpdateInventory = () => {
+  return useMutation(updateInventory);
 };
