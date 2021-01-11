@@ -160,6 +160,7 @@ const AuthAppbar: React.FC<AuthAppbarProps> = ({ user }) => {
                       <IonLabel>Mis compras </IonLabel>
                     </IonItem>
                     <IonItem
+                      id="sign-out"
                       button
                       onClick={() => {
                         history.push('/home');
@@ -172,6 +173,7 @@ const AuthAppbar: React.FC<AuthAppbarProps> = ({ user }) => {
                   </IonList>
                 </IonPopover>
                 <IonItem
+                  id="appbar_account"
                   button
                   lines="none"
                   color="primary"
@@ -214,6 +216,7 @@ const UnAuthAppbar: React.FC = () => {
               </IonRow>
               <IonRow class="ion-justify-content-between ion-align-items-center">
                 <IonButton
+                  id="login-button"
                   className="ion-margin-start"
                   routerLink="/login"
                   routerDirection="root"
