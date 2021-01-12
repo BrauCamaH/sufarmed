@@ -154,7 +154,12 @@ const SignUp: React.FC = () => {
               </IonRow>
             </IonList>
             <IonCol>
-              <IonButton type="submit" expand="block" color="secondary">
+              <IonButton
+                id="signup"
+                type="submit"
+                expand="block"
+                color="secondary"
+              >
                 {isLoading ? <IonSpinner /> : 'Crear Cuenta'}
               </IonButton>
             </IonCol>

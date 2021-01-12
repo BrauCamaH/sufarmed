@@ -96,6 +96,7 @@ const Login: React.FC = () => {
             </IonList>
             <IonCol>
               <IonButton
+                id="login"
                 disabled={isLoading}
                 type="submit"
                 expand="block"
@@ -106,6 +107,7 @@ const Login: React.FC = () => {
             </IonCol>
             <IonCol>
               <IonButton
+                id="signup"
                 fill="clear"
                 color="secondary"
                 expand="block"
