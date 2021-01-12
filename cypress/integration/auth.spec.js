@@ -12,7 +12,7 @@ describe('Sufarmed', () => {
   const lastName = name.split(' ')[1];
 
   it('navigate to login', () => {
-    cy.visit('http://localhost:8100/');
+    cy.visit('/home');
 
     cy.get('#login-button').click();
   });
