@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const AccountDoc: React.FC = () => {
+const AccountDoc: React.FC = () => {
   return (
     <div className="ion-margin ion-padding">
       <h1>Configuración de la cuenta</h1>
@@ -31,3 +31,5 @@ export const AccountDoc: React.FC = () => {
     </div>
   );
 };
+
+export default AccountDoc;

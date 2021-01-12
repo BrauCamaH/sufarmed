@@ -2,7 +2,7 @@ import { IonCard, IonIcon, IonItem, IonLabel } from '@ionic/react';
 import { logoWhatsapp, newspaper } from 'ionicons/icons';
 import React from 'react';
 
-export const Contact: React.FC = () => {
+const Contact: React.FC = () => {
   return (
     <div className="ion-margin ion-padding">
       <h1>Contacto</h1>
@@ -26,3 +26,5 @@ export const Contact: React.FC = () => {
     </div>
   );
 };
+
+export default Contact;
