@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const BuyDoc: React.FC = () => {
+const BuyDoc: React.FC = () => {
   return (
     <div className="ion-margin ion-padding">
       <h1>Compras</h1>
@@ -52,3 +52,5 @@ export const BuyDoc: React.FC = () => {
     </div>
   );
 };
+
+export default BuyDoc;

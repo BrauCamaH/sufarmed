@@ -25,6 +25,7 @@ import {
 import { formatToCurrency } from '../utils';
 
 import QuantityInput from './QuantityInput';
+import { useShoppingState } from '../providers/ShoppingProvider';
 
 export interface CartProps {
   orderDetail: OrderDetail;
@@ -33,9 +34,13 @@ const CartItem: React.FC<CartProps> = ({ orderDetail }) => {
   const dispatch = useCartDispatch();
   const state = useCartState();
   const [quantity, setQuantity] = useState<number>(orderDetail.quantity);
+
+  const shoppingState = useShoppingState();
   const { isLoading, isError, data: product } = useGetProductById(
-    orderDetail.product
+    +orderDetail.product,
+    shoppingState.id
   );
+
   const [deleteOrderDetail] = useDeleteOrderDetail();
   const [updateOrderDetail] = useUpdateOrderDetail();
 

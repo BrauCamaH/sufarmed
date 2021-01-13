@@ -3,6 +3,7 @@ import { Order } from '../models/Order';
 import { useUserState } from './UserProvider';
 
 type Action =
+  | { type: 'set-shopping-id'; payload: number }
   | {
       type: 'set-shopping';
       payload: Order[];
@@ -16,6 +17,7 @@ type Action =
 type Dispatch = (action: Action) => void;
 
 type State = {
+  id: number;
   shopping: Order[];
   status: 'isLoading' | 'isError' | 'isFetched' | 'isUpdating';
 };
@@ -28,6 +30,7 @@ type ShoppingProviderProps = {
 };
 
 const initialState: State = {
+  id: 1,
   shopping: [],
   status: 'isLoading',
 };
@@ -40,6 +43,8 @@ const shoppingReducer = (state: State, action: Action): State => {
       return { ...state, shopping: [...state.shopping, { ...action.payload }] };
     case 'set-status':
       return { ...state, status: action.payload };
+    default:
+      return { ...state };
   }
 };
 
