@@ -34,6 +34,7 @@ import Spinner from '../components/loaders/Spinner';
 
 import './Products.css';
 import { formatToCurrency } from '../utils';
+import { useShoppingState } from '../providers/ShoppingProvider';
 
 interface ProductPageProps {
   product: Product;
@@ -283,7 +284,11 @@ const Especifications: React.FC<ProductPageProps> = ({ product }) => {
 
 const ProductPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { isLoading, isError, data: product } = useGetProductById(+id);
+  const shoppingState = useShoppingState();
+  const { isLoading, isError, data: product } = useGetProductById(
+    +id,
+    shoppingState.id
+  );
   const state = useUserState();
 
   return (

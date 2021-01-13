@@ -22,19 +22,19 @@ describe('Sufarmed', () => {
   });
 
   it('go to sing-up', () => {
-    cy.get('#signup').click();
+    cy.get('#signup').click({ force: true });
   });
 
   it('create user', () => {
-    cy.get('input[name=firstname').type(firstName, { force: true });
-    cy.get('input[name=lastname').type(lastName, { force: true });
-    cy.get('input[name=email').type(email, { force: true });
-    cy.get('input[name=password').type(pass, { force: true });
+    cy.get('input[name=firstname]').type(firstName, { force: true });
+    cy.get('input[name=lastname]').type(lastName, { force: true });
+    cy.get('input[name=email]').type(email, { force: true });
+    cy.get('input[name=password]').type(pass, { force: true });
 
     cy.get('#signup').click({ force: true });
 
     cy.url('home');
-    cy.contains(firstName);
+    cy.contains(firstName.split(' ')[0]);
   });
 
   it('log-out', () => {

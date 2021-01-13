@@ -16,10 +16,12 @@ export const useQueryCart = (
 };
 
 export const useQueryPaidOrders = ({
+  shoppingId,
   token,
   userId,
   page,
 }: {
+  shoppingId: number;
   token: string;
   userId?: number;
   page: number;
@@ -27,7 +29,7 @@ export const useQueryPaidOrders = ({
   const start = (page - 1) * 10;
 
   return useQuery(
-    `paid_orders_by_${userId}_session_${token}_page_${page}`,
+    `paid_orders_by_${userId}_session_${token}_page_${page}_updated_at_${shoppingId}`,
     async () => {
       const { data } = await axios.get<Order[]>(
         `/orders?user=${userId}&status=paid&_start=${start}&_limit=10&_sort=updated_at:DESC`,
@@ -41,14 +43,18 @@ export const useQueryPaidOrders = ({
 };
 
 export const useGetShoppingCount = (
+  shoppingId: number,
   userId: number
 ): QueryResult<number, unknown> => {
-  return useQuery(`shopping_count_${userId}`, async () => {
-    const { data } = await axios.get(
-      `/orders/count?user=${userId}&status=paid`
-    );
-    return data;
-  });
+  return useQuery(
+    `shopping_count_${userId}_updated_at_${shoppingId}`,
+    async () => {
+      const { data } = await axios.get(
+        `/orders/count?user=${userId}&status=paid`
+      );
+      return data;
+    }
+  );
 };
 
 export const updateOrder = async ({

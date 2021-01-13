@@ -48,8 +48,8 @@ export const useGetProductsByCategory = (categoryId: number, page: number) => {
   });
 };
 
-export const useGetProductById = (id: number) => {
-  return useQuery(`product_${id}`, async () => {
+export const useGetProductById = (id: number, shoppingId: number) => {
+  return useQuery(`product_${id}_updated_at_${shoppingId}`, async () => {
     const { data } = await axios.get(`/products/${id}`);
     return data;
   });

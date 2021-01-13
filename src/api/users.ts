@@ -25,19 +25,16 @@ export const login = async ({
 
 export const createUser = async ({
   name,
-  last_name,
   email,
   password,
 }: {
   name: string;
-  last_name: string;
   email: string;
   password: string;
 }): Promise<any | undefined> => {
   const { data } = await axios.post<UserApiResponse>('/auth/local/register', {
     name,
     email,
-    last_name,
     password,
     username: email,
   });

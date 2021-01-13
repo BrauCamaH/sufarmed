@@ -2,7 +2,6 @@ import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import { User } from '../models/User';
 import api from '../api/';
 import { Address } from '../models/Address';
-import { isFunctionDeclaration } from 'typescript';
 
 type Action =
   | { type: 'set-user'; payload: State }

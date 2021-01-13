@@ -20,13 +20,18 @@ import { useGetProductById } from '../api/products';
 import Spinner from '../components/loaders/Spinner';
 import { useGetShoppingCount, useQueryPaidOrders } from '../api/orders';
 import { useUserState } from '../providers/UserProvider';
+import { useShoppingState } from '../providers/ShoppingProvider';
 
 interface DetailItemProps {
   detail: OrderDetail;
 }
 
 const DetailItem: React.FC<DetailItemProps> = ({ detail }) => {
-  const { data: product, isLoading } = useGetProductById(detail.product);
+  const shoppingState = useShoppingState();
+  const { data: product, isLoading } = useGetProductById(
+    detail.product,
+    shoppingState.id
+  );
 
   return (
     <>
@@ -122,17 +127,60 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ order }) => {
   );
 };
 
-const ShoppingHistory: React.FC = () => {
+const AccountNav: React.FC = () => {
   const location = useLocation();
+
+  return (
+    <IonToolbar>
+      <IonRow className="ion-margin-start ion-margin-bottom">
+        <IonItem
+          button
+          lines={location.pathname.startsWith('/account') ? 'full' : 'none'}
+          routerLink="/account"
+        >
+          <h1
+            className={
+              location.pathname.startsWith('/account')
+                ? 'account_item--selected'
+                : undefined
+            }
+          >
+            Mi Cuenta
+          </h1>
+        </IonItem>
+        <IonItem
+          button
+          lines={location.pathname.startsWith('/orders') ? 'full' : 'none'}
+          routerLink="/orders"
+        >
+          <h1
+            className={
+              location.pathname.startsWith('/orders')
+                ? 'account_item--selected'
+                : undefined
+            }
+          >
+            Mis Compras
+          </h1>
+        </IonItem>
+      </IonRow>
+    </IonToolbar>
+  );
+};
+
+const ShoppingHistory: React.FC = () => {
   const userState = useUserState();
   const [page, setPage] = useState(1);
+  const state = useShoppingState();
   const [shoppingHistory, setShoppingHistory] = useState<Order[]>([]);
 
   const { data: count, isLoading: isLoadingCount } = useGetShoppingCount(
+    state.id,
     userState.user?.id || 0
   );
 
   const { refetch, isLoading, data: shopping } = useQueryPaidOrders({
+    shoppingId: state.id,
     token: userState.jwt,
     userId: userState.user?.id,
     page,
@@ -148,46 +196,18 @@ const ShoppingHistory: React.FC = () => {
     }
   }, [isLoading, page]);
 
-  if (isLoading || isLoadingCount) return <Spinner />;
+  if (isLoading || isLoadingCount)
+    return (
+      <>
+        <AccountNav />
+        <Spinner />
+      </>
+    );
   if (!shopping) return <Spinner />;
 
   return (
     <div>
-      <IonToolbar>
-        <IonRow className="ion-margin-start ion-margin-bottom">
-          <IonItem
-            button
-            lines={location.pathname.startsWith('/account') ? 'full' : 'none'}
-            routerLink="/account"
-          >
-            <h1
-              className={
-                location.pathname.startsWith('/account')
-                  ? 'account_item--selected'
-                  : undefined
-              }
-            >
-              Mi Cuenta
-            </h1>
-          </IonItem>
-          <IonItem
-            button
-            lines={location.pathname.startsWith('/orders') ? 'full' : 'none'}
-            routerLink="/orders"
-          >
-            <h1
-              className={
-                location.pathname.startsWith('/orders')
-                  ? 'account_item--selected'
-                  : undefined
-              }
-            >
-              Mis Compras
-            </h1>
-          </IonItem>
-        </IonRow>
-      </IonToolbar>
-
+      <AccountNav />
       <div className="ion-margin">
         <IonRow class="header-row">
           <IonCol size="3">Fecha</IonCol>

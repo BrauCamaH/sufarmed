@@ -182,7 +182,7 @@ const AuthAppbar: React.FC<AuthAppbarProps> = ({ user }) => {
                   }
                 >
                   <IonIcon style={{ marginRight: '2px' }} icon={person} />
-                  <p>{capitalizeWord(user.name)}</p>
+                  <p>{capitalizeWord(user.name.split(' ')[0])}</p>
                 </IonItem>
 
                 <IonButton fill="clear" color="light" routerLink="/cart">
