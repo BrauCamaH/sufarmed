@@ -30,15 +30,14 @@ const SignUp: React.FC = () => {
 
   const handleSignUp = async (data: {
     firstname: string;
-    last_name: string;
+    lastname: string;
     email: string;
     password: string;
   }) => {
-    const { email, last_name, firstname, password } = data;
+    const { email, lastname, firstname, password } = data;
 
     const response: { user: User; jwt: string } = await signUp({
-      name: firstname,
-      last_name,
+      name: `${firstname} ${lastname}`,
       email,
       password,
     });

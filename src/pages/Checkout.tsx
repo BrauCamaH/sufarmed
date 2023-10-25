@@ -43,6 +43,10 @@ import './Checkout.css';
 import { Address } from '../models/Address';
 import { add } from 'ionicons/icons';
 import { useUpdateInventory } from '../api/products';
+import {
+  useShoppingDispatch,
+  useShoppingState,
+} from '../providers/ShoppingProvider';
 
 interface CheckoutFormProps {
   order: Order;
@@ -73,6 +77,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
     state.user?.addresses[0]
   );
   const [updateInventory] = useUpdateInventory();
+  const shoppingDispatch = useShoppingDispatch();
+  const shoppingState = useShoppingState();
 
   const createPaymentIntent = useCallback(async () => {
     const InitialPaymentIntent = await createPayment({
@@ -134,6 +140,10 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
           await updateInventory(order.id);
 
           setLoadingPayment(false);
+          shoppingDispatch({
+            type: 'set-shopping-id',
+            payload: shoppingState.id + 1,
+          });
 
           dispatch({
             type: 'set-cart',

@@ -39,7 +39,8 @@
     "eject": "react-scripts eject",
     "format": "prettier --write \"src/**/*+(tsx|ts)\"",
     "lint": "eslint .",
-    "e2e": "cypress open"
+    "e2e": "cypress open",
+    "cypress:run": "cypress run"
   },
   "eslintConfig": {
     "extends": "react-app"
