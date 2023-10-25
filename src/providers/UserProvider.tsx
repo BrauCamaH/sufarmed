@@ -2,7 +2,6 @@ import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import { User } from '../models/User';
 import api from '../api/';
 import { Address } from '../models/Address';
-import { isFunctionDeclaration } from 'typescript';
 
 type Action =
   | { type: 'set-user'; payload: State }
@@ -40,7 +39,7 @@ const userReducer = (state: State, action: Action): State => {
       if (state.user) {
         const updatedAdresses =
           state.user.addresses.filter(
-            (item) => item.id !== action.payload.id
+            (item) => item.id !== action.payload.id,
           ) || state.user.addresses;
 
         return {
@@ -57,7 +56,7 @@ const userReducer = (state: State, action: Action): State => {
       if (state.user) {
         const updatedAddresses = [...state.user.addresses];
         const index = updatedAddresses.findIndex(
-          (item) => item.id === action.payload.id
+          (item) => item.id === action.payload.id,
         );
         updatedAddresses[index] = { ...action.payload };
 

@@ -55,13 +55,14 @@ const AddtoCart: React.FC<AddToCartProps> = ({ product, user }) => {
   const [quantity, setQuantity] = useState(1);
 
   const existingOrderDetail = state.cart.order_details.find(
-    (item) => item.product === product.id
+    (item) => item.product === product.id,
   );
 
   const handleCreateOrder = async () => {
     if (state.cart.id === 0) {
       dispatch({ type: 'set-status', payload: 'isLoading' });
-      const order: any = await createOrder({ user: user.id });
+      const order = await createOrder({ user: user.id });
+      if (!order) return;
       dispatch({ type: 'set-cart', payload: order });
       const orderDetail = await createOrderDetail({
         orderId: order.id,

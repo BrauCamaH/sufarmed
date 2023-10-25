@@ -25,7 +25,6 @@ const AddAddress: React.FC = () => {
   const dispatch = useUserDispatch();
   const { handleSubmit, register, errors } = useForm();
   const [editAdress, { isLoading: isUpdating }] = useEditAddress();
-
   const handleSave = async (data: {
     name: string;
     address: string;
